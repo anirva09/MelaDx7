@@ -173,6 +173,10 @@ public ImageNet-21k ViT-Base/16 weights.
 * The gap between training accuracy (97.6% in the last epoch) and validation accuracy
   (82.6%) shows the model overfits; more data, stronger augmentation or ensembling would
   be the next steps.
+* Latency, measured on the production Docker stack (CPU only, 8-core laptop, idle): analysing
+  an image (prediction, Grad-CAM, storing) 1.1 to 2.0 s; Grad-CAM for another class 0.6 s; PDF
+  report 0.4 s. Under heavy concurrency this grows several-fold (inference is limited by
+  `MAX_CONCURRENT_INFERENCES`).
 * Not clinically validated. Not a medical device. Outputs are never a diagnosis.
 
 ## Known limitations
