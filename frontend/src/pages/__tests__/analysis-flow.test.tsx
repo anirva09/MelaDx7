@@ -86,9 +86,10 @@ describe("analysis workflow", () => {
 
     expect(await screen.findByTestId("predicted-class")).toHaveTextContent("Melanocytic nevus");
     expect(screen.getByTestId("predicted-confidence")).toHaveTextContent("66.0%");
+    // Phones open on the swipe comparison of the original and the Grad-CAM overlay.
     expect(
       screen.getByRole("application", { name: /Grad-CAM overlay for Melanocytic nevus/ }),
-    ).toBeInTheDocument();
+    ).toHaveAccessibleName(/^Comparison of the original/);
     expect(screen.getByText(/model-attribution visualizations/)).toBeInTheDocument();
     expect(screen.getByLabelText("Medical disclaimer")).toHaveTextContent(/not a medical diagnosis/);
     const modelCard = screen
@@ -101,7 +102,7 @@ describe("analysis workflow", () => {
     await waitFor(() =>
       expect(calls.some((c) => c.url.pathname === `/api/analyses/${detail.id}/explanations/mel`)).toBe(true),
     );
-    expect(await screen.findByRole("application", { name: /for Melanoma\./ })).toBeInTheDocument();
+    expect(await screen.findByRole("application", { name: /overlay for Melanoma,/ })).toBeInTheDocument();
   });
 
   it("warns prominently when the result came from an untrained model", async () => {

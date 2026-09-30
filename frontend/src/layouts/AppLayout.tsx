@@ -1,9 +1,10 @@
 import { Outlet, useLocation } from "react-router-dom";
 
 import { ComposerProvider } from "@/components/shell/Composer";
-import { isTabRoute, MobileTabBar } from "@/components/shell/MobileTabBar";
+import { MobileTabBar } from "@/components/shell/MobileTabBar";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { useIsDesktop } from "@/hooks/useMediaQuery";
+import { isTabRoute } from "@/lib/navigation";
 
 /**
  * Signed-in shell.

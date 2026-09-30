@@ -48,7 +48,7 @@ function SortButton({
 function ConfidenceCell({ value }: { value: number }) {
   return (
     <span className="flex items-center gap-2">
-      <span className="relative h-1.5 w-14 overflow-hidden rounded-full bg-surface-2" aria-hidden>
+      <span className="relative h-1.5 w-14 overflow-hidden rounded-full bg-field" aria-hidden>
         <span
           className="absolute inset-y-0 left-0 rounded-full bg-series-1"
           style={{ width: `${value * 100}%` }}
@@ -59,7 +59,7 @@ function ConfidenceCell({ value }: { value: number }) {
   );
 }
 
-/** History table on wide screens, stacked cards on phones. Rows link to the full result. */
+/** History table for the desktop layout (phones use grouped rows). Rows link to the full result. */
 export function AnalysisTable({
   items,
   sort,
@@ -74,10 +74,10 @@ export function AnalysisTable({
 
   return (
     <>
-      <div className="hidden overflow-x-auto md:block">
-        <table className="w-full text-left text-sm">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-md">
           <caption className="sr-only">{caption}</caption>
-          <thead className="border-b border-line text-xs text-muted">
+          <thead className="border-b border-line text-sm text-muted">
             <tr>
               <th scope="col" className="w-14 px-4 py-2.5 font-medium">
                 <span className="sr-only">Thumbnail</span>
@@ -114,14 +114,14 @@ export function AnalysisTable({
               <tr
                 key={item.id}
                 onClick={() => navigate(`/app/analyses/${item.id}`)}
-                className="cursor-pointer border-b border-line last:border-0 hover:bg-surface-2"
+                className="cursor-pointer border-b border-line last:border-0 hover:bg-active"
               >
                 <td className="px-4 py-2.5">
                   <img
                     src={item.thumbnail_url}
                     alt=""
                     loading="lazy"
-                    className="size-10 rounded-md bg-stage object-cover"
+                    className="size-10 rounded-[10px] bg-stage object-cover"
                   />
                 </td>
                 <td className="max-w-56 px-3 py-2.5">
@@ -132,15 +132,15 @@ export function AnalysisTable({
                   >
                     {item.original_filename}
                   </Link>
-                  <span className="font-mono text-2xs text-muted">{shortId(item.id)}</span>
+                  <span className="font-mono text-xs text-muted">{shortId(item.id)}</span>
                 </td>
                 <td className="px-3 py-2.5">
                   <span className="flex items-center gap-2">
                     <GroupDot group={item.predicted_class.group} />
-                    <span className="text-ink">{item.predicted_class.name}</span>
+                    <span className="font-medium text-ink">{item.predicted_class.name}</span>
                     {item.uncertain && (
                       <Badge tone="caution" title="Uncertain prediction">
-                        <TriangleAlert className="size-3" aria-hidden /> Uncertain
+                        <TriangleAlert className="size-3.5" aria-hidden /> Uncertain
                       </Badge>
                     )}
                   </span>
@@ -148,8 +148,8 @@ export function AnalysisTable({
                 <td className="px-3 py-2.5">
                   <ConfidenceCell value={item.confidence} />
                 </td>
-                {!compact && <td className="px-3 py-2.5 text-xs text-muted">{item.model_label}</td>}
-                <td className="whitespace-nowrap px-4 py-2.5 text-right text-xs text-muted">
+                {!compact && <td className="px-3 py-2.5 text-sm text-muted">{item.model_label}</td>}
+                <td className="whitespace-nowrap px-4 py-2.5 text-right text-sm text-muted">
                   <time dateTime={item.created_at} title={formatDateTime(item.created_at)}>
                     {compact ? formatRelative(item.created_at) : formatDateTime(item.created_at)}
                   </time>
@@ -159,37 +159,6 @@ export function AnalysisTable({
           </tbody>
         </table>
       </div>
-
-      <ul className="flex flex-col divide-y divide-line md:hidden" aria-label={caption}>
-        {items.map((item) => (
-          <li key={item.id}>
-            <Link
-              to={`/app/analyses/${item.id}`}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-surface-2"
-            >
-              <img
-                src={item.thumbnail_url}
-                alt=""
-                loading="lazy"
-                className="size-12 shrink-0 rounded-md bg-stage object-cover"
-              />
-              <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-2">
-                  <GroupDot group={item.predicted_class.group} />
-                  <span className="truncate text-sm font-medium text-ink">{item.predicted_class.name}</span>
-                </span>
-                <span className="mt-0.5 block truncate text-xs text-muted">
-                  {item.original_filename} · {formatRelative(item.created_at)}
-                </span>
-              </span>
-              <span className="flex flex-col items-end gap-1">
-                <span className="tabular text-sm font-medium text-ink">{formatPercent(item.confidence)}</span>
-                {item.uncertain && <Badge tone="caution">Uncertain</Badge>}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
     </>
   );
 }

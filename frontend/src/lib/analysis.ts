@@ -36,7 +36,9 @@ export function dayLabel(iso: string, now: Date = new Date()): { text: string; t
   return { text: weekdayDate.format(new Date(iso)).toUpperCase(), today: false };
 }
 
-export function groupByDay<T extends { created_at: string }>(items: T[]): { key: string; iso: string; items: T[] }[] {
+export function groupByDay<T extends { created_at: string }>(
+  items: T[],
+): { key: string; iso: string; items: T[] }[] {
   const groups: { key: string; iso: string; items: T[] }[] = [];
   for (const item of items) {
     const key = dayKey(item.created_at);

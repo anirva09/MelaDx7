@@ -5,7 +5,13 @@ import { UNTRAINED_WARNING } from "@/lib/copy";
 import { cn } from "@/lib/utils";
 
 /** Explains, with next steps, why results are unavailable or must not be interpreted. */
-export function ModelAvailabilityNotice({ info, className }: { info: ModelInfo | undefined; className?: string }) {
+export function ModelAvailabilityNotice({
+  info,
+  className,
+}: {
+  info: ModelInfo | undefined;
+  className?: string;
+}) {
   if (!info || info.status === "ready") return null;
   const untrained = info.status === "untrained";
   return (
@@ -23,11 +29,15 @@ export function ModelAvailabilityNotice({ info, className }: { info: ModelInfo |
           <>
             <p>{info.message}</p>
             <p className="mt-1">
-              Analyses cannot run until a trained model is loaded. History and existing reports remain available.
+              Analyses cannot run until a trained model is loaded. History and existing reports remain
+              available.
             </p>
           </>
         )}
-        <Link to="/app/model" className="mt-1.5 inline-block font-medium text-ink underline underline-offset-2">
+        <Link
+          to="/app/model"
+          className="mt-0.5 inline-block py-1 font-medium text-ink underline underline-offset-2"
+        >
           {untrained ? "How to train and load a model" : "Setup instructions"}
         </Link>
       </div>

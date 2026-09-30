@@ -34,7 +34,10 @@ export function ConfidenceChart({
             <span className="flex min-w-0 items-center gap-2">
               <GroupDot group={item.group} />
               <span
-                className={cn("truncate text-base tracking-ref", predicted ? "font-semibold text-ink" : "text-ink-2")}
+                className={cn(
+                  "truncate text-base tracking-ref",
+                  predicted ? "font-semibold text-ink" : "text-ink-2",
+                )}
                 title={item.name}
               >
                 {item.name}

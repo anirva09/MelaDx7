@@ -1,16 +1,4 @@
-import {
-  Columns2,
-  Download,
-  Eye,
-  Flame,
-  Layers,
-  Maximize,
-  Maximize2,
-  SplitSquareHorizontal,
-  X,
-  ZoomIn,
-  ZoomOut,
-} from "lucide-react";
+import { Download, Maximize, Maximize2, SplitSquareHorizontal, X, ZoomIn, ZoomOut } from "lucide-react";
 import { Dialog } from "radix-ui";
 import {
   useCallback,
@@ -20,7 +8,6 @@ import {
   useState,
   type KeyboardEvent,
   type PointerEvent,
-  type ReactNode,
   type WheelEvent,
 } from "react";
 
@@ -29,50 +16,25 @@ import { Button } from "@/components/ui/button";
 import { Segmented } from "@/components/ui/segmented";
 import { colorizeCam, colormapGradient, type ColormapName } from "@/lib/colormap";
 import { cn } from "@/lib/utils";
-
-export type ViewMode = "overlay" | "heatmap" | "original" | "side" | "compare";
-
-export interface ViewerSettings {
-  mode: ViewMode;
-  opacity: number;
-  threshold: number;
-  colormap: ColormapName;
-  compareAt: number;
-}
-
-export interface ViewerState extends ViewerSettings {
-  set: (patch: Partial<ViewerSettings>) => void;
-}
-
-/** Viewer settings live outside the stage so a toolbar, a sheet and full screen share them. */
-export function useViewerState(initial: Partial<ViewerSettings> = {}): ViewerState {
-  const [settings, setSettings] = useState<ViewerSettings>({
-    mode: "overlay",
-    opacity: 0.5,
-    threshold: 0,
-    colormap: "turbo",
-    compareAt: 50,
-    ...initial,
-  });
-  const set = useCallback((patch: Partial<ViewerSettings>) => setSettings((s) => ({ ...s, ...patch })), []);
-  return { ...settings, set };
-}
-
-export interface ViewerSources {
-  imageUrl: string;
-  /** Raw grayscale CAM (preferred: enables threshold and colour-map controls). */
-  camUrl?: string | null;
-  /** Pre-rendered Turbo heatmap, used if the raw CAM is unavailable. */
-  heatmapUrl?: string | null;
-  targetLabel?: string | null;
-  degenerate?: boolean;
-  /** Called when an image fails to load (e.g. an expired signed URL) so the parent can refetch. */
-  onImageError?: () => void;
-}
+import {
+  effectiveMode,
+  exportView,
+  MAX_ZOOM,
+  paint,
+  VIEW_OPTIONS,
+  type ViewerSettings,
+  type ViewerSources,
+  type ViewerState,
+  type ViewMode,
+  useViewerState,
+} from "@/lib/viewer";
 
 type LoadState = "loading" | "ready" | "error";
 
-function useImage(url: string | null | undefined): { image: HTMLImageElement | null; state: LoadState | "idle" } {
+function useImage(url: string | null | undefined): {
+  image: HTMLImageElement | null;
+  state: LoadState | "idle";
+} {
   const [loaded, setLoaded] = useState<{ url: string; image: HTMLImageElement | null } | null>(null);
   useEffect(() => {
     if (!url) return;
@@ -89,51 +51,6 @@ function useImage(url: string | null | undefined): { image: HTMLImageElement | n
   if (!url) return { image: null, state: "idle" };
   if (!loaded || loaded.url !== url) return { image: null, state: "loading" };
   return { image: loaded.image, state: loaded.image ? "ready" : "error" };
-}
-
-export const VIEW_OPTIONS: { value: ViewMode; label: string; icon: ReactNode; title?: string }[] = [
-  { value: "overlay", label: "Overlay", icon: <Layers aria-hidden />, title: "Heatmap over the image" },
-  { value: "heatmap", label: "Heatmap", icon: <Flame aria-hidden />, title: "Attribution map only" },
-  { value: "original", label: "Original", icon: <Eye aria-hidden />, title: "Uploaded image" },
-  { value: "side", label: "Side by side", icon: <Columns2 aria-hidden /> },
-  { value: "compare", label: "Compare", icon: <SplitSquareHorizontal aria-hidden /> },
-];
-
-const MAX_RENDER_SIDE = 1600;
-const MAX_ZOOM = 6;
-
-function renderSize(image: HTMLImageElement): { width: number; height: number } {
-  const scale = Math.min(1, MAX_RENDER_SIDE / Math.max(image.naturalWidth, image.naturalHeight));
-  return { width: Math.round(image.naturalWidth * scale), height: Math.round(image.naturalHeight * scale) };
-}
-
-/** Draw one composited frame of the viewer into a canvas. */
-function paint(
-  canvas: HTMLCanvasElement,
-  image: HTMLImageElement,
-  heat: CanvasImageSource | null,
-  mode: "overlay" | "heatmap" | "original",
-  opacity: number,
-): void {
-  const { width, height } = renderSize(image);
-  if (canvas.width !== width) canvas.width = width;
-  if (canvas.height !== height) canvas.height = height;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-  ctx.clearRect(0, 0, width, height);
-  if (mode === "heatmap") {
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, width, height);
-  } else {
-    ctx.drawImage(image, 0, 0, width, height);
-  }
-  if (heat && mode !== "original") {
-    ctx.globalAlpha = mode === "heatmap" ? 1 : opacity;
-    ctx.drawImage(heat, 0, 0, width, height);
-    ctx.globalAlpha = 1;
-  }
 }
 
 /** Loads the images and builds the colourised heat layer for a set of sources. */
@@ -181,11 +98,6 @@ function useLayers(sources: ViewerSources, settings: ViewerSettings) {
   return { original, heatLayer, hasHeat };
 }
 
-/** Without a heat layer only the original can be shown; the chosen mode is kept for later. */
-export function effectiveMode(mode: ViewMode, sources: ViewerSources): ViewMode {
-  return sources.camUrl || sources.heatmapUrl ? mode : "original";
-}
-
 interface StageProps {
   sources: ViewerSources;
   state: ViewerState;
@@ -200,7 +112,14 @@ interface StageProps {
  * The image stage: canvas rendering, pinch/wheel zoom, drag pan, double-tap zoom, and a
  * swipe-to-compare divider. Every gesture has a keyboard or button equivalent.
  */
-export function GradCAMStage({ sources, state, zoom, onZoomChange, className, fullscreen = false }: StageProps) {
+export function GradCAMStage({
+  sources,
+  state,
+  zoom,
+  onZoomChange,
+  className,
+  fullscreen = false,
+}: StageProps) {
   const { original, heatLayer } = useLayers(sources, state);
   const mode = effectiveMode(state.mode, sources);
   const { opacity, compareAt } = state;
@@ -233,13 +152,25 @@ export function GradCAMStage({ sources, state, zoom, onZoomChange, className, fu
     }
   }, [original.image, heatLayer, mode, opacity]);
 
-  const clampPan = useCallback((x: number, y: number, z: number) => {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+  useEffect(() => {
     const el = stageRef.current;
-    if (!el || z <= 1) return { x: 0, y: 0 };
-    const maxX = ((z - 1) * el.clientWidth) / 2;
-    const maxY = ((z - 1) * el.clientHeight) / 2;
-    return { x: Math.max(-maxX, Math.min(maxX, x)), y: Math.max(-maxY, Math.min(maxY, y)) };
+    if (!el) return;
+    const measure = () => setSize({ width: el.clientWidth, height: el.clientHeight });
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
+  const clampPan = useCallback(
+    (x: number, y: number, z: number) => {
+      if (z <= 1) return { x: 0, y: 0 };
+      const maxX = ((z - 1) * size.width) / 2;
+      const maxY = ((z - 1) * size.height) / 2;
+      return { x: Math.max(-maxX, Math.min(maxX, x)), y: Math.max(-maxY, Math.min(maxY, y)) };
+    },
+    [size],
+  );
 
   // Keep the pan inside bounds whenever the zoom changes (buttons, pinch, reset).
   const shownPan = zoom <= 1 ? { x: 0, y: 0 } : clampPan(pan.x, pan.y, zoom);
@@ -268,7 +199,13 @@ export function GradCAMStage({ sources, state, zoom, onZoomChange, className, fu
       return;
     }
     if (zoom > 1) {
-      gesture.current = { kind: "pan", x: event.clientX, y: event.clientY, panX: shownPan.x, panY: shownPan.y };
+      gesture.current = {
+        kind: "pan",
+        x: event.clientX,
+        y: event.clientY,
+        panX: shownPan.x,
+        panY: shownPan.y,
+      };
     }
   };
 
@@ -344,7 +281,9 @@ export function GradCAMStage({ sources, state, zoom, onZoomChange, className, fu
   const transform = `translate(${shownPan.x}px, ${shownPan.y}px) scale(${zoom})`;
   const maxH = fullscreen ? "max-h-[calc(100dvh-180px)]" : "max-h-[62vh]";
   const canvasClass = cn("block h-auto w-auto max-w-full object-contain", maxH);
-  const aspect = original.image ? `${original.image.naturalWidth} / ${original.image.naturalHeight}` : "4 / 3";
+  const aspect = original.image
+    ? `${original.image.naturalWidth} / ${original.image.naturalHeight}`
+    : "4 / 3";
   const description =
     mode === "original"
       ? "Uploaded dermoscopic image"
@@ -438,8 +377,12 @@ export function GradCAMStage({ sources, state, zoom, onZoomChange, className, fu
               <SplitSquareHorizontal className="size-4" strokeWidth={1.5} />
             </span>
           </div>
-          <span className="glass absolute left-2 top-2 rounded-full px-2.5 py-1 text-xs text-white">Original</span>
-          <span className="glass absolute right-2 top-2 rounded-full px-2.5 py-1 text-xs text-white">Grad-CAM</span>
+          <span className="glass absolute left-2 top-2 rounded-full px-2.5 py-1 text-xs text-white">
+            Original
+          </span>
+          <span className="glass absolute right-2 top-2 rounded-full px-2.5 py-1 text-xs text-white">
+            Grad-CAM
+          </span>
         </div>
       )}
     </div>
@@ -477,7 +420,12 @@ export function ViewerControls({
           />
         </label>
       ) : (
-        <label className={cn("flex items-center gap-3", (mode === "heatmap" || mode === "original") && "opacity-50")}>
+        <label
+          className={cn(
+            "flex items-center gap-3",
+            (mode === "heatmap" || mode === "original") && "opacity-50",
+          )}
+        >
           <span className="w-28 shrink-0">Overlay opacity</span>
           <input
             type="range"
@@ -541,7 +489,8 @@ export function ViewerNotes({ sources, className }: { sources: ViewerSources; cl
   if (hasHeat && sources.degenerate) {
     return (
       <p className={cn("text-md text-caution", className)} role="note">
-        The map is empty: the model found no positive evidence for {sources.targetLabel ?? "this class"} in this image.
+        The map is empty: the model found no positive evidence for {sources.targetLabel ?? "this class"} in
+        this image.
       </p>
     );
   }
@@ -553,72 +502,6 @@ export function ViewerNotes({ sources, className }: { sources: ViewerSources; cl
     );
   }
   return null;
-}
-
-/** Export the current view as a PNG (the original pixels are never altered). */
-export function exportView(sources: ViewerSources, state: ViewerSettings, filename: string): void {
-  const img = new Image();
-  const cam = sources.camUrl ? new Image() : null;
-  img.crossOrigin = "anonymous";
-  const load = (el: HTMLImageElement, url: string) =>
-    new Promise<void>((resolve, reject) => {
-      el.onload = () => resolve();
-      el.onerror = () => reject(new Error("load"));
-      el.src = url;
-    });
-  void Promise.all([load(img, sources.imageUrl), cam && sources.camUrl ? load(cam, sources.camUrl) : Promise.resolve()])
-    .then(() => {
-      let heat: HTMLCanvasElement | null = null;
-      if (cam) {
-        const source = document.createElement("canvas");
-        source.width = cam.naturalWidth;
-        source.height = cam.naturalHeight;
-        const sctx = source.getContext("2d");
-        if (sctx) {
-          sctx.drawImage(cam, 0, 0);
-          heat = document.createElement("canvas");
-          heat.width = source.width;
-          heat.height = source.height;
-          heat
-            .getContext("2d")
-            ?.putImageData(
-              colorizeCam(sctx.getImageData(0, 0, source.width, source.height), state.colormap, state.threshold, false),
-              0,
-              0,
-            );
-        }
-      }
-      const mode = effectiveMode(state.mode, sources);
-      const { width, height } = renderSize(img);
-      const side = mode === "side" || mode === "compare";
-      const canvas = document.createElement("canvas");
-      canvas.width = side ? width * 2 + 16 : width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      const frame = document.createElement("canvas");
-      if (side) {
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        paint(frame, img, null, "original", state.opacity);
-        ctx.drawImage(frame, 0, 0);
-        paint(frame, img, heat, "overlay", state.opacity);
-        ctx.drawImage(frame, width + 16, 0);
-      } else {
-        paint(frame, img, heat, mode === "heatmap" || mode === "original" ? mode : "overlay", state.opacity);
-        ctx.drawImage(frame, 0, 0);
-      }
-      canvas.toBlob((blob) => {
-        if (!blob) return;
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-      }, "image/png");
-    })
-    .catch(() => undefined);
 }
 
 /** Full-screen viewer (black surround, floating glass controls). */
@@ -660,7 +543,10 @@ export function ViewerFullscreen({
                 <X aria-hidden />
               </GlassCircle>
             </Dialog.Close>
-            <span className="glass pointer-events-auto rounded-full px-3 py-2 text-sm text-white" aria-live="polite">
+            <span
+              className="glass pointer-events-auto rounded-full px-3 py-2 text-sm text-white"
+              aria-live="polite"
+            >
               {Math.round(zoom * 100)}%
             </span>
           </div>
@@ -703,7 +589,12 @@ interface GradCAMViewerProps extends ViewerSources {
  * on a canvas, so threshold and colour map can change instantly; the original pixels are
  * never altered. Zoom/pan works with buttons, gestures, and the keyboard.
  */
-export function GradCAMViewer({ downloadName = "lesionlens-gradcam.png", className, state: external, ...sources }: GradCAMViewerProps) {
+export function GradCAMViewer({
+  downloadName = "lesionlens-gradcam.png",
+  className,
+  state: external,
+  ...sources
+}: GradCAMViewerProps) {
   const internal = useViewerState();
   const state = external ?? internal;
   const [zoom, setZoom] = useState(1);
@@ -731,22 +622,55 @@ export function GradCAMViewer({ downloadName = "lesionlens-gradcam.png", classNa
           options={VIEW_OPTIONS.filter((option) => hasHeat || option.value === "original")}
         />
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon-sm" className={iconButton} onClick={() => setZoom(Math.max(1, zoom / 1.5))} disabled={zoom <= 1 || mode === "compare"} aria-label="Zoom out">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className={iconButton}
+            onClick={() => setZoom(Math.max(1, zoom / 1.5))}
+            disabled={zoom <= 1 || mode === "compare"}
+            aria-label="Zoom out"
+          >
             <ZoomOut />
           </Button>
           <span className="tabular w-11 text-center text-xs text-white/70" aria-live="polite">
             {Math.round(zoom * 100)}%
           </span>
-          <Button variant="ghost" size="icon-sm" className={iconButton} onClick={() => setZoom(Math.min(MAX_ZOOM, zoom * 1.5))} disabled={zoom >= MAX_ZOOM || mode === "compare"} aria-label="Zoom in">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className={iconButton}
+            onClick={() => setZoom(Math.min(MAX_ZOOM, zoom * 1.5))}
+            disabled={zoom >= MAX_ZOOM || mode === "compare"}
+            aria-label="Zoom in"
+          >
             <ZoomIn />
           </Button>
-          <Button variant="ghost" size="icon-sm" className={iconButton} onClick={() => setZoom(1)} disabled={zoom === 1} aria-label="Reset zoom">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className={iconButton}
+            onClick={() => setZoom(1)}
+            disabled={zoom === 1}
+            aria-label="Reset zoom"
+          >
             <Maximize />
           </Button>
-          <Button variant="ghost" size="icon-sm" className={iconButton} onClick={() => setFullscreen(true)} aria-label="Full screen">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className={iconButton}
+            onClick={() => setFullscreen(true)}
+            aria-label="Full screen"
+          >
             <Maximize2 />
           </Button>
-          <Button variant="ghost" size="icon-sm" className={iconButton} onClick={() => exportView(sources, state, downloadName)} aria-label="Download the current view as PNG">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className={iconButton}
+            onClick={() => exportView(sources, state, downloadName)}
+            aria-label="Download the current view as PNG"
+          >
             <Download />
           </Button>
         </div>
@@ -754,9 +678,7 @@ export function GradCAMViewer({ downloadName = "lesionlens-gradcam.png", classNa
 
       <GradCAMStage sources={sources} state={state} zoom={zoom} onZoomChange={setZoom} />
 
-      {hasHeat && (
-        <ViewerControls sources={sources} state={state} className="px-4 py-3.5 sm:grid-cols-2" />
-      )}
+      {hasHeat && <ViewerControls sources={sources} state={state} className="px-4 py-3.5 sm:grid-cols-2" />}
       <ViewerNotes sources={sources} className="px-4 pb-3" />
       <ViewerFullscreen open={fullscreen} onOpenChange={setFullscreen} sources={sources} state={state} />
     </section>

@@ -67,7 +67,13 @@ interface TextTabsProps<T extends string> {
 }
 
 /** Plain text switcher ("Recents  Suggested", "Today  Week  Month"). */
-export function TextTabs<T extends string>({ value, onValueChange, options, label, className }: TextTabsProps<T>) {
+export function TextTabs<T extends string>({
+  value,
+  onValueChange,
+  options,
+  label,
+  className,
+}: TextTabsProps<T>) {
   return (
     <ToggleGroup.Root
       type="single"
@@ -80,7 +86,7 @@ export function TextTabs<T extends string>({ value, onValueChange, options, labe
         <ToggleGroup.Item
           key={option.value}
           value={option.value}
-          className="-my-2 py-2 text-xs text-muted transition-colors hover:text-ink data-[state=on]:text-ink lg:text-sm"
+          className="-mx-1.5 -my-2 min-w-7 px-1.5 py-2 text-xs text-muted transition-colors hover:text-ink data-[state=on]:text-ink lg:text-sm"
         >
           {option.label}
         </ToggleGroup.Item>

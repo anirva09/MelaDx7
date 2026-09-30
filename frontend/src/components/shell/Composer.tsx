@@ -119,7 +119,11 @@ export function ComposerProvider({ children }: { children: ReactNode }) {
               </p>
             )}
             <div className="mt-4 flex items-center justify-between">
-              <div role="group" aria-label="Image source" className="glass inline-flex h-[50px] items-center gap-3 rounded-full px-2">
+              <div
+                role="group"
+                aria-label="Image source"
+                className="glass inline-flex h-[50px] items-center gap-3 rounded-full px-2"
+              >
                 <PillButton label="Take a photo" onClick={() => camera.current?.click()}>
                   <Camera aria-hidden />
                 </PillButton>

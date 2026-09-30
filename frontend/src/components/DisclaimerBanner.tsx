@@ -14,7 +14,11 @@ export function DisclaimerBanner({ className, compact = false }: { className?: s
         className,
       )}
     >
-      <ShieldCheck className={cn("shrink-0 text-muted", compact ? "size-4" : "mt-px size-5")} strokeWidth={1.5} aria-hidden />
+      <ShieldCheck
+        className={cn("shrink-0 text-muted", compact ? "size-4" : "mt-px size-5")}
+        strokeWidth={1.5}
+        aria-hidden
+      />
       <p>{MEDICAL_DISCLAIMER}</p>
     </aside>
   );

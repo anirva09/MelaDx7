@@ -30,22 +30,16 @@ import {
   useRerunAnalysis,
 } from "@/api/queries";
 import type { AnalysisDetail, ClassProbability } from "@/api/types";
-import { DeleteAnalysisDialog, downloadReport } from "@/components/analysis/AnalysisMenu";
+import { DeleteAnalysisDialog } from "@/components/analysis/AnalysisMenu";
 import { ClassGroupBadge } from "@/components/ClassGroupBadge";
 import { ConfidenceChart } from "@/components/ConfidenceChart";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import {
-  effectiveMode,
-  exportView,
   GradCAMStage,
   GradCAMViewer,
-  useViewerState,
-  VIEW_OPTIONS,
   ViewerControls,
   ViewerFullscreen,
   ViewerNotes,
-  type ViewerSources,
-  type ViewMode,
 } from "@/components/GradCAMViewer";
 import { ModelInfoCard } from "@/components/ModelInfoCard";
 import { Notice } from "@/components/Notice";
@@ -75,7 +69,16 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useIsDesktop } from "@/hooks/useMediaQuery";
 import { groupColor } from "@/lib/analysis";
 import { GRADCAM_NOTE, QUALITY_TITLE, UNTRAINED_WARNING } from "@/lib/copy";
+import { downloadReport } from "@/lib/reports";
 import { cn, errorMessage, formatBytes, formatDateTime, formatPercent, shortHash } from "@/lib/utils";
+import {
+  effectiveMode,
+  exportView,
+  useViewerState,
+  VIEW_OPTIONS,
+  type ViewerSources,
+  type ViewMode,
+} from "@/lib/viewer";
 
 function CopyButton({ value, label }: { value: string; label: string }) {
   return (

@@ -1,12 +1,15 @@
 import type { ReactNode } from "react";
 
 import { FixedChrome } from "@/components/shell/FixedChrome";
+import { useKeyboardOpen } from "@/hooks/useKeyboardOpen";
 
 /**
  * Floating bottom toolbar for detail screens (reference "Note": a glass pill of tools on the
  * left, a circular action on the right), over the same blurred strip as the tab bar.
  */
 export function BottomToolbar({ left, right }: { left?: ReactNode; right?: ReactNode }) {
+  const keyboard = useKeyboardOpen();
+  if (keyboard) return null;
   return (
     <FixedChrome>
       <div

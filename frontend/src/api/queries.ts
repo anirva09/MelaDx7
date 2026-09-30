@@ -1,6 +1,12 @@
 /** TanStack Query hooks and cache keys. */
 
-import { keepPreviousData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { analysisApi, modelApi, statsApi } from "./endpoints";
 import type { AnalysisDetail, AnalysisQuery } from "./types";

@@ -26,7 +26,13 @@ const PAGES: Result[] = [
 ];
 
 /** Command palette: jump to a page or find an analysis by file name, ID or class code. */
-export function QuickSearch({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+export function QuickSearch({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   useEffect(() => {
     const onKey = (event: globalThis.KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -61,7 +67,13 @@ function Panel({ onDone }: { onDone: () => void }) {
   const [active, setActive] = useState(0);
   const query = useDebouncedValue(text.trim(), 250);
   const listId = useId();
-  const analyses = useAnalyses({ q: query || undefined, page: 1, page_size: 6, sort: "created_at", order: "desc" });
+  const analyses = useAnalyses({
+    q: query || undefined,
+    page: 1,
+    page_size: 6,
+    sort: "created_at",
+    order: "desc",
+  });
 
   const results = useMemo<{ group: string; items: Result[] }[]>(() => {
     const needle = text.trim().toLowerCase();
@@ -101,62 +113,61 @@ function Panel({ onDone }: { onDone: () => void }) {
 
   return (
     <>
-    <div className="flex items-center gap-3 border-b border-line px-4">
-      <Search className="size-6 shrink-0 text-muted" strokeWidth={1.5} aria-hidden />
-      <input
-        autoFocus
-        value={text}
-        onChange={(event) => {
-          setText(event.target.value);
-          setActive(0);
-        }}
-        onKeyDown={onKeyDown}
-        placeholder="Search pages and analyses"
-        role="combobox"
-        aria-expanded
-        aria-controls={listId}
-        aria-activedescendant={flat[current] ? `${listId}-${flat[current].id}` : undefined}
-        aria-autocomplete="list"
-        className="h-14 flex-1 bg-transparent text-[17px] text-ink placeholder:text-muted focus:outline-none"
-      />
-    </div>
-    <div id={listId} role="listbox" aria-label="Results" className="max-h-[50vh] overflow-y-auto p-2">
-      {results.length === 0 && (
-        <p className="px-3 py-6 text-center text-md text-muted">No pages or analyses match.</p>
-      )}
-      {results.map((group) => (
-        <div key={group.group} role="group" aria-label={group.group} className="pb-1">
-          <p className="px-3 pb-1 pt-2 text-xs text-muted" aria-hidden>
-            {group.group}
-          </p>
-          {group.items.map((item) => {
-            const index = flat.indexOf(item);
-            return (
-              <div
-                key={item.id}
-                id={`${listId}-${item.id}`}
-                role="option"
-                aria-selected={index === current}
-                tabIndex={-1}
-                onMouseMove={() => setActive(index)}
-                onClick={() => go(item)}
-                onKeyDown={undefined}
-                className={cn(
-                  "flex cursor-pointer items-center gap-3 rounded-[12px] px-3 py-2.5 [&_svg]:size-5 [&_svg]:stroke-[1.5] [&_svg]:text-subtle",
-                  index === current && "bg-active",
-                )}
-              >
-                {item.icon}
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-base text-ink">{item.label}</span>
-                  {item.hint && <span className="block truncate text-xs text-muted">{item.hint}</span>}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      ))}
-    </div>
+      <div className="flex items-center gap-3 border-b border-line px-4">
+        <Search className="size-6 shrink-0 text-muted" strokeWidth={1.5} aria-hidden />
+        <input
+          value={text}
+          onChange={(event) => {
+            setText(event.target.value);
+            setActive(0);
+          }}
+          onKeyDown={onKeyDown}
+          placeholder="Search pages and analyses"
+          role="combobox"
+          aria-expanded
+          aria-controls={listId}
+          aria-activedescendant={flat[current] ? `${listId}-${flat[current].id}` : undefined}
+          aria-autocomplete="list"
+          className="h-14 flex-1 bg-transparent text-[17px] text-ink placeholder:text-muted focus:outline-none"
+        />
+      </div>
+      <div id={listId} role="listbox" aria-label="Results" className="max-h-[50vh] overflow-y-auto p-2">
+        {results.length === 0 && (
+          <p className="px-3 py-6 text-center text-md text-muted">No pages or analyses match.</p>
+        )}
+        {results.map((group) => (
+          <div key={group.group} role="group" aria-label={group.group} className="pb-1">
+            <p className="px-3 pb-1 pt-2 text-xs text-muted" aria-hidden>
+              {group.group}
+            </p>
+            {group.items.map((item) => {
+              const index = flat.indexOf(item);
+              return (
+                <div
+                  key={item.id}
+                  id={`${listId}-${item.id}`}
+                  role="option"
+                  aria-selected={index === current}
+                  tabIndex={-1}
+                  onMouseMove={() => setActive(index)}
+                  onClick={() => go(item)}
+                  onKeyDown={undefined}
+                  className={cn(
+                    "flex cursor-pointer items-center gap-3 rounded-[12px] px-3 py-2.5 [&_svg]:size-5 [&_svg]:stroke-[1.5] [&_svg]:text-subtle",
+                    index === current && "bg-active",
+                  )}
+                >
+                  {item.icon}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-base text-ink">{item.label}</span>
+                    {item.hint && <span className="block truncate text-xs text-muted">{item.hint}</span>}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
     </>
   );
 }

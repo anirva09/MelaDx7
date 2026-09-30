@@ -20,7 +20,15 @@ export function Page({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
 }
 
 /** Large page title on phones (reference note title: 24px bold, -3%). */
-export function PageTitle({ children, className, id }: { children: ReactNode; className?: string; id?: string }) {
+export function PageTitle({
+  children,
+  className,
+  id,
+}: {
+  children: ReactNode;
+  className?: string;
+  id?: string;
+}) {
   return (
     <h1 id={id} className={cn("text-2xl font-bold tracking-title text-ink", className)}>
       {children}

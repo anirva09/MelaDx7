@@ -29,7 +29,9 @@ export function ConfirmDialog({
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="data-open-fade fixed inset-0 z-50 bg-black/40 backdrop-blur-[16px]" />
         <AlertDialog.Content className="data-open-pop fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[20px] bg-surface-2 p-5 shadow-[var(--shadow-pop)] focus:outline-none sm:p-6 dark:bg-[#242424]">
-          <AlertDialog.Title className="text-xl font-semibold tracking-ref text-ink">{title}</AlertDialog.Title>
+          <AlertDialog.Title className="text-xl font-semibold tracking-ref text-ink">
+            {title}
+          </AlertDialog.Title>
           <AlertDialog.Description asChild>
             <div className="mt-2 text-base text-ink-2">{description}</div>
           </AlertDialog.Description>

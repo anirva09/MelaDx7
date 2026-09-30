@@ -3,12 +3,7 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn("rounded-lg bg-surface", className)}
-      {...props}
-    />
-  );
+  return <div className={cn("rounded-lg bg-surface", className)} {...props} />;
 }
 
 export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
@@ -33,6 +28,9 @@ export function CardContent({ className, ...props }: HTMLAttributes<HTMLDivEleme
 
 export function CardFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("flex items-center gap-3 border-t border-line px-4 py-3 lg:px-5", className)} {...props} />
+    <div
+      className={cn("flex items-center gap-3 border-t border-line px-4 py-3 lg:px-5", className)}
+      {...props}
+    />
   );
 }

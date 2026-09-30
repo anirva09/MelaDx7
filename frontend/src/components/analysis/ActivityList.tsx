@@ -18,7 +18,9 @@ export function ActivityList({ items, className }: { items: AnalysisListItem[]; 
         return (
           <section key={group.key} aria-label={label.text} className="flex flex-col gap-2">
             <div className="flex flex-col gap-1 px-1">
-              <h3 className={cn("text-md font-semibold", label.today ? "text-today" : "text-muted")}>{label.text}</h3>
+              <h3 className={cn("text-md font-semibold", label.today ? "text-today" : "text-muted")}>
+                {label.text}
+              </h3>
               {label.today && <hr className="border-0 border-t border-line" />}
             </div>
             <ul className="flex flex-col gap-2">
@@ -38,11 +40,21 @@ export function ActivityList({ items, className }: { items: AnalysisListItem[]; 
                         }}
                       >
                         <span className="flex min-w-0 items-center gap-1.5">
-                          <span className="h-[18px] w-[3px] shrink-0 rounded-full" style={{ background: color }} aria-hidden />
-                          <span className="truncate text-base font-semibold tracking-ref">{item.predicted_class.name}</span>
-                          <span className="tabular shrink-0 text-xs opacity-75">{formatPercent(item.confidence, 0)}</span>
+                          <span
+                            className="h-[18px] w-[3px] shrink-0 rounded-full"
+                            style={{ background: color }}
+                            aria-hidden
+                          />
+                          <span className="truncate text-base font-semibold tracking-ref">
+                            {item.predicted_class.name}
+                          </span>
+                          <span className="tabular shrink-0 text-xs opacity-75">
+                            {formatPercent(item.confidence, 0)}
+                          </span>
                         </span>
-                        <span className="tabular shrink-0 text-xs tracking-ref">{formatTime(item.created_at)}</span>
+                        <span className="tabular shrink-0 text-xs tracking-ref">
+                          {formatTime(item.created_at)}
+                        </span>
                       </Link>
                     </AnalysisMenu>
                   </li>

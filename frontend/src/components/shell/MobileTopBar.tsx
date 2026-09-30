@@ -120,9 +120,7 @@ export function MoreMenu() {
             <ShieldCheck aria-hidden /> About &amp; safety
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onSelect={() => void logout().then(() => navigate("/login", { replace: true }))}
-          >
+          <DropdownMenuItem onSelect={() => void logout().then(() => navigate("/login", { replace: true }))}>
             <LogOut aria-hidden /> Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>

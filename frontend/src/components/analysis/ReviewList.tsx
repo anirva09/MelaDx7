@@ -24,11 +24,16 @@ export function ReviewList({ items, checked, onNew, className }: ReviewListProps
       {items.length === 0 && checked > 0 && (
         <>
           <div className="flex gap-3">
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-white" aria-hidden>
+            <span
+              className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-white"
+              aria-hidden
+            >
               <Check className="size-[14px]" strokeWidth={2.4} />
             </span>
             <span className="flex min-w-0 flex-col gap-0.5">
-              <span className="text-base font-medium tracking-ref text-muted line-through">No results need review</span>
+              <span className="text-base font-medium tracking-ref text-muted line-through">
+                No results need review
+              </span>
               <span className="text-xs font-medium text-muted">
                 from: <span className="underline underline-offset-2">latest {checked} analyses</span>
               </span>

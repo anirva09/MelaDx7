@@ -216,7 +216,7 @@ export function LandingPage() {
       >
         Skip to content
       </a>
-      <header className="sticky top-0 z-30 border-b border-line bg-paper/85 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-line bg-paper/85 pt-[var(--safe-top)] backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
           <Link to="/" aria-label="LesionLens home">
             <Logo />

@@ -34,17 +34,14 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className={cn(
-        "flex flex-col items-start gap-3 rounded-lg border border-danger-line bg-danger-soft p-5",
-        className,
-      )}
+      className={cn("flex flex-col items-start gap-3 rounded-lg bg-danger-soft p-4", className)}
     >
       <div className="flex items-start gap-3">
-        <CircleAlert className="mt-0.5 size-5 shrink-0 text-danger" aria-hidden />
+        <CircleAlert className="mt-px size-5 shrink-0 text-danger" strokeWidth={1.5} aria-hidden />
         <div>
-          <p className="font-medium text-ink">{title}</p>
-          <p className="mt-1 text-sm text-ink-2">{errorMessage(error)}</p>
-          {requestId && <p className="mt-1 font-mono text-2xs text-ink-2">Reference {requestId}</p>}
+          <p className="text-base font-medium tracking-ref text-ink">{title}</p>
+          <p className="mt-1 text-md text-ink-2">{errorMessage(error)}</p>
+          {requestId && <p className="mt-1 font-mono text-xs text-ink-2">Reference {requestId}</p>}
         </div>
       </div>
       {onRetry && (
@@ -68,14 +65,14 @@ export function EmptyState({ icon, title, description, action, className }: Empt
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-line-strong px-6 py-12 text-center",
+        "flex flex-col items-center justify-center gap-3 rounded-lg bg-surface px-6 py-12 text-center",
         className,
       )}
     >
-      {icon && <div className="text-muted [&_svg]:size-8">{icon}</div>}
+      {icon && <div className="text-muted [&_svg]:size-8 [&_svg]:stroke-[1.5]">{icon}</div>}
       <div className="max-w-md">
-        <p className="font-medium text-ink">{title}</p>
-        {description && <div className="mt-1 text-sm text-muted">{description}</div>}
+        <p className="text-lg font-semibold tracking-ref text-ink">{title}</p>
+        {description && <div className="mt-1 text-md text-subtle">{description}</div>}
       </div>
       {action}
     </div>

@@ -6,12 +6,7 @@ import { cn } from "@/lib/utils";
 export const Tabs = RadixTabs.Root;
 
 export function TabsList({ className, ...props }: ComponentProps<typeof RadixTabs.List>) {
-  return (
-    <RadixTabs.List
-      className={cn("no-scrollbar flex gap-5 overflow-x-auto", className)}
-      {...props}
-    />
-  );
+  return <RadixTabs.List className={cn("no-scrollbar flex gap-5 overflow-x-auto", className)} {...props} />;
 }
 
 export function TabsTrigger({ className, ...props }: ComponentProps<typeof RadixTabs.Trigger>) {
@@ -19,7 +14,7 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof Radix
     <RadixTabs.Trigger
       className={cn(
         // Text tabs as in the reference ("Recents  Suggested", "Today  Week  Month").
-        "whitespace-nowrap py-2 text-sm text-muted transition-colors hover:text-ink data-[state=active]:text-ink",
+        "whitespace-nowrap py-2 text-base text-muted transition-colors hover:text-ink data-[state=active]:text-ink lg:text-sm",
         className,
       )}
       {...props}
@@ -28,5 +23,7 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof Radix
 }
 
 export function TabsContent({ className, ...props }: ComponentProps<typeof RadixTabs.Content>) {
-  return <RadixTabs.Content className={cn("pt-4 focus-visible:outline-none lg:pt-6", className)} {...props} />;
+  return (
+    <RadixTabs.Content className={cn("pt-4 focus-visible:outline-none lg:pt-6", className)} {...props} />
+  );
 }

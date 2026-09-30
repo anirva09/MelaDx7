@@ -3,12 +3,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useAnalyses, useModelInfo, useOverview } from "@/api/queries";
-import type { AnalysisListItem, OverviewStats } from "@/api/types";
+import type { AnalysisListItem } from "@/api/types";
 import { ActivityList } from "@/components/analysis/ActivityList";
 import { ActivityTimeline } from "@/components/analysis/ActivityTimeline";
 import { LatestResultCard } from "@/components/analysis/LatestResultCard";
 import { NoteCardSkeleton, ResultNoteCard } from "@/components/analysis/ResultNoteCard";
 import { ReviewList } from "@/components/analysis/ReviewList";
+import { SummaryRows } from "@/components/analysis/SummaryRows";
 import { CountBars } from "@/components/charts/CountBars";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import { LensMark } from "@/components/icons";
@@ -89,8 +90,20 @@ function EmptyHome() {
             <stop offset="1" stopColor="#222" />
           </linearGradient>
         </defs>
-        <rect x="30" y="22" width="136" height="186" rx="10" fill="url(#sheet-back)" transform="rotate(-9 98 115)" />
-        <path d="M44 20h122a10 10 0 0 1 10 10v150l-34 34H44a10 10 0 0 1-10-10V30a10 10 0 0 1 10-10z" fill="url(#sheet-front)" transform="rotate(4 105 117)" />
+        <rect
+          x="30"
+          y="22"
+          width="136"
+          height="186"
+          rx="10"
+          fill="url(#sheet-back)"
+          transform="rotate(-9 98 115)"
+        />
+        <path
+          d="M44 20h122a10 10 0 0 1 10 10v150l-34 34H44a10 10 0 0 1-10-10V30a10 10 0 0 1 10-10z"
+          fill="url(#sheet-front)"
+          transform="rotate(4 105 117)"
+        />
         <path d="M176 180l-34 34v-24a10 10 0 0 1 10-10z" fill="#5a5a5a" transform="rotate(4 105 117)" />
         <g transform="translate(78 88) scale(2.1)" className="text-[#8a8a8a]">
           <LensMark />
@@ -104,7 +117,10 @@ function EmptyHome() {
       </p>
       <svg
         className="pointer-events-none fixed right-[42px] w-[46vw] max-w-[220px] text-[#a3a3a3] lg:hidden"
-        style={{ bottom: "calc(var(--tabbar-bottom) + var(--tabbar-height) + 8px)", height: "min(170px, 22dvh)" }}
+        style={{
+          bottom: "calc(var(--tabbar-bottom) + var(--tabbar-height) + 8px)",
+          height: "min(170px, 22dvh)",
+        }}
         viewBox="0 0 180 170"
         preserveAspectRatio="none"
         fill="none"
@@ -117,7 +133,14 @@ function EmptyHome() {
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
         />
-        <path d="M162 156 L168 165 L174 155" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+        <path
+          d="M162 156 L168 165 L174 155"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
       </svg>
     </div>
   );
@@ -137,7 +160,10 @@ function MobileHome() {
     <>
       <TabTopBar />
       <PullIndicator state={pull} />
-      <Page className="gap-0" style={{ transform: pull.distance ? `translateY(${pull.distance}px)` : undefined }}>
+      <Page
+        className="gap-0"
+        style={{ transform: pull.distance ? `translateY(${pull.distance}px)` : undefined }}
+      >
         <h1 className="sr-only">Home</h1>
         {overview.isError ? (
           <ErrorState error={overview.error} onRetry={() => void overview.refetch()} />
@@ -177,8 +203,9 @@ function MobileHome() {
                 }
               />
               <p className="-mt-1.5 text-xs text-muted">
-                {stats.total_analyses.toLocaleString()} total · {stats.analyses_last_7_days.toLocaleString()} in the last 7
-                days · average top-class probability {formatPercent(stats.average_confidence, 0)}
+                {stats.total_analyses.toLocaleString()} total · {stats.analyses_last_7_days.toLocaleString()}{" "}
+                in the last 7 days · average top-class probability{" "}
+                {formatPercent(stats.average_confidence, 0)}
               </p>
               {recent.data ? (
                 <ActivityList items={recent.data.items.slice(0, 5)} />
@@ -246,28 +273,6 @@ function MobileHome() {
   );
 }
 
-function SummaryRows({ stats, className }: { stats: OverviewStats; className?: string }) {
-  const rows: [string, string][] = [
-    ["Total analyses", stats.total_analyses.toLocaleString()],
-    ["Last 7 days", stats.analyses_last_7_days.toLocaleString()],
-    ["Average top-class probability", formatPercent(stats.average_confidence)],
-    [
-      "Flagged uncertain",
-      `${stats.uncertain_count.toLocaleString()}${stats.total_analyses ? ` (${formatPercent(stats.uncertain_count / stats.total_analyses, 0)})` : ""}`,
-    ],
-  ];
-  return (
-    <dl className={cn("flex flex-col", className)}>
-      {rows.map(([label, value], i) => (
-        <div key={label} className={cn("flex items-center justify-between gap-4 py-2.5", i > 0 && "border-t border-line")}>
-          <dt className="text-base text-ink-2">{label}</dt>
-          <dd className="tabular text-base font-semibold text-ink">{value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
 function DesktopHome() {
   const { user } = useAuth();
   const { overview, recent, flagged, model } = useHomeData();
@@ -326,8 +331,8 @@ function DesktopHome() {
               <div className="flex flex-col items-center gap-3 px-6 pb-10 pt-8 text-center">
                 <p className="text-xl font-semibold tracking-ref text-ink">Get started with LesionLens</p>
                 <p className="max-w-md text-base text-subtle">
-                  Upload a dermoscopic image to get class probabilities and a Grad-CAM explanation. Results are saved
-                  here.
+                  Upload a dermoscopic image to get class probabilities and a Grad-CAM explanation. Results
+                  are saved here.
                 </p>
                 <Button className="mt-2" onClick={newAnalysis}>
                   <ScanLine aria-hidden /> New analysis
@@ -380,7 +385,9 @@ function DesktopHome() {
                   <SummaryRows stats={stats} className="mt-3" />
                   {stats.class_distribution.length > 0 && (
                     <div className="mt-4 border-t border-line pt-4">
-                      <p className="mb-2 text-sm text-muted">Predicted classes (latest prediction per analysis)</p>
+                      <p className="mb-2 text-sm text-muted">
+                        Predicted classes (latest prediction per analysis)
+                      </p>
                       <CountBars items={stats.class_distribution} total={stats.total_analyses} />
                     </div>
                   )}

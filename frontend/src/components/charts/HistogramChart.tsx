@@ -46,7 +46,7 @@ export function HistogramChart({
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <figcaption className="mt-1 text-center text-2xs text-muted">Top-class probability (%)</figcaption>
+      <figcaption className="mt-1 text-center text-xs text-muted">Top-class probability (%)</figcaption>
       <table className="sr-only">
         <caption>{label} by top-class probability</caption>
         <tbody>

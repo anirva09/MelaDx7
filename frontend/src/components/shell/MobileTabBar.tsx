@@ -1,23 +1,12 @@
-import { CircleUser, FileText, History, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import { OverviewIcon } from "@/components/icons";
 import { useComposer } from "@/components/shell/Composer";
 import { FixedChrome } from "@/components/shell/FixedChrome";
 import { GlassCircle } from "@/components/shell/Glass";
+import { useKeyboardOpen } from "@/hooks/useKeyboardOpen";
+import { TABS } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-
-export const TABS = [
-  { to: "/app", label: "Home", icon: OverviewIcon, end: true },
-  { to: "/app/analyses", label: "History", icon: History, end: true },
-  { to: "/app/reports", label: "Reports", icon: FileText, end: true },
-  { to: "/app/profile", label: "Profile", icon: CircleUser, end: true },
-] as const;
-
-export function isTabRoute(pathname: string): boolean {
-  const path = pathname.replace(/\/+$/, "") || "/";
-  return TABS.some((tab) => tab.to === path);
-}
 
 /**
  * Floating bottom navigation (reference: glass pill with four destinations and a separate
@@ -29,6 +18,8 @@ export function MobileTabBar() {
   const { openComposer } = useComposer();
   const path = pathname.replace(/\/+$/, "") || "/";
   const activeIndex = TABS.findIndex((tab) => tab.to === path);
+  const keyboard = useKeyboardOpen();
+  if (keyboard) return null;
 
   return (
     <FixedChrome>

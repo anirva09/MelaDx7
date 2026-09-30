@@ -37,7 +37,7 @@ export function ConfusionMatrix({ labels, names = {}, matrix }: ConfusionMatrixP
           </caption>
           <thead>
             <tr>
-              <th scope="col" className="p-1 text-left align-bottom text-2xs font-normal text-muted">
+              <th scope="col" className="p-1 text-left align-bottom text-xs font-normal text-muted">
                 True ↓ / Predicted →
               </th>
               {labels.map((label) => (
@@ -87,7 +87,7 @@ export function ConfusionMatrix({ labels, names = {}, matrix }: ConfusionMatrixP
           </tbody>
         </table>
       </div>
-      <p className="text-2xs text-muted">
+      <p className="text-xs text-muted">
         {mode === "normalized"
           ? "Percent of each true class. The diagonal is per-class recall (sensitivity)."
           : "Number of test images."}

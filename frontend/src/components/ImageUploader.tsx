@@ -176,7 +176,11 @@ export const ImageUploader = forwardRef<ImageUploaderHandle, ImageUploaderProps>
           {overlay}
         </figure>
       ) : file ? (
-        <div className="aspect-[4/3] animate-pulse rounded-lg bg-surface" role="status" aria-label="Preparing preview" />
+        <div
+          className="aspect-[4/3] animate-pulse rounded-lg bg-surface"
+          role="status"
+          aria-label="Preparing preview"
+        />
       ) : variant === "touch" ? (
         <div className="flex flex-col gap-4">
           <div className="glass relative min-h-[113px] rounded-[20px]">
@@ -187,7 +191,9 @@ export const ImageUploader = forwardRef<ImageUploaderHandle, ImageUploaderProps>
               aria-describedby={`${hintId}${problem ? ` ${errorId}` : ""}`}
               className="press-soft flex min-h-[113px] w-full flex-col items-start gap-1 rounded-[20px] px-4 pb-12 pt-4 text-left"
             >
-              <span className="text-lg font-semibold tracking-ref text-[#949494]">Add a dermoscopic image</span>
+              <span className="text-lg font-semibold tracking-ref text-[#949494]">
+                Add a dermoscopic image
+              </span>
               <span id={hintId} className="text-md text-muted">
                 {limits}
               </span>
@@ -199,7 +205,11 @@ export const ImageUploader = forwardRef<ImageUploaderHandle, ImageUploaderProps>
               <ArrowUp className="size-5" strokeWidth={1.8} />
             </span>
           </div>
-          <div role="group" aria-label="Image source" className="glass inline-flex h-[50px] items-center gap-3 self-start rounded-full px-2">
+          <div
+            role="group"
+            aria-label="Image source"
+            className="glass inline-flex h-[50px] items-center gap-3 self-start rounded-full px-2"
+          >
             <PillButton label="Take a photo" onClick={() => open("camera")} disabled={disabled}>
               <Camera aria-hidden />
             </PillButton>

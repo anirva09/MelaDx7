@@ -20,13 +20,22 @@ export function ResultNoteCard({ item, className }: { item: AnalysisListItem; cl
       >
         <span className="flex items-center justify-between gap-2 text-xs">
           <span className="flex min-w-0 items-center gap-1 text-ink">
-            <ScanLine className="size-4 shrink-0" strokeWidth={1.25} style={{ color: groupColor(item.predicted_class.group) }} aria-hidden />
-            <span className="truncate">{GROUP_LABEL[item.predicted_class.group] ?? item.predicted_class.group}</span>
+            <ScanLine
+              className="size-4 shrink-0"
+              strokeWidth={1.25}
+              style={{ color: groupColor(item.predicted_class.group) }}
+              aria-hidden
+            />
+            <span className="truncate">
+              {GROUP_LABEL[item.predicted_class.group] ?? item.predicted_class.group}
+            </span>
           </span>
           <span className="shrink-0 text-muted">{formatAgo(item.created_at)}</span>
         </span>
         <span className="fade-bottom flex min-h-0 flex-col gap-2 overflow-hidden [&>*]:shrink-0">
-          <span className="truncate text-base font-medium tracking-ref text-ink">{item.predicted_class.name}</span>
+          <span className="truncate text-base font-medium tracking-ref text-ink">
+            {item.predicted_class.name}
+          </span>
           <ul className="list-disc pl-4 text-xs leading-4 text-ink-2 marker:text-ink-2">
             <li className="tabular">{formatPercent(item.confidence)} probability</li>
             <li>{item.uncertain ? "Flagged uncertain" : "Within confidence thresholds"}</li>

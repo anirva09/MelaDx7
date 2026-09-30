@@ -1,5 +1,6 @@
 import { Cpu, FlaskConical, Terminal } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { useInferenceStats, useModelInfo, useModelMetrics } from "@/api/queries";
 import type { EvaluationReport, ModelInfo, SamplePrediction } from "@/api/types";
@@ -13,20 +14,23 @@ import { ClassGroupBadge } from "@/components/ClassGroupBadge";
 import { MetricCard } from "@/components/MetricCard";
 import { ModelAvailabilityNotice } from "@/components/ModelAvailabilityNotice";
 import { Notice } from "@/components/Notice";
-import { PageHeader } from "@/components/PageHeader";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { NativeSelect } from "@/components/ui/input";
 import { Segmented } from "@/components/ui/segmented";
+import { BackButton, MobileTopBar } from "@/components/shell/MobileTopBar";
+import { DefinitionList } from "@/components/ui/definition-list";
+import { DesktopHeader, Page, PageTitle } from "@/components/ui/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useIsDesktop } from "@/hooks/useMediaQuery";
 import { useAuth } from "@/context/AuthContext";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { cn, formatDateTime, formatMs, formatNumber, formatPercent, titleCase } from "@/lib/utils";
 
 function Command({ children }: { children: string }) {
   return (
-    <pre className="overflow-x-auto rounded-md bg-stage px-3 py-2.5 font-mono text-xs leading-relaxed text-white/85">
+    <pre className="overflow-x-auto rounded-[12px] bg-stage px-3 py-2.5 font-mono text-xs leading-relaxed text-white/85">
       <code>{children}</code>
     </pre>
   );
@@ -37,14 +41,14 @@ function SetupSteps() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Terminal className="size-4 text-accent" aria-hidden /> Train and load a model
+          <Terminal className="size-5 text-accent" strokeWidth={1.5} aria-hidden /> Train and load a model
         </CardTitle>
         <CardDescription>
           Run from the repository root. See docs/training.md for dataset download, GPU notes and a
           Kaggle/Colab workflow.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 text-sm text-ink-2">
+      <CardContent className="flex flex-col gap-3 text-md text-ink-2">
         <p>1. Prepare HAM10000 with a lesion-grouped split (no lesion appears in two splits):</p>
         <Command>{`python -m ml.datasets.prepare_ham10000 \\
   --metadata data/raw/HAM10000_metadata.csv \\
@@ -60,16 +64,7 @@ function SetupSteps() {
 }
 
 function Definition({ rows }: { rows: [string, ReactNode][] }) {
-  return (
-    <dl className="grid grid-cols-[minmax(0,11rem)_1fr] gap-x-4 gap-y-2.5 text-sm">
-      {rows.map(([label, value]) => (
-        <div key={label} className="contents">
-          <dt className="text-muted">{label}</dt>
-          <dd className="min-w-0 break-words text-ink">{value ?? "n/a"}</dd>
-        </div>
-      ))}
-    </dl>
-  );
+  return <DefinitionList rows={rows.map(([label, value]) => [label, value ?? "n/a"])} />;
 }
 
 function str(value: unknown): string | null {
@@ -206,7 +201,7 @@ function ModelCardTab({ info }: { info: ModelInfo }) {
                 ]}
               />
             ) : (
-              <p className="text-sm text-muted">This artifact has not been trained.</p>
+              <p className="text-md text-muted">This artifact has not been trained.</p>
             )}
           </CardContent>
         </Card>
@@ -217,9 +212,21 @@ function ModelCardTab({ info }: { info: ModelInfo }) {
           <CardTitle>Classes</CardTitle>
           <CardDescription>Output classes in logit order, as recorded in the model card.</CardDescription>
         </CardHeader>
-        <div className="overflow-x-auto">
-          <table className="mt-3 w-full text-left text-sm">
-            <thead className="border-y border-line text-xs text-muted">
+        <ul className="mt-2 flex flex-col px-4 pb-2 lg:hidden" aria-label="Classes">
+          {info.classes.map((c, i) => (
+            <li key={c.code} className={cn("flex flex-col gap-1.5 py-3", i > 0 && "border-t border-line")}>
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="text-base font-medium tracking-ref text-ink">{c.name}</span>
+                <span className="font-mono text-xs text-muted">{c.code}</span>
+              </span>
+              <ClassGroupBadge group={c.group} className="self-start" />
+              {c.description && <span className="text-md text-ink-2">{c.description}</span>}
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto lg:block">
+          <table className="mt-3 w-full text-left text-md">
+            <thead className="border-y border-line text-sm text-muted">
               <tr>
                 <th scope="col" className="px-5 py-2 font-medium">
                   Code
@@ -230,7 +237,7 @@ function ModelCardTab({ info }: { info: ModelInfo }) {
                 <th scope="col" className="px-3 py-2 font-medium">
                   Group
                 </th>
-                <th scope="col" className="hidden px-5 py-2 font-medium md:table-cell">
+                <th scope="col" className="px-5 py-2 font-medium">
                   Description
                 </th>
               </tr>
@@ -243,9 +250,7 @@ function ModelCardTab({ info }: { info: ModelInfo }) {
                   <td className="px-3 py-2.5">
                     <ClassGroupBadge group={c.group} />
                   </td>
-                  <td className="hidden max-w-xl px-5 py-2.5 text-xs text-muted md:table-cell">
-                    {c.description}
-                  </td>
+                  <td className="max-w-xl px-5 py-2.5 text-sm text-muted">{c.description}</td>
                 </tr>
               ))}
             </tbody>
@@ -259,7 +264,7 @@ function ModelCardTab({ info }: { info: ModelInfo }) {
 function SampleCard({ sample }: { sample: SamplePrediction }) {
   const [showOverlay, setShowOverlay] = useState(true);
   return (
-    <figure className="overflow-hidden rounded-lg border border-line bg-surface">
+    <figure className="overflow-hidden rounded-lg bg-surface-2">
       <button
         type="button"
         onClick={() => setShowOverlay((v) => !v)}
@@ -331,9 +336,37 @@ function EvaluationView({ report, info }: { report: EvaluationReport; info: Mode
           <CardTitle>Per-class performance</CardTitle>
           <CardDescription>Sensitivity is recall. Specificity and AUC are one-vs-rest.</CardDescription>
         </CardHeader>
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-y border-line text-xs text-muted">
+        <ul className="mt-2 flex flex-col px-4 pb-2 lg:hidden" aria-label="Per-class performance">
+          {m.per_class.map((row, i) => (
+            <li key={row.code} className={cn("py-3", i > 0 && "border-t border-line")}>
+              <p className="flex items-baseline justify-between gap-2">
+                <span className="text-base font-medium tracking-ref text-ink">
+                  {row.name} <span className="font-mono text-xs text-muted">{row.code}</span>
+                </span>
+                <span className="tabular text-xs text-muted">n = {row.support}</span>
+              </p>
+              <dl className="tabular mt-2 grid grid-cols-3 gap-x-3 gap-y-2 sm:grid-cols-5">
+                {(
+                  [
+                    ["Precision", formatPercent(row.precision)],
+                    ["Sensitivity", formatPercent(row.recall)],
+                    ["Specificity", formatPercent(row.specificity)],
+                    ["F1", formatPercent(row.f1)],
+                    ["ROC-AUC", formatNumber(row.roc_auc)],
+                  ] as const
+                ).map(([label, value]) => (
+                  <div key={label}>
+                    <dt className="text-xs text-muted">{label}</dt>
+                    <dd className="text-md text-ink">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-3 hidden overflow-x-auto lg:block">
+          <table className="w-full text-left text-md">
+            <thead className="border-y border-line text-sm text-muted">
               <tr>
                 {["Class", "Support", "Precision", "Sensitivity", "Specificity", "F1", "ROC-AUC"].map(
                   (h, i) => (
@@ -356,7 +389,7 @@ function EvaluationView({ report, info }: { report: EvaluationReport; info: Mode
               {m.per_class.map((row) => (
                 <tr key={row.code} className="border-b border-line last:border-0">
                   <th scope="row" className="py-2.5 pl-5 pr-3 font-normal text-ink">
-                    {row.name} <span className="font-mono text-2xs text-muted">{row.code}</span>
+                    {row.name} <span className="font-mono text-xs text-muted">{row.code}</span>
                   </th>
                   <td className="px-3 text-right text-ink-2">{row.support}</td>
                   <td className="px-3 text-right">{formatPercent(row.precision)}</td>
@@ -385,7 +418,7 @@ function EvaluationView({ report, info }: { report: EvaluationReport; info: Mode
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex-row items-start justify-between gap-3">
+          <CardHeader className="flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <CardTitle>ROC curves</CardTitle>
               <CardDescription>One class highlighted at a time</CardDescription>
@@ -395,7 +428,7 @@ function EvaluationView({ report, info }: { report: EvaluationReport; info: Mode
               <NativeSelect
                 value={rocClass}
                 onChange={(e) => setRocClass(e.target.value)}
-                className="w-44 [&_select]:h-9"
+                className="w-full sm:w-44 [&_select]:h-10"
               >
                 {rocCodes.map((code) => (
                   <option key={code} value={code}>
@@ -409,7 +442,7 @@ function EvaluationView({ report, info }: { report: EvaluationReport; info: Mode
             {rocCodes.length ? (
               <RocChart curves={m.roc_curves} selected={rocClass} aucs={aucs} />
             ) : (
-              <p className="text-sm text-muted">Not enough classes present to draw ROC curves.</p>
+              <p className="text-md text-muted">Not enough classes present to draw ROC curves.</p>
             )}
           </CardContent>
         </Card>
@@ -554,85 +587,129 @@ function InferenceView() {
   );
 }
 
+const TABS = ["card", "evaluation", "training", "inference"] as const;
+type Tab = (typeof TABS)[number];
+
 export function ModelPage() {
   useDocumentTitle("Model");
+  const desktop = useIsDesktop();
   const info = useModelInfo();
   const metrics = useModelMetrics();
+  const [params, setParams] = useSearchParams();
+  const requested = params.get("tab");
+  const tab: Tab = TABS.includes(requested as Tab) ? (requested as Tab) : "card";
 
-  if (info.isPending) return <LoadingState label="Loading model information" />;
-  if (info.isError) return <ErrorState error={info.error} onRetry={() => void info.refetch()} />;
+  const chrome = !desktop && <MobileTopBar left={<BackButton fallback="/app/profile" />} />;
+  if (info.isPending)
+    return (
+      <>
+        {chrome}
+        <Page>
+          <LoadingState label="Loading model information" />
+        </Page>
+      </>
+    );
+  if (info.isError)
+    return (
+      <>
+        {chrome}
+        <Page>
+          <ErrorState error={info.error} onRetry={() => void info.refetch()} />
+        </Page>
+      </>
+    );
   const model = info.data;
+  const title = model.status === "unavailable" ? "Model" : `${model.display_name} v${model.version}`;
+  const description =
+    "The model card, its held-out evaluation, the training run, and how the model behaves in this application.";
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title={model.status === "unavailable" ? "Model" : `${model.display_name} v${model.version}`}
-        description="The model card, its held-out evaluation, the training run, and how the model behaves in this application."
-      />
-      <ModelAvailabilityNotice info={model} />
+    <>
+      {chrome}
+      <Page>
+        {desktop ? (
+          <DesktopHeader title={title} subtitle={description} />
+        ) : (
+          <div>
+            <PageTitle>{title}</PageTitle>
+            <p className="mt-1.5 text-md text-subtle">{description}</p>
+          </div>
+        )}
+        <ModelAvailabilityNotice info={model} />
 
-      {model.status === "unavailable" ? (
-        <SetupSteps />
-      ) : (
-        <Tabs defaultValue="card">
-          <TabsList aria-label="Model information">
-            <TabsTrigger value="card">Model card</TabsTrigger>
-            <TabsTrigger value="evaluation">Held-out evaluation</TabsTrigger>
-            <TabsTrigger value="training">Training metrics</TabsTrigger>
-            <TabsTrigger value="inference">Real inference results</TabsTrigger>
-          </TabsList>
-          <TabsContent value="card">
-            <ModelCardTab info={model} />
-          </TabsContent>
-          <TabsContent value="evaluation">
-            {metrics.isPending ? (
-              <LoadingState />
-            ) : metrics.isError ? (
-              <ErrorState error={metrics.error} onRetry={() => void metrics.refetch()} />
-            ) : metrics.data.evaluation ? (
-              <EvaluationView report={metrics.data.evaluation} info={model} />
-            ) : (
-              <div className="flex flex-col gap-4">
+        {model.status === "unavailable" ? (
+          <SetupSteps />
+        ) : (
+          <Tabs
+            value={tab}
+            onValueChange={(value) => {
+              const next = new URLSearchParams(params);
+              if (value === "card") next.delete("tab");
+              else next.set("tab", value);
+              setParams(next, { replace: true });
+            }}
+          >
+            <TabsList aria-label="Model information" className="-mx-4 px-4 lg:mx-0 lg:px-0">
+              <TabsTrigger value="card">Model card</TabsTrigger>
+              <TabsTrigger value="evaluation">Held-out evaluation</TabsTrigger>
+              <TabsTrigger value="training">Training metrics</TabsTrigger>
+              <TabsTrigger value="inference">Real inference results</TabsTrigger>
+            </TabsList>
+            <TabsContent value="card">
+              <ModelCardTab info={model} />
+            </TabsContent>
+            <TabsContent value="evaluation">
+              {metrics.isPending ? (
+                <LoadingState />
+              ) : metrics.isError ? (
+                <ErrorState error={metrics.error} onRetry={() => void metrics.refetch()} />
+              ) : metrics.data.evaluation ? (
+                <EvaluationView report={metrics.data.evaluation} info={model} />
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <EmptyState
+                    icon={<FlaskConical strokeWidth={1.5} />}
+                    title="No evaluation results for this model"
+                    description={metrics.data.evaluation_unavailable_reason}
+                    className="border-none bg-surface"
+                  />
+                  {!model.trained && <SetupSteps />}
+                </div>
+              )}
+            </TabsContent>
+            <TabsContent value="training">
+              {metrics.data?.training_history.length ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Training curves</CardTitle>
+                    <CardDescription>
+                      Per-epoch metrics from the training run. Validation data was used for model selection;
+                      see the held-out tab for unbiased estimates.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <TrainingCurves history={metrics.data.training_history} />
+                  </CardContent>
+                </Card>
+              ) : (
                 <EmptyState
-                  icon={<FlaskConical />}
-                  title="No evaluation results for this model"
-                  description={metrics.data.evaluation_unavailable_reason}
+                  icon={<FlaskConical strokeWidth={1.5} />}
+                  title="No training history"
+                  description={
+                    model.trained
+                      ? "history.jsonl was not found next to the model weights."
+                      : "This model has not been trained."
+                  }
+                  className="border-none bg-surface"
                 />
-                {!model.trained && <SetupSteps />}
-              </div>
-            )}
-          </TabsContent>
-          <TabsContent value="training">
-            {metrics.data?.training_history.length ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Training curves</CardTitle>
-                  <CardDescription>
-                    Per-epoch metrics from the training run. Validation data was used for model selection; see
-                    the held-out tab for unbiased estimates.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <TrainingCurves history={metrics.data.training_history} />
-                </CardContent>
-              </Card>
-            ) : (
-              <EmptyState
-                icon={<FlaskConical />}
-                title="No training history"
-                description={
-                  model.trained
-                    ? "history.jsonl was not found next to the model weights."
-                    : "This model has not been trained."
-                }
-              />
-            )}
-          </TabsContent>
-          <TabsContent value="inference">
-            <InferenceView />
-          </TabsContent>
-        </Tabs>
-      )}
-    </div>
+              )}
+            </TabsContent>
+            <TabsContent value="inference">
+              <InferenceView />
+            </TabsContent>
+          </Tabs>
+        )}
+      </Page>
+    </>
   );
 }

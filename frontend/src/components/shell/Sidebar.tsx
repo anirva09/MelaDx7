@@ -164,7 +164,12 @@ export function Sidebar() {
         {MODEL.map(({ to, label, icon: Icon, tab }) => {
           const active = onModel && modelTab === tab;
           return (
-            <NavLink key={to} to={to} className={() => itemClass(active, true)} aria-current={active ? "page" : undefined}>
+            <NavLink
+              key={to}
+              to={to}
+              className={() => itemClass(active, true)}
+              aria-current={active ? "page" : undefined}
+            >
               <Icon strokeWidth={1.5} aria-hidden />
               {label}
             </NavLink>

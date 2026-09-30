@@ -17,7 +17,8 @@ interface Column {
   current: boolean;
 }
 
-const hourLabel = (h: number) => (h === 0 ? "12 am" : h === 12 ? "Noon" : h < 12 ? `${h} am` : `${h - 12} pm`);
+const hourLabel = (h: number) =>
+  h === 0 ? "12 am" : h === 12 ? "Noon" : h < 12 ? `${h} am` : `${h - 12} pm`;
 const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric" });
 const monthDay = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" });
 
@@ -58,7 +59,13 @@ function columnsFor(range: Range, now: Date, items: AnalysisListItem[]): Column[
       d.setDate(today.getDate() - 6 + i);
       const next = new Date(d);
       next.setDate(d.getDate() + 1);
-      return { key: `d${i}`, label: i === 6 ? "Today" : dayFmt.format(d), start: d.getTime(), end: next.getTime(), current: i === 6 };
+      return {
+        key: `d${i}`,
+        label: i === 6 ? "Today" : dayFmt.format(d),
+        start: d.getTime(),
+        end: next.getTime(),
+        current: i === 6,
+      };
     });
   }
   const today = startOfDay(now);
@@ -127,9 +134,15 @@ export function ActivityTimeline() {
             ]}
           />
         </div>
-        <div className="mt-6 grid pb-3" style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}>
+        <div
+          className="mt-6 grid pb-3"
+          style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}
+        >
           {columns.map((c) => (
-            <span key={c.key} className={cn("truncate text-center text-sm", c.current ? "text-ink" : "text-muted")}>
+            <span
+              key={c.key}
+              className={cn("truncate text-center text-sm", c.current ? "text-ink" : "text-muted")}
+            >
               {c.label}
             </span>
           ))}
@@ -145,7 +158,10 @@ export function ActivityTimeline() {
           return (
             <div
               key={c.key}
-              className={cn("flex min-w-0 flex-col gap-1.5 p-1.5", index > 0 && "border-l border-[var(--chart-grid)]")}
+              className={cn(
+                "flex min-w-0 flex-col gap-1.5 p-1.5",
+                index > 0 && "border-l border-[var(--chart-grid)]",
+              )}
               aria-label={`${c.label}: ${list.length} ${list.length === 1 ? "analysis" : "analyses"}`}
               role="group"
             >
@@ -158,7 +174,11 @@ export function ActivityTimeline() {
                     className="press-soft flex min-w-0 gap-1.5 rounded-[6px] p-1"
                     style={{ background: `color-mix(in srgb, ${color} 10%, transparent)`, color }}
                   >
-                    <span className="w-[3px] shrink-0 rounded-full" style={{ background: color }} aria-hidden />
+                    <span
+                      className="w-[3px] shrink-0 rounded-full"
+                      style={{ background: color }}
+                      aria-hidden
+                    />
                     <span className="flex min-w-0 flex-col gap-1">
                       <span className="line-clamp-2 text-base font-semibold leading-5 tracking-ref">
                         {item.predicted_class.name}

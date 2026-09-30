@@ -1,21 +1,38 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
-import { ImageUploader } from "@/components/ImageUploader";
+import { ImageUploader, type ImageMeta, type ImageUploaderHandle } from "@/components/ImageUploader";
 import { mockImageLoading } from "@/test/utils";
 
-function Harness({ onChange }: { onChange?: (f: File | null) => void }) {
+function Harness({
+  onChange,
+  variant = "pointer",
+}: {
+  onChange?: (f: File | null) => void;
+  variant?: "pointer" | "touch";
+}) {
   const [file, setFile] = useState<File | null>(null);
+  const [meta, setMeta] = useState<ImageMeta | null>(null);
+  const handle = useRef<ImageUploaderHandle>(null);
   return (
-    <ImageUploader
-      file={file}
-      onFileChange={(f) => {
-        setFile(f);
-        onChange?.(f);
-      }}
-      maxBytes={5000}
-    />
+    <>
+      <ImageUploader
+        ref={handle}
+        file={file}
+        onFileChange={(f) => {
+          setFile(f);
+          onChange?.(f);
+        }}
+        onMeta={setMeta}
+        maxBytes={5000}
+        variant={variant}
+      />
+      {meta && <p>{`${meta.width} × ${meta.height} px`}</p>}
+      <button type="button" onClick={() => handle.current?.clear()}>
+        Remove
+      </button>
+    </>
   );
 }
 
@@ -34,6 +51,14 @@ describe("ImageUploader", () => {
     await userEvent.click(screen.getByRole("button", { name: /Remove/ }));
     expect(onChange).toHaveBeenLastCalledWith(null);
     expect(screen.getByRole("button", { name: /Choose a dermoscopic image/ })).toBeInTheDocument();
+  });
+
+  it("offers camera, photos and files on touch devices", () => {
+    render(<Harness variant="touch" />);
+    for (const name of ["Take a photo", "Choose from photos", "Browse files"]) {
+      expect(screen.getByRole("button", { name })).toBeInTheDocument();
+    }
+    expect(screen.getByRole("button", { name: /Add a dermoscopic image/ })).toBeInTheDocument();
   });
 
   it("rejects unsupported types and oversized files with a message", async () => {

@@ -108,7 +108,8 @@ function ThemedToaster() {
       closeButton={desktop}
       toastOptions={{
         classNames: {
-          toast: "!rounded-[16px] !border-0 !bg-[var(--surface-2)] !text-ink !font-sans !shadow-[var(--shadow-pop)]",
+          toast:
+            "!rounded-[16px] !border-0 !bg-[var(--surface-2)] !text-ink !font-sans !shadow-[var(--shadow-pop)]",
           description: "!text-ink-2",
         },
       }}

@@ -50,7 +50,11 @@ export const PasswordInput = forwardRef<
         aria-label={visible ? "Hide password" : "Show password"}
         aria-pressed={visible}
       >
-        {visible ? <EyeOff className="size-5" strokeWidth={1.5} aria-hidden /> : <Eye className="size-5" strokeWidth={1.5} aria-hidden />}
+        {visible ? (
+          <EyeOff className="size-5" strokeWidth={1.5} aria-hidden />
+        ) : (
+          <Eye className="size-5" strokeWidth={1.5} aria-hidden />
+        )}
       </button>
     </div>
   );

@@ -96,7 +96,9 @@ export function LongPressMenu({ actions, label, children, className }: LongPress
   const layout = rect ? computeLayout(rect, actions.length) : null;
 
   const onMenuKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>("[role=menuitem]:not(:disabled)") ?? []);
+    const items = Array.from(
+      menuRef.current?.querySelectorAll<HTMLButtonElement>("[role=menuitem]:not(:disabled)") ?? [],
+    );
     const index = items.indexOf(document.activeElement as HTMLButtonElement);
     const move: Record<string, number> = { ArrowDown: 1, ArrowUp: -1 };
     if (event.key in move) {
@@ -110,10 +112,7 @@ export function LongPressMenu({ actions, label, children, className }: LongPress
 
   return (
     <>
-      <div
-        className={cn("select-none [-webkit-touch-callout:none]", className)}
-        {...pressHandlers}
-      >
+      <div className={cn("select-none [-webkit-touch-callout:none]", className)} {...pressHandlers}>
         {children}
       </div>
       <Dialog.Root open={rect !== null} onOpenChange={(open) => !open && close()}>
@@ -130,13 +129,15 @@ export function LongPressMenu({ actions, label, children, className }: LongPress
             }}
           >
             <Dialog.Title className="sr-only">{label}</Dialog.Title>
-            <Dialog.Description className="sr-only">Choose an action, or press Escape to close.</Dialog.Description>
+            <Dialog.Description className="sr-only">
+              Choose an action, or press Escape to close.
+            </Dialog.Description>
             {layout && (
               <>
                 <div
                   inert
                   aria-hidden
-                  className="pointer-events-none fixed"
+                  className="pointer-events-none fixed overflow-hidden rounded-lg bg-surface shadow-[0_8px_32px_rgb(0_0_0/0.35)]"
                   style={{
                     left: layout.preview.left,
                     top: layout.preview.top,
@@ -154,6 +155,7 @@ export function LongPressMenu({ actions, label, children, className }: LongPress
                 <div
                   ref={menuRef}
                   role="menu"
+                  tabIndex={-1}
                   aria-label={label}
                   onKeyDown={onMenuKeyDown}
                   className="animate-pop-in glass-menu fixed overflow-hidden rounded-[16px] py-2"

@@ -32,7 +32,7 @@ export function AuthLayout({
         <p className="max-w-md text-xs leading-relaxed text-white/55">{MEDICAL_DISCLAIMER}</p>
       </aside>
 
-      <main className="flex flex-col items-center justify-center px-4 py-10 sm:px-8">
+      <main className="flex flex-col items-center justify-center px-4 pb-[max(2.5rem,var(--safe-bottom))] pt-[max(2.5rem,calc(var(--safe-top)+1rem))] sm:px-8">
         <div className="w-full max-w-sm">
           <Link to="/" className="mb-10 inline-block lg:hidden" aria-label="LesionLens home">
             <Logo />
@@ -40,7 +40,7 @@ export function AuthLayout({
           <h1 className="text-2xl font-semibold text-ink">{title}</h1>
           <p className="mt-1.5 text-sm text-muted">{subtitle}</p>
           <div className="mt-8">{children}</div>
-          <p className="mt-10 text-2xs leading-relaxed text-muted lg:hidden">{MEDICAL_DISCLAIMER}</p>
+          <p className="mt-10 text-xs leading-relaxed text-muted lg:hidden">{MEDICAL_DISCLAIMER}</p>
         </div>
       </main>
     </div>

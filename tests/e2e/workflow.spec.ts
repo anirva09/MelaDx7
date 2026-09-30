@@ -8,7 +8,7 @@ import { analyse, PASSWORD, register } from "./helpers";
 
 test("upload, predict, explain, save, retrieve, report and delete", async ({ page }) => {
   await register(page);
-  await expect(page.getByText("No analyses yet")).toBeVisible();
+  await expect(page.getByText("Get started with LesionLens")).toBeVisible();
 
   const id = await analyse(page);
 
@@ -63,7 +63,7 @@ test("upload, predict, explain, save, retrieve, report and delete", async ({ pag
   await expect(page.getByText("Your history is empty")).toBeVisible();
 
   // Sign out and back in.
-  await page.getByRole("button", { name: /Account menu/ }).click();
+  await page.getByRole("button", { name: /^Account:/ }).click();
   await page.getByRole("menuitem", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/login$/);
 });
