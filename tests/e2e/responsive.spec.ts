@@ -4,7 +4,7 @@
  */
 import { expect, test } from "@playwright/test";
 
-import { analyse, register } from "./helpers";
+import { analyse, LESION_NAME, register } from "./helpers";
 
 test("pages fit the viewport on a phone", async ({ page }) => {
   await register(page, "Mobile Tester");
@@ -57,7 +57,7 @@ test("tab bar, composer and result sheet on a phone", async ({ page }) => {
 
   // History row opens the result.
   await page.goto("/app/analyses");
-  await page.getByRole("link", { name: /synthetic-lesion\.jpg/ }).first().click();
+  await page.getByRole("link", { name: LESION_NAME }).first().click();
   await expect(page).toHaveURL(new RegExp(`/app/analyses/${id}$`));
 
   // The "+" composer offers the image sources.

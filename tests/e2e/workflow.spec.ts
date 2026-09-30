@@ -4,11 +4,11 @@
  */
 import { expect, test } from "@playwright/test";
 
-import { analyse, PASSWORD, register } from "./helpers";
+import { analyse, LESION_NAME, PASSWORD, register } from "./helpers";
 
 test("upload, predict, explain, save, retrieve, report and delete", async ({ page }) => {
   await register(page);
-  await expect(page.getByText("Get started with LesionLens")).toBeVisible();
+  await expect(page.getByText("Get started with MelaDx7")).toBeVisible();
 
   const id = await analyse(page);
 
@@ -42,13 +42,13 @@ test("upload, predict, explain, save, retrieve, report and delete", async ({ pag
   // Report download.
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download report" }).click();
-  expect((await download).suggestedFilename()).toMatch(/^lesionlens-report-[0-9a-f]{8}\.pdf$/);
+  expect((await download).suggestedFilename()).toMatch(/^meladx7-report-[0-9a-f]{8}\.pdf$/);
 
   // Retrieve: history lists the analysis; reloading the result shows the same output.
   const predicted = await page.getByTestId("predicted-class").textContent();
   await page.goto("/app/analyses");
   await expect(page.getByRole("table", { name: "Analysis history" }).getByRole("row")).toHaveCount(2);
-  await page.getByRole("link", { name: "synthetic-lesion.jpg" }).click();
+  await page.getByRole("link", { name: LESION_NAME }).click();
   await expect(page.getByTestId("predicted-class")).toHaveText(predicted ?? "");
 
   // Dashboard numbers come from the stored analysis.

@@ -1,7 +1,10 @@
 import { expect, type Page } from "@playwright/test";
 import path from "node:path";
 
-export const LESION = path.join(import.meta.dirname, "fixtures", "synthetic-lesion.jpg");
+// Defaults to a synthetic fixture so CI needs no dataset. For a release check point
+// E2E_LESION_IMAGE at a real dermoscopic image from the held-out test split.
+export const LESION = process.env.E2E_LESION_IMAGE ?? path.join(import.meta.dirname, "fixtures", "synthetic-lesion.jpg");
+export const LESION_NAME = path.basename(LESION);
 export const PASSWORD = "e2e-password-2026";
 
 export function uniqueEmail(prefix = "e2e"): string {
@@ -24,7 +27,7 @@ export async function register(page: Page, name = "E2E Researcher"): Promise<str
 export async function analyse(page: Page): Promise<string> {
   await page.goto("/app/analyze");
   await page.getByTestId("file-input").setInputFiles(LESION);
-  await expect(page.getByAltText("Preview of synthetic-lesion.jpg")).toBeVisible();
+  await expect(page.getByAltText(`Preview of ${LESION_NAME}`)).toBeVisible();
   await page.getByRole("button", { name: "Analyse image" }).click();
   await expect(page).toHaveURL(/\/app\/analyses\/[0-9a-f-]{36}$/, { timeout: 45_000 });
   return page.url().split("/").pop()!;
