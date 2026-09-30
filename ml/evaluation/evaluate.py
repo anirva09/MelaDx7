@@ -120,7 +120,7 @@ def evaluate_artifact(
         image = load_image_file(str(sample.path))
         image.thumbnail((384, 384))
         pred = int(probs[idx].argmax())
-        with GradCAM(model, layer) as gradcam:
+        with GradCAM(model, layer, reshape=get_spec(card.architecture).gradcam_reshape) as gradcam:
             _, cams = gradcam.run(preprocess(image, card.preprocessing).to(torch_device), targets=[pred])
         original_name = f"{rank:02d}_original.jpg"
         overlay_name = f"{rank:02d}_overlay.jpg"
@@ -166,7 +166,7 @@ def evaluate_artifact(
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Evaluate a LesionLens model artifact")
+    parser = argparse.ArgumentParser(description="Evaluate a MelaDx7 model artifact")
     parser.add_argument("--model", type=Path, required=True, help="artifact directory")
     parser.add_argument("--data", type=Path, default=Path("data/processed"))
     parser.add_argument("--split", default="test", choices=["validation", "test"])

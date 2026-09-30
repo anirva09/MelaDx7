@@ -1,0 +1,68 @@
+# Higher-capacity experiment: EfficientNet-B3 at its native 300 px input on HAM10000.
+# Same data, split, loss, schedule and evaluation as efficientnet_b0.yaml; only the
+# backbone and input resolution change, so results are directly comparable.
+# Run:  python -m ml.training.train --config ml/configs/efficientnet_b3.yaml
+# Every key can be overridden: --set training.epochs=10 --set data.batch_size=16
+
+experiment_name: efficientnet_b3_ham10000
+seed: 42
+calibrate_temperature: true
+
+data:
+  root: data/processed
+  classes_file: ml/configs/classes/ham10000.yaml
+  batch_size: 24
+  num_workers: 4
+  provenance:
+    name: HAM10000 ("Human Against Machine with 10000 training images")
+    source: https://doi.org/10.7910/DVN/DBW86T
+    license: CC BY-NC 4.0 (non-commercial use; attribution required)
+    citation: >-
+      Tschandl P, Rosendahl C, Kittler H. The HAM10000 dataset, a large collection of
+      multi-source dermatoscopic images of common pigmented skin lesions.
+      Sci Data 5, 180161 (2018).
+    split_strategy: lesion-grouped stratified (ml.datasets.prepare_ham10000)
+
+model:
+  architecture: efficientnet_b3
+  input_size: 300
+  version: 1.0.0
+  pretrained: true        # ImageNet weights from torchvision
+  dropout: 0.3
+
+optim:
+  lr: 3.0e-4              # head learning rate
+  backbone_lr_multiplier: 0.1
+  weight_decay: 1.0e-4
+  label_smoothing: 0.05
+  grad_clip_norm: 1.0
+
+schedule:
+  warmup_epochs: 1
+  min_lr_ratio: 0.01
+
+training:
+  epochs: 25
+  freeze_backbone_epochs: 1   # train only the new head first
+  early_stopping_patience: 6
+  monitor: val_macro_f1       # robust to class imbalance (nv is ~67% of HAM10000)
+  amp: true                   # mixed precision on CUDA only
+  device: auto
+  deterministic: false
+
+imbalance:
+  strategy: weighted_loss     # weighted_loss | weighted_sampler | none
+  power: 0.5                  # inverse square-root frequency weighting
+
+augmentation:
+  random_resized_crop_scale: [0.75, 1.0]
+  random_resized_crop_ratio: [0.8, 1.25]
+  horizontal_flip: true
+  vertical_flip: true
+  rotation_degrees: 180
+  color_jitter: {brightness: 0.15, contrast: 0.15, saturation: 0.10, hue: 0.02}
+
+output:
+  dir: models
+  evaluate_on_test: true
+  sample_predictions: 12

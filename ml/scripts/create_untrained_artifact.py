@@ -51,7 +51,9 @@ def create_untrained_artifact(
         trained=False,
         created_at=utc_now_iso(),
         taxonomy=taxonomy,
-        preprocessing=PreprocessingSpec(input_size=spec.default_input_size),
+        preprocessing=PreprocessingSpec(
+            input_size=spec.default_input_size, mean=spec.default_mean, std=spec.default_std
+        ),
         weights_sha256=sha,
         temperature=1.0,
         dataset={"note": "No training data. Randomly initialised weights."},

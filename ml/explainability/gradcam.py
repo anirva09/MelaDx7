@@ -20,7 +20,7 @@ works with any architecture from :mod:`ml.models` given its target layer.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 import numpy as np
@@ -51,9 +51,16 @@ class GradCAM:
     ...     logits, maps = cam.run(x, targets=[3])
     """
 
-    def __init__(self, model: nn.Module, target_layer: nn.Module) -> None:
+    def __init__(
+        self,
+        model: nn.Module,
+        target_layer: nn.Module,
+        reshape: Callable[[torch.Tensor], torch.Tensor] | None = None,
+    ) -> None:
         self.model = model
         self.target_layer = target_layer
+        #: Maps the layer's activations/gradients to (B, C, H, W); used for transformers.
+        self.reshape = reshape
         self._activations: torch.Tensor | None = None
         self._gradients: torch.Tensor | None = None
         self._handle: torch.utils.hooks.RemovableHandle | None = None
@@ -132,6 +139,8 @@ class GradCAM:
             raise RuntimeError("gradients were not captured; is the target layer differentiable?")
         activations = self._activations.detach()
         gradients = self._gradients.detach()
+        if self.reshape is not None:
+            activations, gradients = self.reshape(activations), self.reshape(gradients)
         weights = gradients.mean(dim=(2, 3), keepdim=True)  # alpha_k^c
         cam = F.relu((weights * activations).sum(dim=1, keepdim=True))
         cam = F.interpolate(cam, size=tuple(size), mode="bilinear", align_corners=False)

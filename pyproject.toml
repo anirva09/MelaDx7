@@ -26,7 +26,7 @@ ml = ["configs/*.yaml", "configs/classes/*.yaml"]
 [tool.ruff]
 line-length = 110
 target-version = "py311"
-extend-exclude = ["frontend", "backend/alembic/versions"]
+extend-exclude = ["frontend", "backend/alembic/versions", "notebooks"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "ASYNC", "BLE", "C4", "PT"]
@@ -41,6 +41,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["S105", "S106", "S108", "S311", "B017"]
+"tests/acceptance/**" = ["E501"]  # live-stack script, long assertion messages
 
 [tool.ruff.lint.isort]
 known-first-party = ["ml", "app"]
@@ -58,7 +59,7 @@ filterwarnings = [
 ]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"  # numpy 2.x stubs use 3.12 syntax; the code itself stays 3.11-compatible (ruff target py311)
 ignore_missing_imports = true
 warn_unused_ignores = true
 check_untyped_defs = true

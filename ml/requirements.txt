@@ -7,3 +7,4 @@ numpy>=1.26
 pillow>=10.4
 pyyaml>=6.0
 scikit-learn>=1.5
+transformers>=4.44,<5   # only needed for the ViT architecture; <5 keeps weight names stable between training and serving

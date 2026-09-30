@@ -123,10 +123,20 @@ class TestGradCAMMechanics:
 def test_every_architecture_supports_gradcam(name: str) -> None:
     model = build_model(name, 5).eval()
     spec = get_spec(name)
-    with GradCAM(model, spec.gradcam_layer(model)) as cam:
+    with GradCAM(model, spec.gradcam_layer(model), reshape=spec.gradcam_reshape) as cam:
         logits, (result,) = cam.run(torch.randn(1, 3, 64, 64))
     assert logits.shape == (1, 5)
     assert result.cam.shape == (64, 64)
+
+
+def test_vit_gradcam_uses_the_patch_grid() -> None:
+    from ml.models.registry import _vit_reshape
+
+    tokens = torch.arange(2 * 17 * 3, dtype=torch.float32).reshape(2, 17, 3)  # [CLS] + 4x4 patches
+    grid = _vit_reshape(tokens)
+    assert grid.shape == (2, 3, 4, 4)
+    assert torch.equal(grid[0, :, 0, 0], tokens[0, 1, :])  # first patch, not the [CLS] token
+    assert torch.equal(grid[0, :, 3, 3], tokens[0, 16, :])
 
 
 class TestRendering:

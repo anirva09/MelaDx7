@@ -1,0 +1,69 @@
+# Vision Transformer experiment: ViT-Base/16 fine-tuned on HAM10000.
+# Starts from Google's public ImageNet-21k weights (google/vit-base-patch16-224-in21k,
+# Apache-2.0), never from another author's HAM10000 fine-tune, so the held-out test
+# split stays untouched by pretraining. Same data, lesion-grouped split, loss weighting
+# and evaluation as efficientnet_b0.yaml, so the results are directly comparable.
+# Run:  python -m ml.training.train --config ml/configs/vit_base.yaml
+# Every key can be overridden: --set training.epochs=10 --set data.batch_size=16
+
+experiment_name: vit_base_ham10000
+seed: 42
+calibrate_temperature: true
+
+data:
+  root: data/processed
+  classes_file: ml/configs/classes/ham10000.yaml
+  batch_size: 32
+  num_workers: 4
+  provenance:
+    name: HAM10000 ("Human Against Machine with 10000 training images")
+    source: https://doi.org/10.7910/DVN/DBW86T
+    license: CC BY-NC 4.0 (non-commercial use; attribution required)
+    citation: >-
+      Tschandl P, Rosendahl C, Kittler H. The HAM10000 dataset, a large collection of
+      multi-source dermatoscopic images of common pigmented skin lesions.
+      Sci Data 5, 180161 (2018).
+    split_strategy: lesion-grouped stratified (ml.datasets.prepare_ham10000)
+
+model:
+  architecture: vit_base_patch16_224
+  version: 1.0.0
+  pretrained: true        # ImageNet-21k weights from Hugging Face (safetensors)
+  dropout: 0.1
+
+optim:
+  lr: 3.0e-4              # head learning rate
+  backbone_lr_multiplier: 0.1   # backbone: 3e-5, the usual ViT fine-tuning range
+  weight_decay: 0.05
+  label_smoothing: 0.1
+  grad_clip_norm: 1.0
+
+schedule:
+  warmup_epochs: 1
+  min_lr_ratio: 0.01
+
+training:
+  epochs: 15
+  freeze_backbone_epochs: 1   # train only the new head first
+  early_stopping_patience: 4
+  monitor: val_macro_f1       # robust to class imbalance (nv is ~67% of HAM10000)
+  amp: true                   # mixed precision on CUDA only
+  device: auto
+  deterministic: false
+
+imbalance:
+  strategy: weighted_loss     # weighted_loss | weighted_sampler | none
+  power: 0.5                  # inverse square-root frequency weighting
+
+augmentation:
+  random_resized_crop_scale: [0.75, 1.0]
+  random_resized_crop_ratio: [0.8, 1.25]
+  horizontal_flip: true
+  vertical_flip: true
+  rotation_degrees: 180
+  color_jitter: {brightness: 0.15, contrast: 0.15, saturation: 0.10, hue: 0.02}
+
+output:
+  dir: models
+  evaluate_on_test: true
+  sample_predictions: 12

@@ -1,4 +1,4 @@
-"""LesionLens machine-learning package.
+"""MelaDx7 machine-learning package.
 
 Sub-packages mirror the model lifecycle:
 

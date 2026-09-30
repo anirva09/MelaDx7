@@ -81,7 +81,11 @@ def train(config: ExperimentConfig, *, resume: bool = False) -> Path:
     device = resolve_device(config.training.device)
     spec = get_spec(config.model.architecture)
     taxonomy = ClassTaxonomy.from_yaml(config.data.classes_file)
-    preprocessing = PreprocessingSpec(input_size=config.model.input_size or spec.default_input_size)
+    preprocessing = PreprocessingSpec(
+        input_size=config.model.input_size or spec.default_input_size,
+        mean=spec.default_mean,
+        std=spec.default_std,
+    )
     augmentation = AugmentationConfig.from_dict(config.augmentation)
     out_dir = artifact_dir_for(config)
     ckpt_dir = out_dir / "checkpoints"
@@ -336,7 +340,7 @@ def train(config: ExperimentConfig, *, resume: bool = False) -> Path:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Train a LesionLens classifier")
+    parser = argparse.ArgumentParser(description="Train a MelaDx7 classifier")
     parser.add_argument("--config", type=Path, default=Path("ml/configs/efficientnet_b0.yaml"))
     parser.add_argument("--set", dest="overrides", action="append", default=[], metavar="KEY=VALUE")
     parser.add_argument("--resume", action="store_true", help="continue from checkpoints/last.pt")

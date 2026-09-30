@@ -179,7 +179,7 @@ class InferenceEngine:
         layer = self._spec.gradcam_layer(self.model)
         with self._lock:
             start = time.perf_counter()
-            with GradCAM(self.model, layer) as gradcam:
+            with GradCAM(self.model, layer, reshape=self._spec.gradcam_reshape) as gradcam:
                 _logits, cams = gradcam.run(x, targets=[target_index])
             elapsed = (time.perf_counter() - start) * 1000.0
         return ExplanationResult(
