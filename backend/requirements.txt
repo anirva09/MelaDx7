@@ -1,0 +1,21 @@
+# Backend runtime dependencies (tested versions pinned with compatible ranges).
+# The ML stack (torch, torchvision, numpy, pillow, scikit-learn, pyyaml) comes from ../ml/requirements.txt.
+-r ../ml/requirements.txt
+
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30
+pydantic>=2.8,<3
+pydantic-settings>=2.7,<3
+email-validator>=2.2
+python-multipart>=0.0.18
+sqlalchemy[asyncio]>=2.0.36,<3
+asyncpg>=0.30
+alembic>=1.14
+pyjwt>=2.10
+argon2-cffi>=23.1
+reportlab>=4.2
+anyio>=4.6
+tzdata>=2024.1   # IANA time zones incl. legacy aliases (e.g. Asia/Calcutta); slim images lack them
+
+# Optional: S3-compatible storage (STORAGE_BACKEND=s3)
+boto3>=1.35
