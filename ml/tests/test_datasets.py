@@ -95,3 +95,40 @@ def test_prepare_ham10000_end_to_end(tmp_path: Path) -> None:
     for row in manifest:
         assert lesion_split.setdefault(row["lesion_id"], row["split"]) == row["split"]
         assert (out / row["split"] / row["dx"] / f"{row['image_id']}.jpg").is_file()
+
+
+def _isic_row(image_id: str, lesion: str, d2: str, d3: str, **extra: str) -> dict[str, str]:
+    base = {
+        "isic_id": image_id,
+        "lesion_id": lesion,
+        "diagnosis_2": d2,
+        "diagnosis_3": d3,
+        "image_type": "dermoscopic",
+        "image_manipulation": "",
+    }
+    return base | extra
+
+
+def test_convert_isic_archive_maps_labels_and_excludes_synthetic() -> None:
+    from ml.datasets.prepare_ham10000 import convert_isic_archive
+
+    rows = [
+        _isic_row("A", "L1", "Benign melanocytic proliferations", "Nevus"),
+        _isic_row("B", "L2", "Malignant melanocytic proliferations (Melanoma)", "Melanoma, NOS"),
+        _isic_row("C", "L3", "Malignant epidermal proliferations", "Squamous cell carcinoma, NOS"),
+        _isic_row("D", "L4", "Indeterminate epidermal proliferations", "Solar or actinic keratosis"),
+        _isic_row("E", "L5", "Benign soft tissue proliferations - Vascular", ""),
+        _isic_row("F", "L6", "Benign melanocytic proliferations", "Nevus", image_manipulation="synthetic"),
+    ]
+    usable, excluded = convert_isic_archive(rows)
+    assert {r["image_id"]: r["dx"] for r in usable} == {
+        "A": "nv", "B": "mel", "C": "akiec", "D": "akiec", "E": "vasc",
+    }
+    assert excluded == [{"image_id": "F", "reason": "synthetic"}]
+
+
+def test_convert_isic_archive_rejects_unknown_diagnosis() -> None:
+    from ml.datasets.prepare_ham10000 import convert_isic_archive
+
+    with pytest.raises(SystemExit, match="unmapped diagnosis"):
+        convert_isic_archive([_isic_row("A", "L1", "Something", "Else")])

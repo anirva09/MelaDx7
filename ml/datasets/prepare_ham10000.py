@@ -13,6 +13,10 @@ Then run (from the repository root)::
         --images data/raw/HAM10000_images_part_1 data/raw/HAM10000_images_part_2 \
         --output data/processed
 
+The ISIC Archive export of the HAM10000 collection (``metadata.csv`` with ``isic_id`` and
+``diagnosis_1..3`` columns instead of ``image_id`` / ``dx``) is detected automatically and
+converted with :data:`ISIC_ARCHIVE_DX`. Synthetic and non-dermoscopic images are excluded.
+
 Outputs ``data/processed/{train,validation,test}/<dx>/<image_id>.jpg`` plus a
 ``split_manifest.csv`` and ``split_summary.json`` for reproducibility. The split is
 grouped by ``lesion_id`` (see :mod:`ml.datasets.splits`).
@@ -22,12 +26,14 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import shutil
 import sys
 from collections import Counter
 from pathlib import Path
+from typing import Any
 
 from ml.datasets.splits import grouped_stratified_split
 from ml.taxonomy import ClassTaxonomy
@@ -36,13 +42,95 @@ DEFAULT_CLASSES = Path(__file__).resolve().parents[1] / "configs" / "classes" / 
 REQUIRED_COLUMNS = {"lesion_id", "image_id", "dx"}
 
 
-def read_metadata(path: Path) -> list[dict[str, str]]:
+# ISIC Archive re-annotates the seven HAM10000 categories with a diagnosis hierarchy. The
+# mapping below reproduces the published HAM10000 class counts on the original 10,015
+# training images (nv 6705, mel 1113, bkl 1099, bcc 514, akiec 327, vasc 142, df 115):
+# "akiec" (actinic keratoses and intraepithelial carcinoma) is split in the archive into
+# "Solar or actinic keratosis" (130) and "Squamous cell carcinoma, NOS" (197).
+ISIC_ARCHIVE_DX = {
+    "Nevus": "nv",
+    "Melanoma, NOS": "mel",
+    "Pigmented benign keratosis": "bkl",
+    "Basal cell carcinoma": "bcc",
+    "Squamous cell carcinoma, NOS": "akiec",
+    "Solar or actinic keratosis": "akiec",
+    "Dermatofibroma": "df",
+}
+ISIC_VASCULAR = "Benign soft tissue proliferations - Vascular"
+ISIC_COLUMNS = {"isic_id", "lesion_id", "diagnosis_2", "diagnosis_3"}
+
+
+def convert_isic_archive(
+    rows: list[dict[str, str]],
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    """Convert ISIC Archive metadata rows to ``image_id/lesion_id/dx`` rows.
+
+    Returns ``(usable_rows, excluded)`` where ``excluded`` lists images dropped because
+    they are synthetic/manipulated or not dermoscopic.
+    """
+    usable: list[dict[str, str]] = []
+    excluded: list[dict[str, str]] = []
+    for row in rows:
+        if row.get("image_manipulation") or row.get("image_type", "dermoscopic") != "dermoscopic":
+            excluded.append(
+                {
+                    "image_id": row["isic_id"],
+                    "reason": row.get("image_manipulation") or row.get("image_type") or "unknown",
+                }
+            )
+            continue
+        d2, d3 = row["diagnosis_2"], row["diagnosis_3"]
+        if d2 == ISIC_VASCULAR:
+            dx = "vasc"
+        elif d3 in ISIC_ARCHIVE_DX:
+            dx = ISIC_ARCHIVE_DX[d3]
+        else:
+            raise SystemExit(f"{row['isic_id']}: unmapped diagnosis {d2!r} / {d3!r}")
+        usable.append({"image_id": row["isic_id"], "lesion_id": row["lesion_id"], "dx": dx})
+    return usable, excluded
+
+
+def read_metadata(path: Path) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     with open(path, newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
-        missing = REQUIRED_COLUMNS - set(reader.fieldnames or [])
-        if missing:
-            raise SystemExit(f"metadata file is missing columns: {sorted(missing)}")
-        return [dict(row) for row in reader]
+        fields = set(reader.fieldnames or [])
+        rows = [dict(row) for row in reader]
+    if fields >= ISIC_COLUMNS:
+        return convert_isic_archive(rows)
+    missing = REQUIRED_COLUMNS - fields
+    if missing:
+        raise SystemExit(f"metadata file is missing columns: {sorted(missing)}")
+    return rows, []
+
+
+def check_images(rows: list[dict[str, str]], images: dict[str, Path]) -> dict[str, Any]:
+    """Open every image, and find byte-identical files that carry different labels/lesions."""
+    from PIL import Image
+
+    corrupt: list[str] = []
+    by_hash: dict[str, list[str]] = {}
+    for row in rows:
+        path = images[row["image_id"]]
+        try:
+            with Image.open(path) as img:
+                img.verify()
+        except Exception:  # noqa: BLE001 - any decode failure marks the file unusable
+            corrupt.append(row["image_id"])
+            continue
+        by_hash.setdefault(hashlib.sha256(path.read_bytes()).hexdigest(), []).append(row["image_id"])
+    by_id = {r["image_id"]: r for r in rows}
+    duplicates = [ids for ids in by_hash.values() if len(ids) > 1]
+    conflicting = [
+        ids
+        for ids in duplicates
+        if len({by_id[i]["dx"] for i in ids}) > 1 or len({by_id[i]["lesion_id"] for i in ids}) > 1
+    ]
+    return {
+        "checked": len(rows),
+        "corrupt": corrupt,
+        "duplicate_file_groups": duplicates,
+        "duplicates_with_conflicting_lesion_or_label": conflicting,
+    }
 
 
 def index_images(dirs: list[Path]) -> dict[str, Path]:
@@ -83,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     taxonomy = ClassTaxonomy.from_yaml(args.classes)
-    rows = read_metadata(args.metadata)
+    rows, excluded = read_metadata(args.metadata)
     images = index_images(args.images)
 
     unknown = {r["dx"] for r in rows} - set(taxonomy.codes)
@@ -95,6 +183,16 @@ def main(argv: list[str] | None = None) -> int:
             f"{len(missing)} images listed in the metadata were not found "
             f"(first: {missing[:3]}). Check the --images directories."
         )
+
+    integrity = check_images(rows, images)
+    if integrity["corrupt"]:
+        raise SystemExit(f"unreadable images: {integrity['corrupt'][:5]} ...")
+    if integrity["duplicates_with_conflicting_lesion_or_label"]:
+        raise SystemExit(
+            "identical files with different lesion/label would leak across splits: "
+            f"{integrity['duplicates_with_conflicting_lesion_or_label'][:3]}"
+        )
+    # identical files of the same lesion are grouped together by lesion_id already
 
     splits = grouped_stratified_split(
         [r["dx"] for r in rows],
@@ -110,6 +208,10 @@ def main(argv: list[str] | None = None) -> int:
         "seed": args.seed,
         "strategy": "StratifiedGroupKFold grouped by lesion_id",
         "requested_fractions": {"validation": args.val_fraction, "test": args.test_fraction},
+        "total_images": len(rows),
+        "excluded": excluded,
+        "class_counts_total": dict(Counter(r["dx"] for r in rows)),
+        "integrity": integrity,
         "splits": {},
     }
     for split_name, indices in splits.items():
