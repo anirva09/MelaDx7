@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: lesionlens
+          POSTGRES_PASSWORD: lesionlens
+          POSTGRES_DB: lesionlens_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U lesionlens" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies (CPU PyTorch)
+        run: |
+          pip install --extra-index-url https://download.pytorch.org/whl/cpu -r backend/requirements-dev.txt
+          pip install -e .
+      - name: Lint
+        run: ruff check ml backend && ruff format --check ml backend
+      - name: Type check
+        run: cd backend && mypy app ../ml
+      - name: ML tests
+        run: pytest ml/tests -q
+      - name: Backend tests (SQLite)
+        run: pytest backend/tests -q
+      - name: Backend tests (PostgreSQL)
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://lesionlens:lesionlens@localhost:5432/lesionlens_test
+        run: pytest backend/tests -q -m "not slow"
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: [python, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build images
+        run: |
+          docker build -f backend/Dockerfile -t lesionlens-api .
+          docker build -t lesionlens-web frontend

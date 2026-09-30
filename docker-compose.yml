@@ -1,0 +1,66 @@
+# LesionLens: PostgreSQL + FastAPI (with CPU inference) + nginx-served React app.
+#
+#   cp .env.example .env        # then set JWT_SECRET and POSTGRES_PASSWORD
+#   docker compose up --build   # open http://localhost:8080
+#
+# The model artifact is read from ./models (MODEL_PATH is relative to that mount).
+# Without trained weights the app still runs and clearly reports that no model is loaded.
+
+name: lesionlens
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-lesionlens}
+      POSTGRES_USER: ${POSTGRES_USER:-lesionlens}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks: [internal]
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Containers run in production mode unless COMPOSE_ENVIRONMENT=development
+      # (needed only to try the UI with an untrained pipeline-verification model).
+      ENVIRONMENT: ${COMPOSE_ENVIRONMENT:-production}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-lesionlens}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-lesionlens}
+      UPLOAD_DIRECTORY: /app/data/uploads
+      MODEL_PATH: /app/models/${MODEL_DIR:-current}
+      CORS_ORIGINS: ${PUBLIC_URL:-http://localhost:8080}
+    volumes:
+      - uploads:/app/data/uploads
+      - ./models:/app/models:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [internal]
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks: [internal]
+
+volumes:
+  db-data:
+  uploads:
+
+networks:
+  internal:
