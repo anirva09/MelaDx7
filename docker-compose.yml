@@ -1,4 +1,4 @@
-# LesionLens: PostgreSQL + FastAPI (with CPU inference) + nginx-served React app.
+# MelaDx7: PostgreSQL + FastAPI (with CPU inference) + nginx-served React app.
 #
 #   cp .env.example .env        # then set JWT_SECRET and POSTGRES_PASSWORD
 #   docker compose up --build   # open http://localhost:8080

@@ -98,7 +98,10 @@ class TestLocalStorage:
         outside.mkdir()
         (outside / "secret.jpg").write_bytes(b"secret")
         storage = LocalStorage(root)
-        (root / "link").symlink_to(outside)
+        try:
+            (root / "link").symlink_to(outside)
+        except OSError:
+            pytest.skip("symlinks need elevated rights here (Windows without Developer Mode)")
         with pytest.raises(InvalidKeyError):
             storage.get("link/secret.jpg")
 
@@ -187,3 +190,20 @@ def test_sanitize_filename(raw: str | None, expected: str) -> None:
 def test_sanitize_filename_length() -> None:
     assert len(sanitize_filename("a" * 500 + ".jpeg")) <= 120
     assert sanitize_filename("a" * 500 + ".jpeg").endswith(".jpeg")
+
+
+class TestDatabaseUrl:
+    @pytest.mark.parametrize(
+        ("given", "expected"),
+        [
+            ("postgres://u:p@h:5432/d", "postgresql+asyncpg://u:p@h:5432/d"),
+            ("postgresql://u:p@h/d", "postgresql+asyncpg://u:p@h/d"),
+            ("postgresql+asyncpg://u:p@h/d", "postgresql+asyncpg://u:p@h/d"),
+            ("sqlite+aiosqlite:///x.db", "sqlite+aiosqlite:///x.db"),
+        ],
+    )
+    def test_scheme_is_normalised_for_asyncpg(self, given: str, expected: str) -> None:
+        from app.core.config import Settings
+
+        secret = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
+        assert Settings(jwt_secret=secret, database_url=given).database_url == expected

@@ -31,7 +31,7 @@ class Settings(BaseSettings):
 
     # ------------------------------------------------------------- general
     environment: Literal["development", "test", "production"] = "development"
-    app_name: str = "LesionLens"
+    app_name: str = "MelaDx7"
     app_version: str = "1.0.0"
     log_level: str = "INFO"
     log_json: bool = True
@@ -84,6 +84,17 @@ class Settings(BaseSettings):
     signed_url_ttl_seconds: int = Field(default=900, ge=30, le=86_400)
 
     # --------------------------------------------------------- validators
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def _async_database_url(cls, value: object) -> object:
+        """Hosting providers (Render, Heroku...) hand out ``postgres://`` / ``postgresql://``
+        URLs; the async engine needs the asyncpg driver in the scheme."""
+        if isinstance(value, str):
+            for plain in ("postgres://", "postgresql://"):
+                if value.startswith(plain):
+                    return "postgresql+asyncpg://" + value[len(plain) :]
+        return value
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value: object) -> object:

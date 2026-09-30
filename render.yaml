@@ -1,0 +1,67 @@
+# Render Blueprint for MelaDx7: PostgreSQL + API (with CPU inference) + nginx-served web app.
+# See docs/deployment.md ("Deploy on Render") for the steps, costs and limitations.
+#
+# The browser only ever talks to `meladx7-web`, which serves the React build and proxies /api to
+# `meladx7-api` over Render's private network. That keeps the httpOnly SameSite=Strict refresh
+# cookie first-party (no CORS, no cross-site cookies).
+#
+# The ViT-Base/16 model needs roughly 1.5-2 GB of RAM to serve: use a 2 GB plan or larger for the
+# API (the 512 MB plans are killed on start-up). Plans below are paid plans.
+
+databases:
+  - name: meladx7-db
+    databaseName: meladx7
+    user: meladx7
+    plan: basic-256mb
+
+services:
+  - type: web
+    name: meladx7-api
+    runtime: docker
+    plan: standard
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health/live
+    disk:
+      name: uploads
+      mountPath: /app/data/uploads
+      sizeGB: 1
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PORT
+        value: "8000"
+      - key: DOCS_ENABLED # do not publish the interactive API docs on a public deployment
+        value: "false"
+      - key: DATABASE_URL # Render's postgresql:// URL is converted to the asyncpg scheme by the app
+        fromDatabase:
+          name: meladx7-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: UPLOAD_DIRECTORY
+        value: /app/data/uploads
+      - key: MODEL_PATH
+        value: /app/models/vit_base_patch16_224-v1.0.0
+      # The trained weights are not in git. Publish the model zip (see docs/deployment.md) and set
+      # these two in the Render dashboard; they are used as Docker build args.
+      - key: MODEL_URL
+        sync: false
+      - key: MODEL_SHA256
+        sync: false
+
+  - type: web
+    name: meladx7-web
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    healthCheckPath: /healthz
+    envVars:
+      - key: PORT
+        value: "80"
+      - key: BACKEND_ADDR
+        fromService:
+          type: web
+          name: meladx7-api
+          property: hostport
