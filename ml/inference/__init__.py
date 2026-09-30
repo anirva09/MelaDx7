@@ -1,0 +1,53 @@
+"""Inference API consumed by the backend: load a model artifact, predict, explain."""
+
+from ml.inference.artifact import (
+    CARD_FILENAME,
+    HISTORY_FILENAME,
+    METRICS_FILENAME,
+    SAMPLES_DIRNAME,
+    WEIGHTS_FILENAME,
+    ArtifactError,
+    ModelCard,
+    file_sha256,
+    load_model,
+    load_model_card,
+    resolve_artifact_dir,
+    save_model_card,
+    save_weights,
+    utc_now_iso,
+    write_json,
+)
+from ml.inference.engine import (
+    LOW_CONFIDENCE_THRESHOLD,
+    LOW_MARGIN_THRESHOLD,
+    ClassScore,
+    ExplanationResult,
+    InferenceEngine,
+    PredictionResult,
+    summarize_probabilities,
+)
+
+__all__ = [
+    "CARD_FILENAME",
+    "HISTORY_FILENAME",
+    "LOW_CONFIDENCE_THRESHOLD",
+    "LOW_MARGIN_THRESHOLD",
+    "METRICS_FILENAME",
+    "SAMPLES_DIRNAME",
+    "WEIGHTS_FILENAME",
+    "ArtifactError",
+    "ClassScore",
+    "ExplanationResult",
+    "InferenceEngine",
+    "ModelCard",
+    "PredictionResult",
+    "file_sha256",
+    "load_model",
+    "load_model_card",
+    "resolve_artifact_dir",
+    "save_model_card",
+    "save_weights",
+    "summarize_probabilities",
+    "utc_now_iso",
+    "write_json",
+]

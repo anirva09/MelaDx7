@@ -1,0 +1,55 @@
+# Class taxonomy for the HAM10000 dataset (Tschandl et al., Sci. Data 5, 180161, 2018).
+#
+# `code` must match the dataset folder names (data/processed/<split>/<code>/).
+# `index` order is the order of the model's output logits and must never change
+# for a trained checkpoint (it is copied into the model card at training time).
+#
+# `group` drives the derived "malignant / pre-malignant classes combined" readout:
+#   malignant     - malignant lesion categories
+#   premalignant  - categories that include pre-malignant or in-situ lesions
+#   benign        - benign lesion categories
+# Group assignment follows the category definitions in the HAM10000 data
+# descriptor. It is a grouping of model output classes, not a clinical grading.
+
+dataset_id: HAM10000
+classes:
+  - index: 0
+    code: akiec
+    name: Actinic keratosis / intraepithelial carcinoma
+    group: premalignant
+    description: >-
+      Actinic keratoses and intraepithelial carcinoma (Bowen's disease), common
+      non-invasive variants of squamous cell carcinoma.
+  - index: 1
+    code: bcc
+    name: Basal cell carcinoma
+    group: malignant
+    description: >-
+      A common variant of epithelial skin cancer that rarely metastasizes but
+      grows destructively if untreated.
+  - index: 2
+    code: bkl
+    name: Benign keratosis-like lesion
+    group: benign
+    description: >-
+      Solar lentigines, seborrheic keratoses and lichen-planus-like keratoses.
+  - index: 3
+    code: df
+    name: Dermatofibroma
+    group: benign
+    description: A benign skin lesion regarded as a benign proliferation or a reaction to minimal trauma.
+  - index: 4
+    code: mel
+    name: Melanoma
+    group: malignant
+    description: A malignant neoplasm derived from melanocytes.
+  - index: 5
+    code: nv
+    name: Melanocytic nevus
+    group: benign
+    description: Benign neoplasms of melanocytes, in many dermatoscopic variants.
+  - index: 6
+    code: vasc
+    name: Vascular lesion
+    group: benign
+    description: Cherry angiomas, angiokeratomas, pyogenic granulomas and hemorrhage.

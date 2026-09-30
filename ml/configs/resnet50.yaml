@@ -1,0 +1,40 @@
+# Alternative experiment: ResNet-50 baseline on HAM10000.
+# Run:  python -m ml.training.train --config ml/configs/resnet50.yaml
+
+experiment_name: resnet50_ham10000
+seed: 42
+calibrate_temperature: true
+
+data:
+  root: data/processed
+  classes_file: ml/configs/classes/ham10000.yaml
+  batch_size: 32
+  num_workers: 4
+  provenance:
+    name: HAM10000
+    source: https://doi.org/10.7910/DVN/DBW86T
+    license: CC BY-NC 4.0 (non-commercial use; attribution required)
+    split_strategy: lesion-grouped stratified (ml.datasets.prepare_ham10000)
+
+model:
+  architecture: resnet50
+  version: 1.0.0
+  pretrained: true
+  dropout: 0.2
+
+optim:
+  lr: 3.0e-4
+  backbone_lr_multiplier: 0.1
+  weight_decay: 1.0e-4
+  label_smoothing: 0.05
+  grad_clip_norm: 1.0
+
+training:
+  epochs: 30
+  freeze_backbone_epochs: 1
+  early_stopping_patience: 6
+  monitor: val_macro_f1
+
+imbalance:
+  strategy: weighted_loss
+  power: 0.5

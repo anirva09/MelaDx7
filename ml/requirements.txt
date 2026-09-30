@@ -1,0 +1,9 @@
+# ML runtime dependencies (training, evaluation, inference).
+# CPU-only PyTorch wheels:  pip install -r ml/requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+# CUDA wheels: follow https://pytorch.org/get-started/locally/ and then install the rest.
+torch>=2.4
+torchvision>=0.19
+numpy>=1.26
+pillow>=10.4
+pyyaml>=6.0
+scikit-learn>=1.5

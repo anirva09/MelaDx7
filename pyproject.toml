@@ -1,0 +1,64 @@
+# Repository-wide Python project metadata and tooling configuration.
+#
+# `pip install -e .` from the repository root makes the `ml` package importable
+# everywhere (training scripts, the backend, notebooks). Runtime dependencies are
+# pinned in ml/requirements.txt and backend/requirements*.txt.
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lesionlens"
+version = "1.0.0"
+description = "Interpretable deep learning for dermoscopic skin-lesion analysis (CNN + Grad-CAM)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+[tool.setuptools.packages.find]
+include = ["ml*"]
+exclude = ["ml.tests*"]
+
+[tool.setuptools.package-data]
+ml = ["configs/*.yaml", "configs/classes/*.yaml"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["frontend", "backend/alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "ASYNC", "BLE", "C4", "PT"]
+ignore = [
+    "S101",   # assert is fine in tests and for internal invariants
+    "S603", "S607",  # subprocess with fixed git arguments
+    "RUF012",
+    "B008",   # FastAPI Depends() in defaults is idiomatic
+    "PT011", "PT018", "PT006",
+    "SIM108",  # explicit if/else is clearer for multi-line numeric code
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S105", "S106", "S108", "S311", "B017"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ml", "app"]
+
+[tool.pytest.ini_options]
+pythonpath = [".", "backend"]
+testpaths = ["ml/tests", "backend/tests"]
+markers = ["slow: trains small networks (deselect with -m 'not slow')"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+filterwarnings = [
+    "ignore:y_pred contains classes not in y_true:UserWarning",
+    "ignore:The least populated class in y has only:UserWarning",
+]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+warn_unused_ignores = true
+check_untyped_defs = true

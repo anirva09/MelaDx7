@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------- secrets
+.env
+.env.*
+!.env.example
+
+# ------------------------------------------------------------------ python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.egg-info/
+build/
+
+# ---------------------------------------------------------------- node/web
+node_modules/
+frontend/dist/
+frontend/coverage/
+tests/e2e/test-results/
+tests/e2e/playwright-report/
+*.tsbuildinfo
+
+# ------------------------------------------------- data, uploads and models
+# Medical images and trained weights are never committed.
+data/*
+!data/README.md
+models/*
+!models/README.md
+*.pt
+*.pth
+*.onnx
+
+# ------------------------------------------------------------------- misc
+.DS_Store
+*.log
+.idea/
+.vscode/
