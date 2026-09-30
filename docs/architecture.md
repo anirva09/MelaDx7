@@ -1,6 +1,6 @@
 # Architecture
 
-LesionLens is a monorepo with three independently testable parts and one deployment
+MelaDx7 is a monorepo with three independently testable parts and one deployment
 unit per runtime:
 
 | Part | Path | Responsibility |
@@ -226,7 +226,7 @@ blue (#1d74d8) so white labels meet WCAG AA contrast.
 
 Below 1024px the app is a touch interface, not a collapsed desktop:
 
-| Reference element | In LesionLens |
+| Reference element | In MelaDx7 |
 |---|---|
 | Floating glass tab bar + separate "+" circle | Home, History, Reports, Profile; "+" opens the analysis composer |
 | Top-right control pill (bell, dots) | Model status (dot shows ready/untrained/missing) and a More menu |

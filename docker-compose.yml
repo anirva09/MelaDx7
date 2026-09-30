@@ -6,15 +6,15 @@
 # The model artifact is read from ./models (MODEL_PATH is relative to that mount).
 # Without trained weights the app still runs and clearly reports that no model is loaded.
 
-name: lesionlens
+name: meladx7
 
 services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-lesionlens}
-      POSTGRES_USER: ${POSTGRES_USER:-lesionlens}
+      POSTGRES_DB: ${POSTGRES_DB:-meladx7}
+      POSTGRES_USER: ${POSTGRES_USER:-meladx7}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
     volumes:
       - db-data:/var/lib/postgresql/data
@@ -35,7 +35,7 @@ services:
       # Containers run in production mode unless COMPOSE_ENVIRONMENT=development
       # (needed only to try the UI with an untrained pipeline-verification model).
       ENVIRONMENT: ${COMPOSE_ENVIRONMENT:-production}
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-lesionlens}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-lesionlens}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-meladx7}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-meladx7}
       UPLOAD_DIRECTORY: /app/data/uploads
       MODEL_PATH: /app/models/${MODEL_DIR:-current}
       CORS_ORIGINS: ${PUBLIC_URL:-http://localhost:8080}

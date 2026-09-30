@@ -39,8 +39,8 @@ async function shot(page, name) {
 
 async function setTheme(page, theme) {
   await page.evaluate((t) => {
-    if (t === "dark") localStorage.removeItem("lesionlens-theme");
-    else localStorage.setItem("lesionlens-theme", t);
+    if (t === "dark") localStorage.removeItem("meladx7-theme");
+    else localStorage.setItem("meladx7-theme", t);
   }, theme);
 }
 

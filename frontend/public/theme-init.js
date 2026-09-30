@@ -4,7 +4,7 @@
 (function () {
   var dark = true;
   try {
-    var t = localStorage.getItem("lesionlens-theme");
+    var t = localStorage.getItem("meladx7-theme");
     if (t === "light") dark = false;
     else if (t === "system") dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   } catch (e) {

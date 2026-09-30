@@ -9,7 +9,7 @@ cp .env.example .env
 # Edit .env:
 #   JWT_SECRET=<output of: openssl rand -hex 32>
 #   POSTGRES_PASSWORD=<a strong password>
-#   MODEL_DIR=efficientnet_b0-v1.0.0      # a folder inside ./models
+#   MODEL_DIR=vit_base_patch16_224-v1.0.0 # a folder inside ./models (see "Model weights" below)
 docker compose up --build -d
 docker compose ps                          # all three services should become healthy
 ```
@@ -26,6 +26,13 @@ http://localhost:8080/api/docs).
 Containers run with `ENVIRONMENT=production` unless `COMPOSE_ENVIRONMENT=development`
 is set. Production mode enforces secure cookies, explicit CORS origins, and refuses
 untrained models.
+
+### Model weights
+
+The trained artifact (`model.pt` ~330 MB + `model_card.json` + `metrics.json`) is **not in git**.
+Train it (see [training.md](training.md)) or obtain a copy from the project's release, and unzip it
+so that `./models/vit_base_patch16_224-v1.0.0/model.pt` exists. The weights derive from
+CC BY-NC data: non-commercial use only.
 
 ### No trained model yet?
 
@@ -66,7 +73,37 @@ docker compose exec backend python -m app.cli prune-sessions --days 7
    folder name stable and call `POST /api/model/reload`.
 3. Old analyses keep their model version; users can re-run them with the new model.
 
-## Option B: local development without Docker
+## Option B: Render (all services)
+
+`render.yaml` is a Render Blueprint: PostgreSQL + the API (Docker) + the web app (Docker,
+nginx). The browser only talks to the web service, which proxies `/api` to the API over
+Render's private network, so the httpOnly SameSite=Strict refresh cookie stays first-party.
+
+1. **Publish the model zip somewhere with a stable HTTPS URL** (for example a GitHub Release
+   asset) and compute its hash:
+   ```bash
+   cd models && zip -qr vit_base_patch16_224-v1.0.0.zip vit_base_patch16_224-v1.0.0 -x "*/checkpoints/*"
+   sha256sum vit_base_patch16_224-v1.0.0.zip
+   ```
+2. In Render: **New -> Blueprint**, pick the repository. Render reads `render.yaml`.
+3. When prompted, set `MODEL_URL` (the zip URL) and `MODEL_SHA256` (the hash). They are used
+   as Docker build args: the build refuses the download if the hash differs, and the app then
+   checks `model.pt` against the model card again.
+4. Deploy. The first build installs PyTorch (CPU) and downloads the model; expect 10-15 minutes.
+   `GET /api/health` should report `"model": "ready"`.
+
+**Costs and limits.** The ViT needs roughly 1.5-2 GB of RAM to serve, so the API uses Render's
+2 GB `standard` plan (paid). The 512 MB plans are killed on start-up; free tiers will not run
+this model. Inference runs on CPU (about a second per image). Uploads are stored on a 1 GB
+persistent disk; use the S3 storage backend for anything larger. The in-memory rate limiter is
+per process.
+
+**Why not Vercel?** Vercel's serverless functions cannot hold PyTorch plus a 330 MB model, so
+the API cannot run there. Vercel could serve only the static frontend, but then the browser
+would call another origin and the `SameSite=Strict` session cookie would be blocked unless
+`/api` were proxied through Vercel `rewrites`. Keeping both on Render avoids that.
+
+## Option C: local development without Docker
 
 Requirements: Python 3.11+, Node 20+, PostgreSQL 14+.
 
@@ -76,7 +113,7 @@ make install                                  # CPU torch, backend deps, `pip in
 cp .env.example .env                          # set JWT_SECRET and DATABASE_URL
 createdb lesionlens                           # or use any PostgreSQL instance
 make migrate
-make dev-model                                # optional: untrained model for UI work
+make dev-model                                # optional: random-weights model for UI work only
 #   .env: MODEL_PATH=models/dev-untrained, ALLOW_UNTRAINED_MODEL=true
 make api                                      # http://localhost:8000/api/docs
 make web                                      # http://localhost:5173 (proxies /api)

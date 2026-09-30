@@ -9,7 +9,7 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "lesionlens"
+name = "meladx7"
 version = "1.0.0"
 description = "Interpretable deep learning for dermoscopic skin-lesion analysis (CNN + Grad-CAM)"
 readme = "README.md"

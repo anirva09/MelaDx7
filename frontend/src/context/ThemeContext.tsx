@@ -8,7 +8,7 @@ interface ThemeContextValue {
   setPreference: (value: Preference) => void;
 }
 
-const STORAGE_KEY = "lesionlens-theme";
+const STORAGE_KEY = "meladx7-theme";
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 function readPreference(): Preference {

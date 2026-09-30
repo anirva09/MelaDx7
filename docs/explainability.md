@@ -21,6 +21,7 @@ parameters do not need `requires_grad` (the input tensor carries the graph).
 
 | Architecture | Target layer | Map resolution |
 |---|---|---|
+| ViT-Base/16 (release) | `backbone.encoder.layer.11.layernorm_before`, patch tokens reshaped to a grid | 14 x 14 |
 | EfficientNet-B0 | `features.8` (final 1x1 conv block) | 7 x 7 |
 | ResNet-50 / ResNet-18 | `layer4[-1]` | 7 x 7 |
 | EfficientNet-B3 | `features.8` | 10 x 10 at 300 px |

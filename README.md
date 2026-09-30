@@ -1,8 +1,8 @@
-# LesionLens
+# MelaDx7
 
 **Interpretable Deep Learning for Skin Cancer Detection and Subtype Classification**
 
-LesionLens analyses dermoscopic skin-lesion images with a convolutional neural network,
+MelaDx7 analyses dermoscopic skin-lesion images with a convolutional neural network,
 reports a calibrated probability for every lesion class, and explains each prediction
 with a Grad-CAM heatmap of the image regions that drove it. It is a complete system:
 training pipeline, versioned model artifacts, a FastAPI inference service with
@@ -10,7 +10,7 @@ PostgreSQL, and a React web application.
 
 > **Medical disclaimer.** This AI system provides an assistive prediction and
 > visualization. It is not a medical diagnosis and should not replace evaluation by a
-> qualified healthcare professional. LesionLens is a research and education prototype,
+> qualified healthcare professional. MelaDx7 is a research and education prototype,
 > not a medical device. It gives no treatment recommendations.
 
 ---
@@ -82,34 +82,43 @@ a clinician or researcher can inspect, question and reproduce it.
   quick search, and a separate native-feeling phone design (floating glass tab bar with an
   analyse button, bottom sheets, long-press menus, swipe-to-delete, pull-to-refresh, pinch
   zoom and swipe comparison, safe areas). Keyboard accessible; dark by default, light opt-in.
-- Docker Compose deployment, CI workflow, 222 automated tests (ML, API, UI, browser end-to-end).
+- Docker Compose deployment, CI workflow, automated tests for ML, API, UI and the browser end-to-end flow (counts in [Testing](#testing)).
 
-**Honest by construction:** no bundled or fabricated dataset, no hard-coded predictions,
-metrics or heatmaps. Without trained weights the app runs and says so; metrics are shown
-only if they were computed for the exact loaded weights.
+**Honest by construction:** no bundled dataset, no hard-coded predictions, metrics or
+heatmaps. Metrics are shown only if they were computed for the exact loaded weights
+(SHA-256 match), and every result states that it is not a diagnosis.
 
 ## Screenshots
 
-The screenshots below were taken with an **untrained** pipeline-verification model
-(randomly initialised), so the predictions and heatmaps shown are meaningless and the UI
-marks them as such. Replace them with screenshots from your trained model.
+Taken from the running application with the trained ViT-Base/16 model, on real images
+from the held-out test split (HAM10000, CC BY-NC). Every screen exists in dark (default) and
+light; the theme is chosen in Settings (Dark / Light / System).
 
-| Desktop home | Analysis result |
+| Result with Grad-CAM (dark) | Result with Grad-CAM (light) |
 |---|---|
-| ![Desktop home](docs/screenshots/desktop-home.png) | ![Analysis result](docs/screenshots/desktop-result.png) |
+| ![Result, dark](docs/screenshots/desktop-result-dark.png) | ![Result, light](docs/screenshots/desktop-result-light.png) |
 
-| Model card and evaluation | Light theme |
+| Overview | History |
 |---|---|
-| ![Model page](docs/screenshots/desktop-model.png) | ![Light theme](docs/screenshots/desktop-result-light.png) |
+| ![Overview](docs/screenshots/desktop-home-dark.png) | ![History](docs/screenshots/desktop-history-dark.png) |
 
-**Phone:** home, result with swipe comparison, history, long-press menu, the "+" composer
-and the class sheet.
+| Model card and evaluation | Settings: Dark / Light / System |
+|---|---|
+| ![Model page](docs/screenshots/desktop-model-dark.png) | ![Settings](docs/screenshots/desktop-settings-light.png) |
 
-![Phone screens](docs/screenshots/phone.png)
+| New analysis | Reports |
+|---|---|
+| ![Upload](docs/screenshots/desktop-upload-dark.png) | ![Reports](docs/screenshots/desktop-reports-dark.png) |
 
-![Landing page](docs/screenshots/landing.png)
+**Phone:** result with swipe comparison, overview, history and settings.
 
-<!-- After training, add: docs/screenshots/trained-result.png and docs/screenshots/evaluation.png -->
+| Result | Overview | History | Settings |
+|---|---|---|---|
+| ![](docs/screenshots/phone-result-dark.png) | ![](docs/screenshots/phone-home-dark.png) | ![](docs/screenshots/phone-history-light.png) | ![](docs/screenshots/phone-settings-light.png) |
+
+![Landing page](docs/screenshots/desktop-landing-dark.png)
+
+Regenerate with `tests/e2e/capture-screenshots.mjs` (see the script header).
 
 ## Architecture
 
@@ -128,7 +137,7 @@ flowchart LR
     Services --> Storage[StorageBackend]
   end
   subgraph ML[ml package]
-    Engine[InferenceEngine] --> CNN[EfficientNet-B0]
+    Engine[InferenceEngine] --> Net[ViT-Base/16]
     Engine --> GradCAM
   end
   SPA --> Static
@@ -147,7 +156,7 @@ Detailed diagrams (request sequence, ER model, layering, security controls) are 
 
 | Layer | Technologies |
 |---|---|
-| Deep learning | PyTorch, torchvision (EfficientNet-B0 / ResNet), NumPy, Pillow, scikit-learn |
+| Deep learning | PyTorch, torchvision, Hugging Face Transformers (ViT-Base/16; EfficientNet and ResNet also supported), NumPy, Pillow, scikit-learn |
 | Explainability | Grad-CAM (own implementation), Turbo and single-hue colour maps |
 | API | FastAPI, Pydantic v2, SQLAlchemy 2 (async), asyncpg, Alembic, PyJWT, argon2-cffi, ReportLab |
 | Data | PostgreSQL 16 (SQLite for fast tests), local or S3-compatible object storage |
@@ -168,7 +177,7 @@ Detailed diagrams (request sequence, ER model, layering, security controls) are 
 │   ├── evaluation/             Metrics and the evaluation CLI
 │   ├── inference/              Model artifacts/cards and the InferenceEngine
 │   ├── explainability/         Grad-CAM and heatmap rendering
-│   ├── scripts/                Untrained pipeline-verification artifact
+│   ├── scripts/                Development-only pipeline-verification artifact
 │   └── tests/                  80 tests (incl. a Grad-CAM localisation test and training smoke tests)
 ├── backend/
 │   ├── app/
@@ -209,11 +218,11 @@ cp .env.example .env     # set JWT_SECRET (openssl rand -hex 32) and POSTGRES_PA
 docker compose up --build
 ```
 
-Open http://localhost:8080 and create an account. Until a trained model is placed in
-`./models` (see below), the app explains that no weights are loaded and analysis is
-disabled; history, reports and all other pages work. See
-[docs/deployment.md](docs/deployment.md) for trying the workflow with an untrained model,
-admin accounts, HTTPS and scaling.
+Open http://localhost:8080 and create an account. The API loads the model folder named
+by `MODEL_DIR` from `./models` (a trained artifact; see [Model setup](#model-setup-and-inference)).
+Without one, the app says no weights are loaded and analysis is disabled; the other pages
+still work. See [docs/deployment.md](docs/deployment.md) for admin accounts, HTTPS, scaling and
+deploying to Render.
 
 ### Local development
 
@@ -231,34 +240,40 @@ Frontend only: `cd frontend && npm install && npm run dev` (proxies `/api` to po
 
 ## Dataset setup
 
-The default configuration targets **HAM10000** (10,015 dermatoscopic images, 7
-categories; Harvard Dataverse, https://doi.org/10.7910/DVN/DBW86T; **CC BY-NC 4.0**;
-Tschandl et al., *Sci. Data* 5, 180161, 2018). Download it yourself and accept its
-licence; no data is included here.
+The release model uses **HAM10000** (Tschandl et al., *Sci. Data* 5, 180161, 2018;
+https://doi.org/10.7910/DVN/DBW86T; **CC BY-NC**), in the ISIC Archive export:
+**11,719 images used** (one synthetic image excluded), 7 classes, split by lesion into
+**8,369 train / 1,675 validation / 1,675 test**. The full audit, label mapping and per-class
+counts are in [docs/dataset.md](docs/dataset.md). Download the data yourself and accept its
+licence; none is included here.
 
 ```bash
 python -m ml.datasets.prepare_ham10000 \
-  --metadata data/raw/HAM10000_metadata.csv \
-  --images data/raw/HAM10000_images_part_1 data/raw/HAM10000_images_part_2 \
+  --metadata data/raw/metadata.csv \
+  --images data/raw/ISIC-images \
   --output data/processed
 ```
 
-The split is **grouped by lesion** (several images show the same lesion), so no lesion
-appears in more than one of train/validation/test. Any other dataset works if arranged as
+Both the ISIC Archive layout and the original Harvard Dataverse layout are accepted. The
+split is **grouped by lesion**, so no lesion appears in more than one of
+train/validation/test; the script also checks for corrupt files and duplicates and records
+the class distribution in `split_summary.json`. Any other dataset works if arranged as
 `data/processed/{train,validation,test}/<class_code>/` with a matching class YAML.
 Details: [docs/training.md](docs/training.md).
 
 ## Model training
 
 ```bash
-python -m ml.training.train --config ml/configs/efficientnet_b0.yaml
+python -m ml.training.train --config ml/configs/vit_base.yaml      # release model
+# others: ml/configs/efficientnet_b0.yaml, resnet50.yaml
 # override anything: --set training.epochs=40 --set data.batch_size=64
 # resume:            --resume
 ```
 
-No GPU? Run `notebooks/train_ham10000_kaggle.ipynb` on Kaggle or Colab.
+No GPU? Run `notebooks/train_ham10000_kaggle.ipynb` on Kaggle or Colab (set `CHOICE = "vit"`;
+about 22 minutes on a T4).
 
-The run writes `models/efficientnet_b0-v1.0.0/` with weights, model card, history, test
+The run writes `models/vit_base_patch16_224-v1.0.0/` with weights, model card, history, test
 metrics and sample explanations.
 
 ## Model evaluation
@@ -266,7 +281,7 @@ metrics and sample explanations.
 Evaluation runs automatically after training, on the held-out test split. To re-run:
 
 ```bash
-python -m ml.evaluation.evaluate --model models/efficientnet_b0-v1.0.0 --data data/processed
+python -m ml.evaluation.evaluate --model models/vit_base_patch16_224-v1.0.0 --data data/processed
 ```
 
 Reported: accuracy, balanced accuracy, top-2 accuracy, macro/weighted precision, recall,
@@ -274,14 +289,65 @@ F1, per-class sensitivity/specificity/F1/ROC-AUC, confusion matrix, ROC curves, 
 Brier with a reliability diagram, the derived malignant/pre-malignant screening task, and
 sample predictions with Grad-CAM. The web app's Model page renders all of it.
 
-**No trained weights or results are included in this repository and none are claimed.**
-Numbers appear only after you train.
+### Results (release model, held-out test split)
+
+Release model: **ViT-Base/16 v1.0.0**, evaluated once on the held-out, lesion-grouped test
+split (1,675 images that were never used for training, checkpoint selection or
+calibration). Every figure below is copied from `metrics.json` of the released artifact
+(weights SHA-256 `62eaf9a7a67d11ac...`).
+
+| Metric | Value |
+|---|---|
+| Accuracy | 0.8245 |
+| Balanced accuracy | 0.7395 |
+| Top-2 accuracy | 0.9319 |
+| Macro precision / recall / F1 | 0.7433 / 0.7395 / 0.7352 |
+| Weighted F1 | 0.8290 |
+| Macro ROC-AUC (one-vs-rest) | 0.9188 |
+| Calibration: ECE / NLL / Brier (after temperature scaling, T = 0.702) | 0.0829 / 0.6474 / 0.2796 |
+| Malignant or pre-malignant classes combined vs. rest (akiec + bcc + mel, 329 positives): sensitivity / specificity at 0.5, ROC-AUC | 0.766 / 0.904, 0.918 |
+
+| Class | Test images | Recall (sensitivity) | Precision | Specificity | F1 | ROC-AUC |
+|---|---|---|---|---|---|---|
+| akiec (Actinic keratosis / intraepithelial carcinoma) | 54 | 0.667 | 0.581 | 0.984 | 0.621 | 0.941 |
+| bcc (Basal cell carcinoma) | 89 | 0.685 | 0.753 | 0.987 | 0.718 | 0.955 |
+| bkl (Benign keratosis-like lesion) | 192 | 0.656 | 0.700 | 0.964 | 0.677 | 0.917 |
+| df (Dermatofibroma) | 23 | 0.565 | 0.812 | 0.998 | 0.667 | 0.728 |
+| mel (Melanoma) | 186 | 0.710 | 0.532 | 0.922 | 0.608 | 0.935 |
+| nv (Melanocytic nevus) | 1106 | 0.893 | 0.932 | 0.874 | 0.912 | 0.955 |
+| vasc (Vascular lesion) | 25 | 1.000 | 0.893 | 0.998 | 0.943 | 1.000 |
+
+Training run: 12 epochs (early stopping, best epoch 8) on a
+Kaggle GPU, about 22 minutes, seed 42, class-weighted loss. Fine-tuned from Google's
+public ImageNet-21k ViT-Base/16 weights.
+
+**How to read these numbers.**
+
+* They are evaluation results on one public dataset, not guarantees about any individual
+  image, patient or clinic.
+* Melanoma recall is 0.71 but its precision is only 0.53: about half of the images
+  the model calls melanoma are not, and 36 of 186 true melanomas were called
+  nevus. 81 nevi were called melanoma.
+* Dermatofibroma (23 images), vascular lesion (25) and akiec (54) have very few
+  test images, so their per-class numbers are noisy.
+* Probabilities are over-confident in the highest bin: among the 306 test images with
+  confidence above 0.93, top-1 accuracy was 0.82.
+* The gap between training accuracy (97.6% in the last epoch) and validation accuracy
+  (82.6%) shows the model overfits; more data, stronger augmentation or ensembling would
+  be the next steps.
+* Not clinically validated. Not a medical device. Outputs are never a diagnosis.
+
+Full detail: [docs/model.md](docs/model.md#results).
+
+**The weights are not stored in git** (`models/` is ignored; the file is ~330 MB and derived from
+CC BY-NC data). Put the artifact in `models/` or set `MODEL_URL` for the Docker build
+(see [docs/deployment.md](docs/deployment.md)).
 
 ## Model setup and inference
 
 ```bash
 # .env
-MODEL_PATH=models/efficientnet_b0-v1.0.0
+MODEL_PATH=models/vit_base_patch16_224-v1.0.0
 ```
 
 Restart the API or call `POST /api/model/reload` as an admin. Inference then runs:
@@ -295,16 +361,16 @@ Restart the API or call `POST /api/model/reload` as an admin. Inference then run
 from PIL import Image
 from ml.inference import InferenceEngine
 
-engine = InferenceEngine.from_path("models/efficientnet_b0-v1.0.0")
+engine = InferenceEngine.from_path("models/vit_base_patch16_224-v1.0.0")
 image = Image.open("lesion.jpg").convert("RGB")
 result = engine.predict(image)
 print(result.predicted.name, result.confidence, result.uncertain)
 explanation = engine.explain(image, result.predicted_index)   # explanation.cam.cam: HxW in [0, 1]
 ```
 
-For UI development before training: `make dev-model` creates an **untrained** artifact,
-accepted only with `ALLOW_UNTRAINED_MODEL=true` outside production and labelled as
-meaningless on every screen and report.
+For UI development without weights, `make dev-model` creates a randomly initialised
+artifact. It is accepted only with `ALLOW_UNTRAINED_MODEL=true` outside production and is
+labelled as meaningless on every screen and report. It is never used by the release.
 
 ## API
 
@@ -325,10 +391,11 @@ Full reference, error codes and examples: [docs/api.md](docs/api.md).
 ## Grad-CAM in one paragraph
 
 For the predicted (or any chosen) class, Grad-CAM takes the gradient of the class score
-with respect to the last convolutional feature maps, averages it per channel to get each
+with respect to the last feature maps (for the ViT: the patch tokens entering the last
+transformer block, reshaped to a 14 x 14 grid), averages it per channel to get each
 channel's importance, weights the feature maps by it, sums them, keeps positive values and
 upsamples the result to the image. Bright regions are where features that raised the class
-score were found. The maps are coarse (7 x 7), relative within one image, and show
+score were found. The maps are coarse (14 x 14 patches for the ViT), relative within one image, and show
 correlation, not causation. As the UI states: *the highlighted regions indicate areas that
 contributed strongly to the model's prediction. They are model-attribution visualizations
 and should not be interpreted as definitive clinical evidence.* More in
@@ -367,7 +434,10 @@ with weak or placeholder secrets rejected. See the table in
 
 - Not clinically validated; not a medical device; outputs are not diagnoses.
 - Trained on one public dataset. HAM10000 comes from a limited set of centres and
-  predominantly lighter skin types; performance elsewhere is unknown.
+  predominantly lighter skin types; performance elsewhere is unknown. The weights are
+  derived from CC BY-NC data: **non-commercial use only**.
+- Modest accuracy: 82.5% overall, melanoma precision 0.53 and recall 0.71 on the test
+  split; over-confident at high confidence. See [Results](#results-release-model-held-out-test-split).
 - Closed-set: every image is assigned to one of the trained classes, even if it shows
   something else. Uncertainty flags are heuristics, not out-of-distribution detection.
 - Calibration is fitted on the same dataset's validation split.
@@ -408,3 +478,18 @@ Guide: Mrs. M. Vijaya. Coordinators: Dr. Ch. Deepika, Mr. PKVS Sarma.
 
 Source code: MIT (see `LICENSE`). Datasets and any weights trained on them are subject to
 the dataset's own licence (HAM10000: CC BY-NC 4.0).
+
+## License and credits
+
+* **Code:** MIT, see [LICENSE](LICENSE). Copyright (c) 2026 anirva09.
+* **Trained weights:** derived from HAM10000 (CC BY-NC). The weights are therefore for
+  **non-commercial** use only, with attribution, even though the code is MIT.
+* **Dataset:** Tschandl P., Rosendahl C., Kittler H. The HAM10000 dataset, a large collection of
+  multi-source dermatoscopic images of common pigmented skin lesions. *Sci. Data* 5, 180161
+  (2018). https://doi.org/10.7910/DVN/DBW86T. Images via the ISIC Archive.
+* **Base model:** Vision Transformer ViT-Base/16, Dosovitskiy et al., "An Image is Worth 16x16
+  Words", ICLR 2021. Initial weights: `google/vit-base-patch16-224-in21k` (Apache-2.0), served
+  through Hugging Face Transformers.
+* **Project:** dataset preparation, lesion-grouped split, training and evaluation of the release
+  model, and the MelaDx7 application were done by the project author (anirva09).
+* The screenshots show images from the HAM10000 test split (CC BY-NC).

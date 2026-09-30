@@ -38,18 +38,18 @@ class Settings(BaseSettings):
     docs_enabled: bool = True
 
     # ------------------------------------------------------------ database
-    database_url: str = "postgresql+asyncpg://lesionlens:lesionlens@localhost:5432/lesionlens"
+    database_url: str = "postgresql+asyncpg://meladx7:meladx7@localhost:5432/meladx7"
     database_echo: bool = False
     database_pool_size: int = 5
 
     # -------------------------------------------------------- auth / JWT
     jwt_secret: SecretStr = Field(min_length=32)
     jwt_algorithm: Literal["HS256", "HS384", "HS512"] = "HS256"
-    jwt_issuer: str = "lesionlens"
-    jwt_audience: str = "lesionlens-api"
+    jwt_issuer: str = "meladx7"
+    jwt_audience: str = "meladx7-api"
     access_token_ttl_minutes: int = Field(default=15, ge=1, le=120)
     refresh_token_ttl_days: int = Field(default=7, ge=1, le=60)
-    refresh_cookie_name: str = "lesionlens_refresh"
+    refresh_cookie_name: str = "meladx7_refresh"
     cookie_secure: bool | None = None  # None -> True in production, False otherwise
     cookie_samesite: Literal["strict", "lax"] = "strict"
 

@@ -4,7 +4,7 @@ By default tests run against a temporary SQLite database (migrated with Alembic,
 exactly as in production). Set ``TEST_DATABASE_URL`` to run the same suite
 against PostgreSQL, e.g.::
 
-    TEST_DATABASE_URL=postgresql+asyncpg://lesionlens:pw@localhost:5432/lesionlens_test pytest backend/tests
+    TEST_DATABASE_URL=postgresql+asyncpg://meladx7:pw@localhost:5432/meladx7_test pytest backend/tests
 
 Images are synthetic and generated on the fly; the model is an *untrained*
 pipeline-verification artifact (or a tiny model trained on synthetic shapes).

@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "LesionLens API",
+    "title": "MelaDx7 API",
     "description": "\nInterpretable deep learning for dermoscopic skin-lesion analysis.\n\nA convolutional neural network classifies an uploaded dermoscopic image into the\nclasses defined by the loaded model card, reports calibrated class probabilities and\nan uncertainty assessment, and explains the prediction with a Grad-CAM heatmap.\n\n**This API provides assistive model outputs for research and clinical decision support.\nIt is not a medical diagnosis and must not replace evaluation by a qualified healthcare\nprofessional.**\n\nAuthenticate with `POST /api/auth/login`, then send `Authorization: Bearer <access_token>`.\n",
     "version": "1.0.0"
   },

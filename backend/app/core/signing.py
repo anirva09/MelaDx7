@@ -41,7 +41,7 @@ class SignedReference:
 class UrlSigner:
     def __init__(self, secret: str, *, default_ttl: int, prefix: str = "/api/files") -> None:
         # Derive a dedicated key so file signatures never share a key with JWTs.
-        self._key = hmac.new(secret.encode(), b"lesionlens/file-url/v1", hashlib.sha256).digest()
+        self._key = hmac.new(secret.encode(), b"meladx7/file-url/v1", hashlib.sha256).digest()
         self.default_ttl = default_ttl
         self.prefix = prefix.rstrip("/")
 

@@ -110,13 +110,13 @@ class TestS3Storage:
     @mock_aws
     def test_round_trip_with_moto(self) -> None:
         client = boto3.client("s3", region_name="us-east-1")
-        client.create_bucket(Bucket="lesionlens-test")
-        storage = S3Storage("lesionlens-test", prefix="dev", client=client)
+        client.create_bucket(Bucket="meladx7-test")
+        storage = S3Storage("meladx7-test", prefix="dev", client=client)
         storage.put("analyses/a/original.jpg", b"jpeg-bytes")
         storage.put("analyses/a/predictions/p/heatmap.png", b"png-bytes")
         assert storage.get("analyses/a/original.jpg") == b"jpeg-bytes"
         assert storage.exists("analyses/a/original.jpg")
-        head = client.head_object(Bucket="lesionlens-test", Key="dev/analyses/a/original.jpg")
+        head = client.head_object(Bucket="meladx7-test", Key="dev/analyses/a/original.jpg")
         assert head["ContentType"] == "image/jpeg"
         assert head["ServerSideEncryption"] == "AES256"
         assert storage.delete_prefix("analyses/a") == 2

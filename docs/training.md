@@ -13,50 +13,23 @@ pip install -e .                                       # makes the `ml` package 
 ```
 
 No GPU? Use the Kaggle/Colab notebook in `notebooks/train_ham10000_kaggle.ipynb`
-(free GPU; HAM10000 is available there as "Skin Cancer MNIST: HAM10000").
+(free GPU). Upload the prepared `data/processed` folder and the code as Kaggle datasets and set
+`CHOICE = "vit"` in the notebook; the notebook documents the exact steps..
 
 ## 2. Dataset: HAM10000
 
-* **Name:** HAM10000 ("Human Against Machine with 10000 training images")
-* **Source:** Harvard Dataverse, https://doi.org/10.7910/DVN/DBW86T (also in the ISIC Archive)
-* **Licence:** CC BY-NC 4.0 - non-commercial use only, with attribution. Check the terms
-  at the source before use.
-* **Citation:** Tschandl P., Rosendahl C., Kittler H. The HAM10000 dataset, a large
-  collection of multi-source dermatoscopic images of common pigmented skin lesions.
-  *Sci. Data* 5, 180161 (2018).
-* **Content:** 10,015 dermatoscopic images, 7 diagnostic categories, metadata CSV with
-  `lesion_id`, `image_id`, `dx`, `dx_type`, `age`, `sex`, `localization`.
-
-Download and unpack so you have:
-
-```
-data/raw/HAM10000_metadata.csv
-data/raw/HAM10000_images_part_1/ISIC_0024306.jpg ...
-data/raw/HAM10000_images_part_2/ISIC_0029306.jpg ...
-```
-
-No dataset is bundled with this repository, and none is fabricated.
-
-## 3. Lesion-grouped split
+The release model uses the HAM10000 collection as exported from the ISIC Archive (11,719
+images used, 7 classes; CC BY-NC, attribution to Tschandl et al., *Sci. Data* 5, 180161,
+2018). Audit, label mapping, split and per-class counts are in [dataset.md](dataset.md).
+Prepare it with the lesion-grouped splitter:
 
 ```bash
-python -m ml.datasets.prepare_ham10000 \
-  --metadata data/raw/HAM10000_metadata.csv \
-  --images data/raw/HAM10000_images_part_1 data/raw/HAM10000_images_part_2 \
-  --output data/processed --mode copy          # or --mode symlink / hardlink to save space
+python -m ml.datasets.prepare_ham10000   --metadata path/to/metadata.csv --images path/to/ISIC-images --output data/processed
 ```
 
-HAM10000 contains several images of the same lesion (shared `lesion_id`). An image-level
-random split would put near-duplicates in both training and test sets and inflate test
-scores. The script uses `StratifiedGroupKFold` so each lesion appears in exactly one split
-while class proportions stay close to the whole dataset (default 70/15/15, seed 42). It
-asserts there is no lesion overlap and writes `split_manifest.csv` and
-`split_summary.json` for reproducibility.
-
-### Using another dataset
-
-Any folder dataset works:
-
+The script accepts the ISIC Archive layout and the original Harvard Dataverse layout,
+excludes synthetic images, checks for corrupt and duplicate files and writes
+`split_manifest.csv` and `split_summary.json` (seed 42). The result is:
 ```
 data/processed/{train,validation,test}/<class_code>/*.jpg
 ```
@@ -69,8 +42,13 @@ refuses unknown or missing class folders instead of guessing.
 ## 4. Train
 
 ```bash
-python -m ml.training.train --config ml/configs/efficientnet_b0.yaml
+python -m ml.training.train --config ml/configs/vit_base.yaml      # release model (ViT-Base/16)
+# comparison configs: efficientnet_b0.yaml, resnet50.yaml
 ```
+
+`vit_base.yaml` starts from Google's public ImageNet-21k ViT-Base/16 weights (Hugging Face,
+Apache-2.0) and needs `transformers` (in `ml/requirements.txt`) and internet access for the first
+download. About 22 minutes on a Kaggle T4.
 
 Override anything from the command line (unknown keys are rejected):
 
@@ -102,7 +80,7 @@ What the pipeline does:
 Macro-F1 is the selection metric because accuracy is dominated by `nv` (about 67% of
 images); a model predicting `nv` for everything would already reach roughly 67% accuracy.
 
-Output (`models/efficientnet_b0-v1.0.0/`): `model.pt`, `model_card.json`,
+Output (`models/vit_base_patch16_224-v1.0.0/`): `model.pt`, `model_card.json`,
 `history.jsonl`, `training_config.json`, `metrics.json`, `samples/`, `checkpoints/`.
 
 Bump `model.version` for every new model you intend to keep; artifacts are identified by
@@ -111,14 +89,14 @@ architecture + version, and predictions by the weights checksum.
 ## 5. Evaluate again (optional)
 
 ```bash
-python -m ml.evaluation.evaluate --model models/efficientnet_b0-v1.0.0 --data data/processed
+python -m ml.evaluation.evaluate --model models/vit_base_patch16_224-v1.0.0 --data data/processed
 ```
 
 ## 6. Serve it
 
 ```bash
 # .env
-MODEL_PATH=models/efficientnet_b0-v1.0.0
+MODEL_PATH=models/vit_base_patch16_224-v1.0.0
 ALLOW_UNTRAINED_MODEL=false
 ```
 

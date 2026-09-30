@@ -93,7 +93,7 @@ Abridged response:
   "image": { "url": "/api/files/eyJu...", "width": 600, "height": 450, "sha256": "..." },
   "quality": { "warnings": [] },
   "prediction": {
-    "model": { "display_name": "EfficientNet-B0", "version": "1.0.0", "trained": true, "weights_sha256": "..." },
+    "model": { "display_name": "ViT-Base/16", "version": "1.0.0", "trained": true, "weights_sha256": "..." },
     "predicted_class": { "code": "nv", "name": "Melanocytic nevus", "group": "benign" },
     "confidence": 0.81,
     "probabilities": [ { "code": "nv", "probability": 0.81 }, { "code": "mel", "probability": 0.11 } ],

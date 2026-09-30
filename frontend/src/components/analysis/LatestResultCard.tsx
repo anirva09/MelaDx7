@@ -6,7 +6,7 @@ import { useAnalysis } from "@/api/queries";
 import { formatAgo } from "@/lib/analysis";
 import { formatPercent } from "@/lib/utils";
 
-const STORAGE_KEY = "lesionlens-dismissed-latest";
+const STORAGE_KEY = "meladx7-dismissed-latest";
 
 function readDismissed(): string | null {
   try {
