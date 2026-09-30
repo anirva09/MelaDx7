@@ -78,8 +78,11 @@ a clinician or researcher can inspect, question and reproduce it.
 - JWT access tokens + rotating httpOnly refresh cookies with reuse detection; Argon2id.
 - Local or S3-compatible storage behind one interface; signed, expiring image URLs.
 - Structured JSON logs with request IDs; health checks; rate limits; security headers; CSP.
-- Responsive UI (phone, tablet, desktop), keyboard accessible, light and dark themes.
-- Docker Compose deployment, CI workflow, 208 automated tests (ML, API, UI, browser end-to-end).
+- Interface built to the product's Figma reference: a desktop dashboard with sidebar and
+  quick search, and a separate native-feeling phone design (floating glass tab bar with an
+  analyse button, bottom sheets, long-press menus, swipe-to-delete, pull-to-refresh, pinch
+  zoom and swipe comparison, safe areas). Keyboard accessible; dark by default, light opt-in.
+- Docker Compose deployment, CI workflow, 222 automated tests (ML, API, UI, browser end-to-end).
 
 **Honest by construction:** no bundled or fabricated dataset, no hard-coded predictions,
 metrics or heatmaps. Without trained weights the app runs and says so; metrics are shown
@@ -91,17 +94,20 @@ The screenshots below were taken with an **untrained** pipeline-verification mod
 (randomly initialised), so the predictions and heatmaps shown are meaningless and the UI
 marks them as such. Replace them with screenshots from your trained model.
 
-| Landing page | Dashboard |
+| Desktop home | Analysis result |
 |---|---|
-| ![Landing page](docs/screenshots/landing.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+| ![Desktop home](docs/screenshots/desktop-home.png) | ![Analysis result](docs/screenshots/desktop-result.png) |
 
-| Analysis result | Model card and evaluation |
+| Model card and evaluation | Light theme |
 |---|---|
-| ![Analysis result](docs/screenshots/analysis-detail.png) | ![Model page](docs/screenshots/model.png) |
+| ![Model page](docs/screenshots/desktop-model.png) | ![Light theme](docs/screenshots/desktop-result-light.png) |
 
-| Dark theme | Phone |
-|---|---|
-| ![Dark theme](docs/screenshots/analysis-detail-dark.png) | ![Phone layout](docs/screenshots/mobile.png) |
+**Phone:** home, result with swipe comparison, history, long-press menu, the "+" composer
+and the class sheet.
+
+![Phone screens](docs/screenshots/phone.png)
+
+![Landing page](docs/screenshots/landing.png)
 
 <!-- After training, add: docs/screenshots/trained-result.png and docs/screenshots/evaluation.png -->
 
@@ -145,7 +151,7 @@ Detailed diagrams (request sequence, ER model, layering, security controls) are 
 | Explainability | Grad-CAM (own implementation), Turbo and single-hue colour maps |
 | API | FastAPI, Pydantic v2, SQLAlchemy 2 (async), asyncpg, Alembic, PyJWT, argon2-cffi, ReportLab |
 | Data | PostgreSQL 16 (SQLite for fast tests), local or S3-compatible object storage |
-| Frontend | React 19, TypeScript, Vite, Tailwind CSS v4, Radix UI (shadcn-style components), TanStack Query, React Router, React Hook Form + Zod, Recharts, Lucide |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS v4, Radix UI (shadcn-style components), TanStack Query, React Router, React Hook Form + Zod, Recharts, Lucide, DM Sans |
 | Quality | pytest, Vitest + Testing Library, Playwright, Ruff, mypy, ESLint (incl. jsx-a11y) |
 | Operations | Docker, Docker Compose, nginx, GitHub Actions |
 

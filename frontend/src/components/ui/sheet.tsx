@@ -46,6 +46,7 @@ export function BottomSheet({
   useSheetStack(open && !desktop);
   const [drag, setDrag] = useState(0);
   const dragStart = useRef<number | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (desktop || (event.target as HTMLElement).closest("input,button")) return;
@@ -126,6 +127,11 @@ export function BottomSheet({
         <Dialog.Content
           className="sheet-host fixed inset-0 z-50 flex flex-col focus:outline-none"
           onPointerDownOutside={(event) => event.preventDefault()}
+          // Focus the sheet itself (as native sheets do); Tab then reaches its controls.
+          onOpenAutoFocus={(event) => {
+            event.preventDefault();
+            panelRef.current?.focus();
+          }}
         >
           {size === "full" && (
             <div
@@ -146,8 +152,10 @@ export function BottomSheet({
             onClick={() => onOpenChange(false)}
           />
           <div
+            ref={panelRef}
+            tabIndex={-1}
             className={cn(
-              "data-open-sheet flex flex-col overflow-hidden rounded-t-[24px] bg-surface-2 dark:bg-[#242424]",
+              "data-open-sheet flex flex-col overflow-hidden rounded-t-[24px] outline-none bg-surface-2 dark:bg-[#242424]",
               size === "full" ? "h-[calc(100dvh-var(--topbar-top)-64px)]" : "max-h-[85dvh]",
               className,
             )}

@@ -195,14 +195,58 @@ inference endpoints return `503 model_unavailable` with setup instructions.
 ## Frontend
 
 ```
-src/api/          fetch client (token in memory, single-flight refresh), typed endpoints, query hooks
-src/context/      AuthProvider (session restore from refresh cookie), ThemeProvider
-src/layouts/      App shell (sidebar, drawer), auth layout
-src/pages/        Landing, auth, dashboard, analyze, history, detail, model, settings
-src/components/   ImageUploader, GradCAMViewer, ConfidenceChart, PredictionCard, AnalysisTable,
-                  MetricCard, ModelInfoCard, DisclaimerBanner, States, charts/*, ui/*
-src/lib/          formatting, colour maps, file validation, shared copy (disclaimers)
+src/api/            fetch client (token in memory, single-flight refresh), typed endpoints, query hooks
+src/context/        AuthProvider (session restore from refresh cookie), ThemeProvider
+src/layouts/        App shell (desktop sidebar or phone chrome), auth layout
+src/pages/          Landing, auth, Home, Analyze, History, result, Reports, Profile, Model
+src/components/
+  shell/            Sidebar, QuickSearch (Ctrl/Cmd+K), MobileTabBar, MobileTopBar, BottomToolbar,
+                    Composer ("+" action), glass buttons, FixedChrome portal, AboutSheet
+  analysis/         ActivityList, ActivityTimeline, ResultNoteCard, ReviewList, AnalysisRow,
+                    LatestResultCard, SummaryRows, AnalysisMenu (long-press actions)
+  ui/               BottomSheet, LongPressMenu, SwipeRow, PullIndicator, page/section primitives,
+                    buttons, inputs, menus, dialogs
+  GradCAMViewer     stage (gestures), controls, full screen, desktop composite
+src/hooks/          media queries, long press, pull to refresh, sheet stacking, keyboard detection
+src/lib/            formatting, colour maps, viewer state/export, file validation, shared copy
 ```
+
+### Design system
+
+The interface reproduces the product's Figma reference ("Mobile App UI"): the dark palette
+(#141414 page, #1f1f1f cards, #242424 nested cards, white 11% glass), DM Sans with the
+reference type scale (10 / 12 / 13 / 14 / 16 / 18 / 22 / 24 / 32 px), 16px card radii, section
+headers with a caret and a vertical-dots menu, and the reference's accent colours (blue
+#2995ff for actions; red, yellow, violet and salmon for dates and class groups). Tokens live in
+`src/index.css`; a light theme mirrors the same structure and is opt-in (dark is the default).
+Icons are Lucide at the reference's 1.5px stroke. Filled buttons that carry text use a deeper
+blue (#1d74d8) so white labels meet WCAG AA contrast.
+
+### Two interaction designs
+
+Below 1024px the app is a touch interface, not a collapsed desktop:
+
+| Reference element | In LesionLens |
+|---|---|
+| Floating glass tab bar + separate "+" circle | Home, History, Reports, Profile; "+" opens the analysis composer |
+| Top-right control pill (bell, dots) | Model status (dot shows ready/untrained/missing) and a More menu |
+| Calendar card (date header, coloured rows) | Analyses grouped by day, coloured by class group |
+| Featured image card with close | Latest result with its Grad-CAM overlay |
+| Daily Tasks checklist, "Add task" row | Results flagged uncertain; "Start a new analysis" row |
+| Horizontal Notes cards, Recents/Suggested | Result cards, Recents/Flagged |
+| Empty state with arrow to "+" | First-run state pointing at the analyse button |
+| Long-press lift + blurred menu | Open, download report, copy ID, prediction history, delete |
+| Composer above the keyboard with action pill | Camera, photo library and files |
+| Note page (back circle, share pill, title, property rows, bottom tool pill) | Result and New analysis screens |
+| Templates sheet (close/confirm circles, search, 2-column grid) | Filters, "Explain a class" |
+| Desktop dashboard (sidebar, greeting, pill buttons, cards, time grid) | Desktop Home with results, activity timeline, review list, summary |
+
+Phone interactions: safe-area-aware floating chrome (portalled outside the scrolling content
+so it stays anchored while a sheet recedes the page), pull-to-refresh, swipe-to-delete rows,
+infinite scroll, bottom sheets with drag-to-dismiss, pinch/double-tap zoom and swipe
+comparison in the image viewer, full-screen viewer, and floating bars that hide while the
+on-screen keyboard is open. Every gesture has a button or keyboard equivalent (right-click or
+Shift+F10 opens the long-press menu; arrow keys move the comparison divider).
 
 The Grad-CAM viewer fetches the stored raw CAM (8-bit grayscale) and colourises it on a
 canvas, so opacity, threshold and colour map change instantly without new server work,
