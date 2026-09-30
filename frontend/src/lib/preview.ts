@@ -10,6 +10,14 @@ export interface PreviewImage {
   dispose: () => void;
 }
 
+/**
+ * Revoke shortly after the preview is released: the <img> showing it may still be loading while
+ * the page navigates away, and revoking at once makes the browser log ERR_FILE_NOT_FOUND.
+ */
+function revokeLater(url: string): void {
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 function loadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -33,18 +41,18 @@ export async function makePreview(file: File): Promise<PreviewImage> {
   const width = img.naturalWidth;
   const height = img.naturalHeight;
   const scale = PREVIEW_MAX_SIDE / Math.max(width, height);
-  if (scale >= 1) return { url: original, width, height, dispose: () => URL.revokeObjectURL(original) };
+  if (scale >= 1) return { url: original, width, height, dispose: () => revokeLater(original) };
 
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(width * scale);
   canvas.height = Math.round(height * scale);
   const ctx = canvas.getContext("2d");
-  if (!ctx) return { url: original, width, height, dispose: () => URL.revokeObjectURL(original) };
+  if (!ctx) return { url: original, width, height, dispose: () => revokeLater(original) };
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.9));
-  if (!blob) return { url: original, width, height, dispose: () => URL.revokeObjectURL(original) };
+  if (!blob) return { url: original, width, height, dispose: () => revokeLater(original) };
   URL.revokeObjectURL(original);
   const small = URL.createObjectURL(blob);
-  return { url: small, width, height, dispose: () => URL.revokeObjectURL(small) };
+  return { url: small, width, height, dispose: () => revokeLater(small) };
 }
