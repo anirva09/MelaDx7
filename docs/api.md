@@ -26,7 +26,7 @@ echoed back, so a rejected password never appears in a response.
 ## Authentication
 
 1. `POST /api/auth/register` or `POST /api/auth/login` returns an access token and sets an
-   httpOnly refresh cookie (`lesionlens_refresh`, path `/api/auth`, SameSite=Strict).
+   httpOnly refresh cookie (`meladx7_refresh`, path `/api/auth`, SameSite=Strict).
 2. Send `Authorization: Bearer <access_token>` on every other request. Tokens last 15 minutes.
 3. `POST /api/auth/refresh` (cookie only) returns a new access token and **rotates** the
    cookie. Presenting an already-rotated token revokes the whole session family, except

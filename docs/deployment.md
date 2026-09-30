@@ -111,7 +111,7 @@ Requirements: Python 3.11+, Node 20+, PostgreSQL 14+.
 python -m venv .venv && source .venv/bin/activate
 make install                                  # CPU torch, backend deps, `pip install -e .`, npm ci
 cp .env.example .env                          # set JWT_SECRET and DATABASE_URL
-createdb lesionlens                           # or use any PostgreSQL instance
+createdb meladx7                           # or use any PostgreSQL instance
 make migrate
 make dev-model                                # optional: random-weights model for UI work only
 #   .env: MODEL_PATH=models/dev-untrained, ALLOW_UNTRAINED_MODEL=true
