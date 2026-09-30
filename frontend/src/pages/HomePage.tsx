@@ -110,7 +110,7 @@ function EmptyHome() {
         </g>
       </svg>
       <h1 className="mt-10 text-xl font-semibold leading-[1.5] tracking-ref text-ink dark:text-[#f5f5f5]">
-        Get started with LesionLens
+        Get started with MelaDx7
       </h1>
       <p className="mt-1.5 max-w-[281px] text-base font-medium leading-[1.5] tracking-ref text-subtle">
         Analyse a dermoscopic image with the action button to see class probabilities and a Grad-CAM map
@@ -329,7 +329,7 @@ function DesktopHome() {
             </div>
             {stats && stats.total_analyses === 0 ? (
               <div className="flex flex-col items-center gap-3 px-6 pb-10 pt-8 text-center">
-                <p className="text-xl font-semibold tracking-ref text-ink">Get started with LesionLens</p>
+                <p className="text-xl font-semibold tracking-ref text-ink">Get started with MelaDx7</p>
                 <p className="max-w-md text-base text-subtle">
                   Upload a dermoscopic image to get class probabilities and a Grad-CAM explanation. Results
                   are saved here.

@@ -590,7 +590,7 @@ interface GradCAMViewerProps extends ViewerSources {
  * never altered. Zoom/pan works with buttons, gestures, and the keyboard.
  */
 export function GradCAMViewer({
-  downloadName = "lesionlens-gradcam.png",
+  downloadName = "meladx7-gradcam.png",
   className,
   state: external,
   ...sources

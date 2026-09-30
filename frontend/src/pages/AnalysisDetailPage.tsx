@@ -338,7 +338,7 @@ export function AnalysisDetailPage() {
     degenerate: classView ? classView.degenerate : (explanation?.degenerate ?? false),
     onImageError,
   };
-  const downloadName = `lesionlens-${detail.id.slice(0, 8)}-${viewing?.code ?? "image"}.png`;
+  const downloadName = `meladx7-${detail.id.slice(0, 8)}-${viewing?.code ?? "image"}.png`;
   const canRerun = !detail.produced_by_current_model && model.data?.status !== "unavailable";
 
   const report = async () => {

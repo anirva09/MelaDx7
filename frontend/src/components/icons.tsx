@@ -24,7 +24,7 @@ export function OverviewIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-/** Dermatoscope field of view with a lesion mark: the LesionLens mark. */
+/** Dermatoscope field of view with a lesion mark: the MelaDx7 mark. */
 export function LensMark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden {...props}>

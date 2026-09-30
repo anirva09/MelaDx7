@@ -34,7 +34,7 @@ export class ApiError extends Error {
 }
 
 export const NETWORK_ERROR_MESSAGE =
-  "Could not reach the LesionLens server. Check your connection and try again.";
+  "Could not reach the MelaDx7 server. Check your connection and try again.";
 
 type Listener = (token: string | null) => void;
 

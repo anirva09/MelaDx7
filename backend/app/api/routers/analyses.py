@@ -160,7 +160,7 @@ async def download_report(
         content=pdf,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f'attachment; filename="lesionlens-report-{str(analysis_id)[:8]}.pdf"',
+            "Content-Disposition": f'attachment; filename="meladx7-report-{str(analysis_id)[:8]}.pdf"',
             "Cache-Control": "no-store",
         },
     )

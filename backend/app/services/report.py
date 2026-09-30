@@ -168,12 +168,12 @@ def build_report(
         rightMargin=18 * mm,
         topMargin=16 * mm,
         bottomMargin=20 * mm,
-        title=f"LesionLens analysis {analysis.id}",
-        author="LesionLens",
+        title=f"MelaDx7 analysis {analysis.id}",
+        author="MelaDx7",
         subject="AI-assisted skin lesion analysis",
     )
     story: list[object] = [
-        Paragraph("LesionLens analysis report", styles["title"]),
+        Paragraph("MelaDx7 analysis report", styles["title"]),
         Paragraph(
             "AI-assisted dermoscopic image analysis with Grad-CAM explanation. "
             "For research and clinical decision support only.",

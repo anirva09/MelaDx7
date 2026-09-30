@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * LesionLens design tokens, taken from the product's Figma reference ("Mobile App UI").
+ * MelaDx7 design tokens, taken from the product's Figma reference ("Mobile App UI").
  * The reference is a dark interface; dark is the default theme and the light theme mirrors
  * the same structure with inverted neutrals.
  *

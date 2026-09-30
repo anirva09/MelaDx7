@@ -20,7 +20,7 @@ export function RouteErrorPage({ inline = false }: { inline?: boolean }) {
       ? "This page does not exist"
       : "This page stopped working";
   const message = chunkFailed
-    ? "A newer version of LesionLens is available. Reload to continue."
+    ? "A newer version of MelaDx7 is available. Reload to continue."
     : "An unexpected error occurred while displaying this page. Your data is safe. Reload the page or go back to the overview.";
 
   const Wrapper = inline ? "div" : "main";

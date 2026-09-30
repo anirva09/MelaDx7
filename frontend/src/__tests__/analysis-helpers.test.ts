@@ -6,7 +6,10 @@ describe("analysis presentation helpers", () => {
 
   it("labels today, yesterday and older days", () => {
     expect(dayLabel(new Date(2026, 8, 30, 9).toISOString(), now)).toMatchObject({ today: true });
-    expect(dayLabel(new Date(2026, 8, 30, 9).toISOString(), now).text).toMatch(/SEP 30/);
+    // Month/day order follows the runtime locale ("SEP 30" in en-US, "30 SEPT" in en-GB).
+    const today = dayLabel(new Date(2026, 8, 30, 9).toISOString(), now).text;
+    expect(today).toMatch(/SEP/);
+    expect(today).toMatch(/30/);
     expect(dayLabel(new Date(2026, 8, 29, 23).toISOString(), now)).toEqual({ text: "YESTERDAY", today: false });
     expect(dayLabel(new Date(2026, 8, 20, 12).toISOString(), now).today).toBe(false);
   });

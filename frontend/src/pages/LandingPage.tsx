@@ -218,7 +218,7 @@ export function LandingPage() {
       </a>
       <header className="sticky top-0 z-30 border-b border-line bg-paper/85 pt-[var(--safe-top)] backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
-          <Link to="/" aria-label="LesionLens home">
+          <Link to="/" aria-label="MelaDx7 home">
             <Logo />
           </Link>
           <nav aria-label="Sections" className="hidden items-center gap-6 text-sm text-ink-2 md:flex">

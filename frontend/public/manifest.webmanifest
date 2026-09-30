@@ -1,6 +1,6 @@
 {
-  "name": "LesionLens",
-  "short_name": "LesionLens",
+  "name": "MelaDx7",
+  "short_name": "MelaDx7",
   "description": "Interpretable skin lesion analysis with Grad-CAM. Research and decision-support prototype; not a diagnostic device.",
   "start_url": "/app",
   "scope": "/",

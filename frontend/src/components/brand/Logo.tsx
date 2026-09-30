@@ -9,7 +9,7 @@ export function Logo({ className, compact = false }: { className?: string; compa
         <circle cx="16" cy="16" r="9.5" fill="none" stroke="#fff" strokeWidth="2" />
         <circle cx="16" cy="16" r="4.2" fill="#2995ff" />
       </svg>
-      {!compact && <span className="text-base font-bold">LesionLens</span>}
+      {!compact && <span className="text-base font-bold">MelaDx7</span>}
     </span>
   );
 }

@@ -8,7 +8,7 @@ export function AboutSheet({ open, onOpenChange }: { open: boolean; onOpenChange
     { title: "About Grad-CAM", body: GRADCAM_NOTE },
     {
       title: "Research use",
-      body: "LesionLens is a research and clinical decision-support prototype. It has not been cleared or approved as a medical device.",
+      body: "MelaDx7 is a research and clinical decision-support prototype. It has not been cleared or approved as a medical device.",
     },
     {
       title: "Privacy",
@@ -20,7 +20,7 @@ export function AboutSheet({ open, onOpenChange }: { open: boolean; onOpenChange
       open={open}
       onOpenChange={onOpenChange}
       title="About & safety"
-      description="How to read LesionLens results safely."
+      description="How to read MelaDx7 results safely."
       size="auto"
     >
       <div className="flex flex-col gap-3 pb-2">

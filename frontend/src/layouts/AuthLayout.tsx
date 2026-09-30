@@ -16,7 +16,7 @@ export function AuthLayout({
   return (
     <div className="grid min-h-dvh bg-paper lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       <aside className="relative hidden flex-col justify-between overflow-hidden bg-stage p-10 text-white lg:flex">
-        <Link to="/" aria-label="LesionLens home" className="[&_span]:text-white">
+        <Link to="/" aria-label="MelaDx7 home" className="[&_span]:text-white">
           <Logo />
         </Link>
         <div className="relative max-w-md">
@@ -34,7 +34,7 @@ export function AuthLayout({
 
       <main className="flex flex-col items-center justify-center px-4 pb-[max(2.5rem,var(--safe-bottom))] pt-[max(2.5rem,calc(var(--safe-top)+1rem))] sm:px-8">
         <div className="w-full max-w-sm">
-          <Link to="/" className="mb-10 inline-block lg:hidden" aria-label="LesionLens home">
+          <Link to="/" className="mb-10 inline-block lg:hidden" aria-label="MelaDx7 home">
             <Logo />
           </Link>
           <h1 className="text-2xl font-semibold text-ink">{title}</h1>

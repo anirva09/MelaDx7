@@ -119,7 +119,7 @@ export function RegisterPage() {
               {...register("acknowledge")}
             />
             <span>
-              I understand LesionLens is a research and decision-support prototype. Its outputs are not a
+              I understand MelaDx7 is a research and decision-support prototype. Its outputs are not a
               medical diagnosis.
             </span>
           </label>

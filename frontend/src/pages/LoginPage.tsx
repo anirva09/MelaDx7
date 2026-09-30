@@ -52,7 +52,7 @@ export function LoginPage() {
       title="Sign in"
       subtitle={
         <>
-          New to LesionLens?{" "}
+          New to MelaDx7?{" "}
           <Link to="/register" className="font-medium text-accent hover:underline">
             Create an account
           </Link>
