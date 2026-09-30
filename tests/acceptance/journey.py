@@ -20,6 +20,17 @@ import httpx
 results: list[tuple[str, bool, str]] = []
 
 
+def cookie_header(response: httpx.Response) -> str | None:
+    """'name=value' of the refresh cookie from a Set-Cookie header.
+
+    Production cookies are Secure, which HTTP clients refuse to send over plain http://localhost
+    (browsers do send them on localhost). The journey therefore carries the cookie explicitly,
+    which also lets it replay a revoked cookie on purpose.
+    """
+    raw = response.headers.get("set-cookie")
+    return raw.split(";", 1)[0] if raw else None
+
+
 def step(name: str, ok: bool, detail: str = "") -> bool:
     results.append((name, ok, detail))
     print(f"[{'PASS' if ok else 'FAIL'}] {name}{(' - ' + detail) if detail else ''}", flush=True)
@@ -49,6 +60,8 @@ def main() -> int:
         return 1
     tok = r.json()["access_token"]
     h = {"Authorization": f"Bearer {tok}"}
+    rc = cookie_header(r) or ""
+    c.cookies.clear()  # only the explicit Cookie header below is used
     step("refresh cookie is httpOnly", "httponly" in r.headers.get("set-cookie", "").lower())
     step("me", c.get("/api/auth/me", headers=h).json().get("email") == email)
 
@@ -105,20 +118,23 @@ def main() -> int:
     step("delete one analysis", c.delete(f"/api/analyses/{created[-1][1]['id']}", headers=h).status_code == 204)
 
     # session lifecycle
-    rf = c.post("/api/auth/refresh")
-    step("refresh rotates the session", rf.status_code == 200 and "access_token" in rf.json())
-    step("logout", c.post("/api/auth/logout").status_code == 204)
-    step("refresh after logout is rejected", c.post("/api/auth/refresh").status_code == 401)
+    rf = c.post("/api/auth/refresh", headers={"Cookie": rc})
+    rotated = cookie_header(rf) or ""
+    step("refresh rotates the session", rf.status_code == 200 and "access_token" in rf.json() and rotated != rc)
+    step("logout", c.post("/api/auth/logout", headers={"Cookie": rotated}).status_code == 204)
+    step("revoked refresh cookie is rejected after logout", c.post("/api/auth/refresh", headers={"Cookie": rotated}).status_code == 401)
 
     r = c.post("/api/auth/login", json={"email": email, "password": password})
     h3 = {"Authorization": f"Bearer {r.json()['access_token']}"}
+    live_cookie = cookie_header(r) or ""
+    c.cookies.clear()
     bad = c.request("DELETE", "/api/users/me", headers=h3, json={"password": "wrong-password-xyz"})
     step("account deletion needs the right password", bad.status_code in (400, 401, 403, 422), str(bad.status_code))
     d = c.request("DELETE", "/api/users/me", headers=h3, json={"password": password})
     step("delete account", d.status_code == 204, str(d.status_code))
     step("old access token dead after deletion", c.get("/api/auth/me", headers=h3).status_code == 401)
     step("login fails after deletion", c.post("/api/auth/login", json={"email": email, "password": password}).status_code in (400, 401))
-    step("refresh fails after deletion", c.post("/api/auth/refresh").status_code == 401)
+    step("session cookie is dead after deletion", c.post("/api/auth/refresh", headers={"Cookie": live_cookie}).status_code == 401)
     for path in ("/api/analyses", "/api/model/info", "/api/stats/overview"):
         step(f"protected route {path} is 401 without a session", httpx.get(args.base + path).status_code == 401)
     step("deleted user's analysis is unreachable", c.get(f"/api/analyses/{aid}", headers=h3).status_code in (401, 404))
