@@ -1,6 +1,6 @@
 /** TanStack Query hooks and cache keys. */
 
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { analysisApi, modelApi, statsApi } from "./endpoints";
 import type { AnalysisDetail, AnalysisQuery } from "./types";
@@ -8,6 +8,7 @@ import type { AnalysisDetail, AnalysisQuery } from "./types";
 export const queryKeys = {
   analyses: ["analyses"] as const,
   analysisList: (query: AnalysisQuery) => ["analyses", "list", query] as const,
+  analysisFeed: (query: AnalysisQuery) => ["analyses", "feed", query] as const,
   analysis: (id: string) => ["analyses", "detail", id] as const,
   classExplanation: (id: string, code: string) => ["analyses", "detail", id, "explain", code] as const,
   modelInfo: ["model", "info"] as const,
@@ -39,6 +40,17 @@ export function useAnalyses(query: AnalysisQuery) {
   return useQuery({
     queryKey: queryKeys.analysisList(query),
     queryFn: ({ signal }) => analysisApi.list(query, signal),
+    placeholderData: keepPreviousData,
+  });
+}
+
+/** Paged list that grows as the user scrolls (phones) or presses "Load more". */
+export function useAnalysisFeed(query: Omit<AnalysisQuery, "page">) {
+  return useInfiniteQuery({
+    queryKey: queryKeys.analysisFeed(query),
+    queryFn: ({ pageParam, signal }) => analysisApi.list({ ...query, page: pageParam }, signal),
+    initialPageParam: 1,
+    getNextPageParam: (last) => (last.page < last.pages ? last.page + 1 : undefined),
     placeholderData: keepPreviousData,
   });
 }

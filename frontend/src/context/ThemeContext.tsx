@@ -14,9 +14,10 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 function readPreference(): Preference {
   try {
     const value = localStorage.getItem(STORAGE_KEY);
-    return value === "light" || value === "dark" ? value : "system";
+    // Dark is the default: the product's reference design is a dark interface.
+    return value === "light" || value === "system" ? value : "dark";
   } catch {
-    return "system";
+    return "dark";
   }
 }
 
@@ -40,12 +41,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", resolved === "dark");
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", resolved === "dark" ? "#141414" : "#f2f2f2");
   }, [resolved]);
 
   const setPreference = useCallback((value: Preference) => {
     setPreferenceState(value);
     try {
-      if (value === "system") localStorage.removeItem(STORAGE_KEY);
+      if (value === "dark") localStorage.removeItem(STORAGE_KEY);
       else localStorage.setItem(STORAGE_KEY, value);
     } catch {
       // Storage may be unavailable (private mode); the choice still applies for this session.

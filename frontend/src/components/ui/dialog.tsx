@@ -27,15 +27,15 @@ export function ConfirmDialog({
   return (
     <AlertDialog.Root open={open} onOpenChange={onOpenChange}>
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-[#05090b]/60 backdrop-blur-[2px]" />
-        <AlertDialog.Content className="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-line bg-surface p-6 shadow-[var(--shadow-pop)] focus:outline-none">
-          <AlertDialog.Title className="text-lg font-semibold text-ink">{title}</AlertDialog.Title>
+        <AlertDialog.Overlay className="data-open-fade fixed inset-0 z-50 bg-black/40 backdrop-blur-[16px]" />
+        <AlertDialog.Content className="data-open-pop fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[20px] bg-surface-2 p-5 shadow-[var(--shadow-pop)] focus:outline-none sm:p-6 dark:bg-[#242424]">
+          <AlertDialog.Title className="text-xl font-semibold tracking-ref text-ink">{title}</AlertDialog.Title>
           <AlertDialog.Description asChild>
-            <div className="mt-2 text-sm text-ink-2">{description}</div>
+            <div className="mt-2 text-base text-ink-2">{description}</div>
           </AlertDialog.Description>
-          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
             <AlertDialog.Cancel asChild>
-              <Button variant="secondary" disabled={pending}>
+              <Button variant="glass" disabled={pending}>
                 Cancel
               </Button>
             </AlertDialog.Cancel>

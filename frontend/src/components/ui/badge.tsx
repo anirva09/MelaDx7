@@ -4,15 +4,17 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-2xs font-medium whitespace-nowrap",
+  // Reference tag ("In progress"): radius 10, 14px medium, 4/8 padding.
+  "inline-flex items-center gap-1.5 rounded-[10px] px-2 py-1 text-md leading-[18px] font-medium tracking-title whitespace-nowrap",
   {
     variants: {
       tone: {
-        neutral: "border-line bg-surface-2 text-ink-2",
-        accent: "border-transparent bg-accent-soft text-accent-ink",
-        caution: "border-caution-line bg-caution-soft text-caution",
-        danger: "border-danger-line bg-danger-soft text-danger",
-        good: "border-transparent bg-good-soft text-good",
+        neutral: "bg-surface-2 text-ink-2 dark:bg-[#2a2a2a]",
+        tag: "bg-tag text-tag-ink",
+        accent: "bg-accent-soft text-accent-ink",
+        caution: "bg-caution-soft text-caution",
+        danger: "bg-danger-soft text-danger",
+        good: "bg-good-soft text-good",
       },
     },
     defaultVariants: { tone: "neutral" },

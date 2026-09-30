@@ -3,102 +3,155 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * LesionLens design tokens.
- *   paper    page background            surface   cards, panels
- *   ink      primary text               ink-2     secondary text     muted  captions
- *   line     hairlines                  accent    dermoscope teal (actions, focus, data emphasis)
- *   stage    the image viewer surround - dark and neutral in both themes, so heatmap
- *            colours read the same way regardless of the UI theme
- *   caution  uncertainty / quality notices     danger  destructive actions, errors
- * Chart series colours were validated for CVD separation and contrast on both surfaces.
+ * LesionLens design tokens, taken from the product's Figma reference ("Mobile App UI").
+ * The reference is a dark interface; dark is the default theme and the light theme mirrors
+ * the same structure with inverted neutrals.
+ *
+ *   paper       page background (mobile #141414; desktop main panel #090909)
+ *   surface     section cards (mobile #1f1f1f; desktop #171717)
+ *   surface-2   cards nested in a section (#242424)
+ *   field       inputs and search fields (#333333)
+ *   ink / ink-2 / muted / subtle / faint   text: #fff, #b4b4b4, #808080, #999999, #515151
+ *   line / line-strong                     hairlines #383838, circle outlines #4d4d4d
+ *   glass       floating controls (white 11% + backdrop blur)
+ *   accent      the reference's action blue (#2995ff) for icons, checks and circles;
+ *               accent-fill is a deeper blue for filled buttons that carry text (WCAG AA).
+ *   group-*     class groups use the reference's event colours
  */
 :root {
-  --paper: #f4f6f7;
+  --paper: #f2f2f2;
   --surface: #ffffff;
-  --surface-2: #f7f9fa;
-  --ink: #16212c;
-  --ink-2: #455260;
-  --muted: #64717e;
-  --line: #dde3e8;
-  --line-strong: #c3ccd4;
-  --accent: #00758c;
-  --accent-hover: #00627a;
+  --surface-2: #f4f4f4;
+  --field: #e9e9e9;
+  --sidebar: #f7f7f7;
+  --sidebar-line: #e2e2e2;
+  --ink: #141414;
+  --ink-2: #4b4b4b;
+  --muted: #6f6f6f;
+  --subtle: #666666;
+  --faint: #a3a3a3;
+  --line: #e3e3e3;
+  --line-strong: #c9c9c9;
+  --glass: rgb(0 0 0 / 0.05);
+  --glass-strong: rgb(255 255 255 / 0.72);
+  --glass-edge: rgb(0 0 0 / 0.06);
+  --glass-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
+  --scrim: rgb(242 242 242 / 0.35);
+  --menu: rgb(255 255 255 / 0.78);
+  --active: rgb(0 0 0 / 0.06);
+  --accent: #1a7fe6;
+  --accent-fill: #1a73d9;
   --accent-contrast: #ffffff;
-  --accent-soft: #e3f1f4;
-  --accent-ink: #005466;
-  --stage: #0e1417;
-  --stage-line: #253037;
-  --caution: #8a4f00;
-  --caution-soft: #fdf4e3;
-  --caution-line: #f0d4a4;
-  --danger: #b42318;
-  --danger-soft: #fdeceb;
-  --danger-line: #f5c2bd;
-  --good: #16704a;
-  --good-soft: #e6f4ec;
-  --group-malignant: #a23b52;
-  --group-premalignant: #a8611f;
-  --group-benign: #62788a;
-  --series-1: #0085a0;
-  --series-2: #d9622b;
-  --chart-muted: #bfc9d1;
-  --chart-grid: #e6ebef;
-  --seq-lo: #eaf5f7;
-  --seq-hi: #004f61;
-  --shadow-card: 0 1px 2px rgb(16 24 32 / 0.04), 0 1px 1px rgb(16 24 32 / 0.03);
-  --shadow-pop: 0 12px 32px -8px rgb(16 24 32 / 0.18), 0 2px 6px rgb(16 24 32 / 0.08);
+  --accent-soft: rgb(26 127 230 / 0.1);
+  --accent-ink: #145fae;
+  --stage: #0d0d0d;
+  --stage-line: #262626;
+  --caution: #8a6400;
+  --caution-soft: rgb(255 221 85 / 0.22);
+  --caution-line: rgb(170 130 0 / 0.35);
+  --danger: #d92d20;
+  --danger-soft: rgb(255 69 56 / 0.1);
+  --danger-line: rgb(217 45 32 / 0.3);
+  --good: #0a8f10;
+  --good-soft: rgb(4 196 10 / 0.12);
+  --today: #e5372b;
+  --tag-bg: #ece4fb;
+  --tag-ink: #5b2fa6;
+  --group-malignant: #d6543f;
+  --group-premalignant: #a07800;
+  --group-benign: #4d4ddb;
+  --group-other: #737373;
+  --series-1: #1a7fe6;
+  --series-2: #d6543f;
+  --chart-muted: #cfcfcf;
+  --chart-grid: #ececec;
+  --seq-lo: #eef5fd;
+  --seq-hi: #0d4f99;
+  --shadow-card: none;
+  --shadow-pop: 0 16px 40px -8px rgb(0 0 0 / 0.18);
   color-scheme: light;
 }
 
 .dark {
-  --paper: #0c1215;
-  --surface: #131b1f;
-  --surface-2: #182228;
-  --ink: #e5ebee;
-  --ink-2: #a9b5bd;
-  --muted: #86939c;
-  --line: #243038;
-  --line-strong: #33424b;
-  --accent: #3fb6c6;
-  --accent-hover: #5fc6d3;
-  --accent-contrast: #062127;
-  --accent-soft: #10323a;
-  --accent-ink: #8fd6e0;
-  --stage: #080c0e;
-  --stage-line: #1f292f;
-  --caution: #f0b35a;
-  --caution-soft: #2b2110;
-  --caution-line: #574018;
-  --danger: #f28b82;
-  --danger-soft: #331819;
-  --danger-line: #5b2a2a;
-  --good: #5cc592;
-  --good-soft: #10291d;
-  --group-malignant: #e0839a;
-  --group-premalignant: #e0a15e;
-  --group-benign: #93a4b2;
-  --series-1: #12a2b4;
-  --series-2: #d96a33;
-  --chart-muted: #3a4952;
-  --chart-grid: #1f2a30;
-  --seq-lo: #16252b;
-  --seq-hi: #7fd3de;
-  --shadow-card: 0 0 0 1px rgb(0 0 0 / 0.2);
+  --paper: #141414;
+  --surface: #1f1f1f;
+  --surface-2: #242424;
+  --field: #333333;
+  --sidebar: #101011;
+  --sidebar-line: #2e2e2e;
+  --ink: #ffffff;
+  --ink-2: #b4b4b4;
+  --muted: #808080;
+  --subtle: #999999;
+  --faint: #515151;
+  --line: #383838;
+  --line-strong: #4d4d4d;
+  --glass: rgb(255 255 255 / 0.11);
+  --glass-strong: rgb(20 20 20 / 0.4);
+  --glass-edge: rgb(255 255 255 / 0.06);
+  --glass-shadow: 0 4px 4px rgb(0 0 0 / 0.25);
+  --scrim: rgb(20 20 20 / 0.01);
+  --menu: rgb(20 20 20 / 0.4);
+  --active: rgb(255 255 255 / 0.1);
+  --accent: #2995ff;
+  --accent-fill: #1d74d8;
+  --accent-contrast: #ffffff;
+  --accent-soft: rgb(41 149 255 / 0.14);
+  --accent-ink: #7dbcff;
+  --stage: #0d0d0d;
+  --stage-line: #262626;
+  --caution: #ffdd55;
+  --caution-soft: rgb(255 221 85 / 0.1);
+  --caution-line: rgb(255 221 85 / 0.25);
+  --danger: #ff4538;
+  --danger-soft: rgb(255 69 56 / 0.1);
+  --danger-line: rgb(255 69 56 / 0.3);
+  --good: #04c40a;
+  --good-soft: rgb(4 196 10 / 0.12);
+  --today: #ff4538;
+  --tag-bg: #220053;
+  --tag-ink: #ae86e8;
+  --group-malignant: #ff8573;
+  --group-premalignant: #ffdd55;
+  --group-benign: #7373ff;
+  --group-other: #999999;
+  --series-1: #2995ff;
+  --series-2: #ff8573;
+  --chart-muted: #3d3d3d;
+  --chart-grid: #262626;
+  --seq-lo: #1c2330;
+  --seq-hi: #7dbcff;
+  --shadow-card: none;
   --shadow-pop: 0 16px 40px -8px rgb(0 0 0 / 0.6);
   color-scheme: dark;
+}
+
+/* The desktop dashboard frame uses a deeper page and card tone than the phone frames. */
+@media (min-width: 1024px) {
+  .dark {
+    --paper: #090909;
+    --surface: #171717;
+  }
 }
 
 @theme inline {
   --color-paper: var(--paper);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-field: var(--field);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-line: var(--sidebar-line);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-faint: var(--faint);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-glass: var(--glass);
+  --color-active: var(--active);
   --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
+  --color-accent-fill: var(--accent-fill);
   --color-accent-contrast: var(--accent-contrast);
   --color-accent-soft: var(--accent-soft);
   --color-accent-ink: var(--accent-ink);
@@ -112,52 +165,76 @@
   --color-danger-line: var(--danger-line);
   --color-good: var(--good);
   --color-good-soft: var(--good-soft);
+  --color-today: var(--today);
+  --color-tag: var(--tag-bg);
+  --color-tag-ink: var(--tag-ink);
   --color-series-1: var(--series-1);
   --color-series-2: var(--series-2);
   --color-chart-muted: var(--chart-muted);
 
-  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
-  /* Type scale (Plex Sans at 16px base): 12 / 13 / 14 / 16 / 18 / 22 / 28 / 40 / 52 */
-  --text-2xs: 0.75rem;
-  --text-2xs--line-height: 1rem;
-  --text-xs: 0.8125rem;
-  --text-xs--line-height: 1.15rem;
-  --text-sm: 0.875rem;
-  --text-sm--line-height: 1.35rem;
+  /*
+   * Type scale from the reference (DM Sans):
+   *   2xs 10 nav labels · xs 12 meta · sm 13 desktop nav/tabs · md 14 caps headers/tags
+   *   base 16 item titles · lg 18 section headers · xl 22 empty-state title
+   *   2xl 24 page titles (mobile) · 3xl 32 greeting (desktop)
+   */
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 0.8125rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.0625rem;
+  --text-md: 0.875rem;
+  --text-md--line-height: 1.125rem;
   --text-base: 1rem;
-  --text-base--line-height: 1.6rem;
+  --text-base--line-height: 1.3125rem;
   --text-lg: 1.125rem;
-  --text-lg--line-height: 1.65rem;
+  --text-lg--line-height: 1.4375rem;
   --text-xl: 1.375rem;
-  --text-xl--line-height: 1.85rem;
-  --text-2xl: 1.75rem;
-  --text-2xl--line-height: 2.2rem;
-  --text-3xl: 2.5rem;
-  --text-3xl--line-height: 2.85rem;
-  --text-4xl: 3.25rem;
-  --text-4xl--line-height: 3.5rem;
+  --text-xl--line-height: 2.0625rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.9375rem;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 2.625rem;
+  --text-4xl: 3rem;
+  --text-4xl--line-height: 3.25rem;
 
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
-  --radius-xl: 14px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
 
   --shadow-card: var(--shadow-card);
   --shadow-pop: var(--shadow-pop);
 }
 
 @layer base {
+  :root {
+    /* Safe areas (notch, home indicator) and the floating navigation geometry. */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --topbar-top: calc(max(var(--safe-top), 6px) + 6px);
+    --tabbar-bottom: max(16px, calc(var(--safe-bottom) - 6px));
+    --tabbar-height: 59px;
+    --page-top: calc(var(--topbar-top) + 48px + 27px);
+    --page-bottom: calc(var(--tabbar-bottom) + var(--tabbar-height) + 32px);
+  }
   html {
     -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     @apply bg-paper text-ink font-sans antialiased;
-    font-feature-settings: "ss02" 1;
+    overscroll-behavior-y: none;
   }
   ::selection {
-    background: color-mix(in oklab, var(--accent) 25%, transparent);
+    background: color-mix(in oklab, var(--accent) 35%, transparent);
   }
   :focus-visible {
     outline: 2px solid var(--accent);
@@ -168,13 +245,17 @@
   h3,
   h4 {
     text-wrap: balance;
-    letter-spacing: -0.012em;
   }
   p {
     text-wrap: pretty;
   }
   input[type="range"] {
     accent-color: var(--accent);
+  }
+  button,
+  [role="button"],
+  a {
+    touch-action: manipulation;
   }
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -192,12 +273,217 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
+  /* Letter-spacing values from the reference: -1% body titles, -3% page titles, -4% greeting. */
+  .tracking-ref {
+    letter-spacing: -0.01em;
+  }
+  .tracking-title {
+    letter-spacing: -0.03em;
+  }
+  .tracking-display {
+    letter-spacing: -0.04em;
+  }
+  /* Floating glass controls (nav pill, top control pill, circular buttons). */
+  .glass {
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    backdrop-filter: blur(12px) saturate(1.4);
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 0 0 0.5px var(--glass-edge);
+  }
+  /* Menus that float over blurred content (context menu, action menu). */
+  .glass-menu {
+    background: var(--menu);
+    -webkit-backdrop-filter: blur(32px) saturate(1.5);
+    backdrop-filter: blur(32px) saturate(1.5);
+    box-shadow:
+      0 4px 24px rgb(0 0 0 / 0.25),
+      inset 0 0 0 0.5px var(--glass-edge);
+  }
+  /* Haptic-style press feedback for touch targets. */
+  .press {
+    transition:
+      transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 160ms ease,
+      background-color 160ms ease;
+  }
+  .press:active {
+    transform: scale(0.96);
+  }
+  .press-soft:active {
+    transform: scale(0.985);
+    opacity: 0.85;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Bottom fade used on truncated card bodies (reference "Rectangle 24937"). */
+  .fade-bottom {
+    -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent);
+    mask-image: linear-gradient(to bottom, #000 62%, transparent);
+  }
   .stage-checker {
     background-color: var(--stage);
     background-image:
-      linear-gradient(45deg, rgb(255 255 255 / 0.025) 25%, transparent 25%),
-      linear-gradient(-45deg, rgb(255 255 255 / 0.025) 25%, transparent 25%);
+      linear-gradient(45deg, rgb(255 255 255 / 0.02) 25%, transparent 25%),
+      linear-gradient(-45deg, rgb(255 255 255 / 0.02) 25%, transparent 25%);
     background-size: 16px 16px;
+  }
+  .page-mobile {
+    padding-top: var(--page-top);
+    padding-bottom: var(--page-bottom);
+    padding-left: max(16px, var(--safe-left));
+    padding-right: max(16px, var(--safe-right));
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes sheet-out {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(300%);
+  }
+}
+
+.animate-sheet-in {
+  animation: sheet-in 380ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.animate-sheet-out {
+  animation: sheet-out 260ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+.animate-fade-in {
+  animation: fade-in 220ms ease-out;
+}
+.animate-fade-out {
+  animation: fade-out 180ms ease-in forwards;
+}
+.animate-pop-in {
+  animation: pop-in 220ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.animate-rise-in {
+  animation: rise-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes hold {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* Keeps a sheet mounted while its panel slides out. */
+.sheet-host[data-state="closed"] {
+  animation: hold 260ms forwards;
+}
+
+/* Radix state-driven animations */
+[data-state="open"].data-open-fade {
+  animation: fade-in 220ms ease-out;
+}
+[data-state="closed"].data-open-fade {
+  animation: fade-out 180ms ease-in forwards;
+}
+[data-state="open"].data-open-sheet {
+  animation: sheet-in 380ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+[data-state="closed"].data-open-sheet {
+  animation: sheet-out 260ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+[data-state="open"].data-open-pop {
+  animation: pop-in 200ms cubic-bezier(0.2, 0.9, 0.3, 1.1);
+}
+[data-state="closed"].data-open-pop {
+  animation: fade-out 140ms ease-in forwards;
+}
+[data-state="open"].data-open-rise {
+  animation: rise-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+[data-state="closed"].data-open-rise {
+  animation: fade-out 160ms ease-in forwards;
+}
+
+/*
+ * When a sheet is open the page behind recedes like a stacked card (reference "Note - Templates").
+ * Only the scrolling content moves; fixed chrome is portalled outside #app-content and fades.
+ */
+#app-content {
+  transition:
+    transform 380ms cubic-bezier(0.32, 0.72, 0, 1),
+    filter 380ms ease;
+  transform-origin: 50% var(--sheet-origin, 0px);
+}
+.fixed-chrome {
+  transition: opacity 220ms ease;
+}
+@media (max-width: 1023.98px) {
+  html[data-sheet-open] body {
+    background: #000;
+  }
+  html[data-sheet-open] #app-content {
+    transform: translateY(calc(var(--safe-top) + 14px)) scale(0.944);
+    filter: brightness(0.7);
+  }
+  html[data-sheet-open] .fixed-chrome {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 

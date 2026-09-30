@@ -40,8 +40,8 @@ export function Segmented<T extends string>({
       onValueChange={(next) => next && onValueChange(next as T)}
       aria-label={label}
       className={cn(
-        "inline-flex max-w-full overflow-x-auto rounded-md p-0.5 [scrollbar-width:none]",
-        tone === "stage" ? "bg-white/[0.06] ring-1 ring-white/10" : "bg-surface-2 ring-1 ring-line",
+        "no-scrollbar inline-flex max-w-full overflow-x-auto rounded-full p-1",
+        tone === "stage" ? "bg-white/[0.11] backdrop-blur-md" : "bg-surface-2 dark:bg-[#242424]",
         className,
       )}
     >
@@ -51,11 +51,11 @@ export function Segmented<T extends string>({
           value={option.value}
           title={option.title}
           className={cn(
-            "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-[5px] font-medium transition-colors [&_svg]:size-4",
-            size === "sm" ? "h-7 px-2.5 text-2xs" : "h-8 px-3 text-xs",
+            "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full transition-colors [&_svg]:size-[18px] [&_svg]:stroke-[1.5]",
+            size === "sm" ? "h-8 px-3 text-sm" : "h-9 px-4 text-md",
             tone === "stage"
-              ? "text-white/65 hover:text-white data-[state=on]:bg-white/15 data-[state=on]:text-white"
-              : "text-muted hover:text-ink data-[state=on]:bg-surface data-[state=on]:text-ink data-[state=on]:shadow-[var(--shadow-card)]",
+              ? "text-white/70 hover:text-white data-[state=on]:bg-white/15 data-[state=on]:text-white"
+              : "text-muted hover:text-ink data-[state=on]:bg-active data-[state=on]:text-ink",
           )}
         >
           {option.icon}

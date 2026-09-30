@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import { DropdownMenu as Menu } from "radix-ui";
 import type { ComponentProps } from "react";
 
@@ -10,10 +11,12 @@ export function DropdownMenuContent({ className, ...props }: ComponentProps<type
   return (
     <Menu.Portal>
       <Menu.Content
-        sideOffset={6}
+        sideOffset={8}
         align="end"
+        collisionPadding={12}
         className={cn(
-          "z-50 min-w-52 rounded-lg border border-line bg-surface p-1 shadow-[var(--shadow-pop)]",
+          // Reference "Note - Keyboard Menu": translucent, blurred, radius 19, 12px padding.
+          "glass-menu data-open-pop z-50 min-w-[215px] origin-[var(--radix-dropdown-menu-content-transform-origin)] rounded-[19px] p-1.5",
           className,
         )}
         {...props}
@@ -26,8 +29,8 @@ export function DropdownMenuItem({ className, ...props }: ComponentProps<typeof 
   return (
     <Menu.Item
       className={cn(
-        "flex cursor-default select-none items-center gap-2 rounded-md px-2.5 py-2 text-sm text-ink outline-none",
-        "data-[highlighted]:bg-surface-2 [&_svg]:size-4 [&_svg]:text-muted",
+        "flex min-h-11 cursor-default select-none items-center gap-2 rounded-[13px] px-2.5 text-base font-medium tracking-ref text-ink outline-none",
+        "data-[highlighted]:bg-active data-[disabled]:opacity-40 [&_svg]:size-6 [&_svg]:stroke-[1.5] [&_svg]:text-ink",
         className,
       )}
       {...props}
@@ -40,5 +43,25 @@ export function DropdownMenuLabel({ className, ...props }: ComponentProps<typeof
 }
 
 export function DropdownMenuSeparator({ className, ...props }: ComponentProps<typeof Menu.Separator>) {
-  return <Menu.Separator className={cn("my-1 h-px bg-line", className)} {...props} />;
+  return <Menu.Separator className={cn("mx-2.5 my-1 h-px bg-white/10", className)} {...props} />;
+}
+
+export const DropdownMenuRadioGroup = Menu.RadioGroup;
+
+export function DropdownMenuRadioItem({ className, children, ...props }: ComponentProps<typeof Menu.RadioItem>) {
+  return (
+    <Menu.RadioItem
+      className={cn(
+        "flex min-h-11 cursor-default select-none items-center gap-2 rounded-[13px] px-2.5 text-base font-medium tracking-ref text-ink outline-none",
+        "data-[highlighted]:bg-active data-[state=checked]:bg-active [&_svg]:size-6 [&_svg]:stroke-[1.5]",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      <Menu.ItemIndicator className="ml-auto">
+        <Check aria-hidden className="!size-5 text-accent" />
+      </Menu.ItemIndicator>
+    </Menu.RadioItem>
+  );
 }

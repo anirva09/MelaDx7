@@ -1,6 +1,7 @@
 import type { ModelRef } from "@/api/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DefinitionList } from "@/components/ui/definition-list";
 import { formatMs, shortHash } from "@/lib/utils";
 
 interface ModelInfoCardProps {
@@ -42,15 +43,8 @@ export function ModelInfoCard({ model, temperature, inferenceMs, explainMs }: Mo
         <CardTitle>Model information</CardTitle>
         {model.trained ? <Badge tone="good">Trained</Badge> : <Badge tone="danger">Untrained</Badge>}
       </CardHeader>
-      <CardContent>
-        <dl className="grid grid-cols-[minmax(0,9rem)_1fr] gap-x-4 gap-y-2 text-sm">
-          {rows.map(([label, value]) => (
-            <div key={label} className="contents">
-              <dt className="text-muted">{label}</dt>
-              <dd className="min-w-0 break-words text-ink">{value}</dd>
-            </div>
-          ))}
-        </dl>
+      <CardContent className="pt-2">
+        <DefinitionList rows={rows} />
       </CardContent>
     </Card>
   );

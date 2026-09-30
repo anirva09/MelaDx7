@@ -7,6 +7,7 @@ import { ApiError } from "@/api/client";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
+import { useIsDesktop } from "@/hooks/useMediaQuery";
 import { AppLayout } from "@/layouts/AppLayout";
 import { LandingPage } from "@/pages/LandingPage";
 import { LoginPage } from "@/pages/LoginPage";
@@ -17,14 +18,15 @@ import { FullPageSpinner, GuestRoute, ProtectedRoute } from "@/routes/ProtectedR
 import { LoadingState } from "@/components/States";
 
 // Signed-in pages are split into their own chunks (charts are only loaded when needed).
-const DashboardPage = lazy(() => import("@/pages/DashboardPage").then((m) => ({ default: m.DashboardPage })));
+const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
 const AnalyzePage = lazy(() => import("@/pages/AnalyzePage").then((m) => ({ default: m.AnalyzePage })));
 const HistoryPage = lazy(() => import("@/pages/HistoryPage").then((m) => ({ default: m.HistoryPage })));
 const AnalysisDetailPage = lazy(() =>
   import("@/pages/AnalysisDetailPage").then((m) => ({ default: m.AnalysisDetailPage })),
 );
 const ModelPage = lazy(() => import("@/pages/ModelPage").then((m) => ({ default: m.ModelPage })));
-const SettingsPage = lazy(() => import("@/pages/SettingsPage").then((m) => ({ default: m.SettingsPage })));
+const ReportsPage = lazy(() => import("@/pages/ReportsPage").then((m) => ({ default: m.ReportsPage })));
+const ProfilePage = lazy(() => import("@/pages/ProfilePage").then((m) => ({ default: m.ProfilePage })));
 
 function page(element: React.ReactNode) {
   return <Suspense fallback={<LoadingState label="Loading page" />}>{element}</Suspense>;
@@ -55,12 +57,14 @@ export const routes = [
                 // Errors inside the workspace keep the sidebar and navigation usable.
                 errorElement: <RouteErrorPage inline />,
                 children: [
-                  { index: true, element: page(<DashboardPage />) },
+                  { index: true, element: page(<HomePage />) },
                   { path: "analyze", element: page(<AnalyzePage />) },
                   { path: "analyses", element: page(<HistoryPage />) },
                   { path: "analyses/:id", element: page(<AnalysisDetailPage />) },
                   { path: "model", element: page(<ModelPage />) },
-                  { path: "settings", element: page(<SettingsPage />) },
+                  { path: "reports", element: page(<ReportsPage />) },
+                  { path: "profile", element: page(<ProfilePage />) },
+                  { path: "settings", element: <Navigate to="/app/profile" replace /> },
                 ],
               },
             ],
@@ -94,7 +98,22 @@ export function createQueryClient(): QueryClient {
 
 function ThemedToaster() {
   const { resolved } = useTheme();
-  return <Toaster theme={resolved} position="bottom-right" closeButton richColors={false} />;
+  const desktop = useIsDesktop();
+  return (
+    <Toaster
+      theme={resolved}
+      // Phones: banners drop in below the floating top controls, clear of the tab bar.
+      position={desktop ? "bottom-right" : "top-center"}
+      mobileOffset={{ top: "calc(var(--topbar-top) + 56px)" }}
+      closeButton={desktop}
+      toastOptions={{
+        classNames: {
+          toast: "!rounded-[16px] !border-0 !bg-[var(--surface-2)] !text-ink !font-sans !shadow-[var(--shadow-pop)]",
+          description: "!text-ink-2",
+        },
+      }}
+    />
+  );
 }
 
 const router = createBrowserRouter(routes);
