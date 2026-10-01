@@ -4,7 +4,7 @@ Source for the video and images in `docs/media/`:
 
 | File | What |
 |---|---|
-| `storyboard.html` | The 48 s promo as a seekable animation (1920 x 1080). Uses the real application screenshots in `docs/screenshots/` and a real Grad-CAM (`assets/`) produced by the released model. |
+| `storyboard.html` | The 50 s promo as a seekable animation (1920 x 1080). Uses the real application screenshots in `docs/screenshots/` and a real Grad-CAM (`assets/`) produced by the released model. |
 | `banner.html` | README banner (1600 x 400) and the GitHub social-preview image (1280 x 640). |
 | `render.mjs` | Renders frames by seeking the animation (identical output on any machine) and encodes them with ffmpeg. |
 

@@ -118,17 +118,20 @@
     <div class="phone" id="s5p2" style="left:1370px; top:200px"><img src="../../docs/screenshots/phone-history-dark.png"/></div>
   </section>
 
-  <!-- 6 · Themes -->
+  <!-- 6 · Reproducible and private -->
   <section class="scene" id="s6">
-    <div class="abs tag" id="s6tag" style="left:340px; top:46px">Display preferences</div>
-    <h2 class="abs" id="s6h" style="left:340px; top:84px; font-size:64px">Light &middot; Dark &middot; System</h2>
-    <div class="win" id="s6win" style="left:340px; top:196px; width:1240px">
+    <div class="abs tag" id="s6tag" style="left:70px; top:42px">Reproducible &amp; private</div>
+    <div class="win" id="s6win" style="left:60px; top:96px; width:1380px">
       <div class="bar"><i></i><i></i><i></i></div>
-      <img src="../../docs/screenshots/desktop-settings-light.png"/>
-      <div id="s6dark" style="position:absolute; left:0; right:0; top:34px; bottom:0; clip-path:inset(0 0 0 0)"><img src="../../docs/screenshots/desktop-settings-dark.png"/></div>
-      <div id="s6div" style="position:absolute; top:34px; bottom:0; width:4px; background:#2995ff; box-shadow:0 0 24px #2995ff; left:0"></div>
+      <img src="../../docs/screenshots/desktop-model-dark.png"/>
     </div>
-    <p class="sub abs" id="s6p" style="left:1100px; top:104px; width:480px; text-align:right; font-size:28px">Applied at once. Remembered across sessions.</p>
+    <div class="rect" id="s6r1" style="left:325px; top:600px; width:530px; height:62px"></div>
+    <div class="rect" id="s6r2" style="left:860px; top:500px; width:530px; height:132px"></div>
+    <div class="rect" id="s6r3" style="left:325px; top:776px; width:530px; height:216px"></div>
+    <div class="bullet" id="s6b0" style="top:190px"><b>Every result is traceable</b><span>Model version and weights SHA&#8209;256 are stored with each analysis.</span></div>
+    <div class="bullet" id="s6b1" style="top:410px"><b>Calibration is documented</b><span>Temperature and uncertainty thresholds are part of the model card.</span></div>
+    <div class="bullet" id="s6b2" style="top:630px"><b>Data and licence are stated</b><span>Dataset, split strategy and CC BY-NC terms, shown in the app.</span></div>
+    <div class="bullet" id="s6b3" style="top:850px"><b>Yours to export or delete</b><span>A PDF report per analysis. Delete one result, or the whole account.</span></div>
   </section>
 
   <!-- 7 · Honest numbers -->
@@ -179,8 +182,8 @@
   }
 
   // Timeline (seconds)
-  const T = { s1: [0, 4.6], s2: [4.6, 10.2], s3: [10.2, 19.4], s4: [19.4, 26.4], s5: [26.4, 32.4], s6: [32.4, 37.6], s7: [37.6, 42.8], s8: [42.8, 48] };
-  window.DURATION = 48;
+  const T = { s1: [0, 4.6], s2: [4.6, 10.2], s3: [10.2, 19.4], s4: [19.4, 26.4], s5: [26.4, 32.4], s6: [32.4, 39.6], s7: [39.6, 44.8], s8: [44.8, 50] };
+  window.DURATION = 50;
   for (const k of Object.keys(T)) scene($(k), T[k][0], T[k][1], k === "s1" ? 0.01 : 0.5);
   // The first scene must be visible from frame 0; keep its fade-in instant.
 
@@ -218,29 +221,28 @@
   A($("s5p1"), [{ transform: "translateY(0)" }, { transform: "translateY(-14px)" }], 29.0, 3.2, "ease-in-out");
 
   // S6
-  fadeIn($("s6tag"), 32.7); fadeUp($("s6h"), 32.9, 0.8, 30); fadeIn($("s6p"), 33.6);
-  A($("s6win"), [{ opacity: 0, transform: "translateY(60px)" }, { opacity: 1, transform: "none" }], 32.7, 0.9);
-  // dark layer reveals from the left, then retreats: dark -> light -> dark
-  A($("s6dark"), [{ clipPath: "inset(0 0 0 0)" }, { clipPath: "inset(0 100% 0 0)", offset: .5 }, { clipPath: "inset(0 0 0 0)" }], 33.6, 3.4, "ease-in-out");
-  A($("s6div"), [{ left: "1236px", opacity: 1 }, { left: "0px", opacity: 1, offset: .5 }, { left: "1236px", opacity: 1, offset: 1 }], 33.6, 3.4, "ease-in-out");
+  fadeIn($("s6tag"), 32.7);
+  A($("s6win"), [{ opacity: 0, transform: "translateY(60px) scale(.97)" }, { opacity: 1, transform: "none" }], 32.6, 1.0);
+  bl("s6b0", 33.5); bl("s6b1", 35.2); bl("s6b2", 36.9); bl("s6b3", 38.3);
+  box("s6r1", 33.4, 1.9); box("s6r2", 35.1, 1.9); box("s6r3", 36.8, 1.9);
 
   // S7
-  fadeIn($("s7tag"), 37.9); fadeUp($("s7h"), 38.1, 0.8);
-  fadeUp($("s7c1"), 39.0, 0.7); fadeUp($("s7c2"), 39.4, 0.7); fadeUp($("s7c3"), 39.8, 0.7);
-  fadeUp($("s7n"), 40.9, 0.7, 20); fadeIn($("s7p"), 41.5, 0.7);
+  fadeIn($("s7tag"), 39.9); fadeUp($("s7h"), 40.1, 0.8);
+  fadeUp($("s7c1"), 41.0, 0.7); fadeUp($("s7c2"), 41.4, 0.7); fadeUp($("s7c3"), 41.8, 0.7);
+  fadeUp($("s7n"), 42.9, 0.7, 20); fadeIn($("s7p"), 43.5, 0.7);
   const ease = (x) => 1 - Math.pow(1 - x, 3);
   hooks.push((t) => {
     const p = (a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
-    $("n1").textContent = Math.round(1675 * ease(p(39.1, 40.5))).toLocaleString("en-US");
-    $("n2").textContent = (82.45 * ease(p(39.5, 40.9))).toFixed(2) + "%";
-    $("n3").textContent = (0.7352 * ease(p(39.9, 41.3))).toFixed(3);
+    $("n1").textContent = Math.round(1675 * ease(p(41.1, 42.5))).toLocaleString("en-US");
+    $("n2").textContent = (82.45 * ease(p(41.5, 42.9))).toFixed(2) + "%";
+    $("n3").textContent = (0.7352 * ease(p(41.9, 43.3))).toFixed(3);
   });
 
   // S8
-  fadeUp($("s8t"), 43.2, 0.8, 30); fadeIn($("s8s"), 43.7); fadeIn($("s8d"), 44.4); fadeIn($("s8g"), 45.0); fadeIn($("s8c"), 45.5);
+  fadeUp($("s8t"), 45.2, 0.8, 30); fadeIn($("s8s"), 45.7); fadeIn($("s8d"), 46.4); fadeIn($("s8g"), 47.0); fadeIn($("s8c"), 47.5);
 
   // Footer disclaimer while the product is on screen
-  A($("foot"), [{ opacity: 0 }, { opacity: 1, offset: .06 }, { opacity: 1, offset: .94 }, { opacity: 0 }], 4.9, 37.9, "linear");
+  A($("foot"), [{ opacity: 0 }, { opacity: 1, offset: .06 }, { opacity: 1, offset: .94 }, { opacity: 0 }], 4.9, 39.9, "linear");
 
   window.render = (t) => {
     anims.forEach((a) => (a.currentTime = t * 1000));
