@@ -123,9 +123,21 @@ light; the theme is chosen in Settings (Dark / Light / System).
 
 **Phone:** result with swipe comparison, overview, history and settings.
 
-| Result | Overview | History | Settings |
-|---|---|---|---|
-| ![](docs/screenshots/phone-result-dark.png) | ![](docs/screenshots/phone-home-dark.png) | ![](docs/screenshots/phone-history-light.png) | ![](docs/screenshots/phone-settings-light.png) |
+<!-- An HTML table with fixed image widths: a markdown table sizes every image to its own column, so the phones came out in different sizes. -->
+<table>
+  <tr>
+    <th align="center" width="25%">Result</th>
+    <th align="center" width="25%">Overview</th>
+    <th align="center" width="25%">History</th>
+    <th align="center" width="25%">Settings</th>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="docs/screenshots/phone-result-dark.png" width="220" alt="Phone: result with swipe comparison"></td>
+    <td align="center" valign="top"><img src="docs/screenshots/phone-home-dark.png" width="220" alt="Phone: overview"></td>
+    <td align="center" valign="top"><img src="docs/screenshots/phone-history-light.png" width="220" alt="Phone: history"></td>
+    <td align="center" valign="top"><img src="docs/screenshots/phone-settings-light.png" width="220" alt="Phone: settings"></td>
+  </tr>
+</table>
 
 ![Landing page](docs/screenshots/desktop-landing-dark.png)
 
