@@ -101,18 +101,37 @@ class AuthService:
         log.info("password changed; sessions revoked", extra={"user_id": str(user.id)})
 
     # ------------------------------------------------------------- tokens
-    async def issue_tokens(self, user: User, *, family_id: uuid.UUID | None = None) -> IssuedTokens:
+    async def issue_tokens(
+        self,
+        user: User,
+        *,
+        family_id: uuid.UUID | None = None,
+        replaces: RefreshToken | None = None,
+    ) -> IssuedTokens:
+        """Create an access token and a new refresh token.
+
+        When ``replaces`` is given (rotation), the old token is revoked and linked to its replacement
+        in the *same* transaction as the insert. Doing this in two commits left a window in which a
+        parallel refresh saw "revoked, but not replaced" and mistook it for token theft, revoking the
+        whole session.
+        """
         access, expires_in = create_access_token(self.settings, user.id, user.role)
         plain = new_refresh_token()
         expires_at = utcnow() + timedelta(days=self.settings.refresh_token_ttl_days)
+        new_id = uuid.uuid4()
         await self.tokens.add(
             RefreshToken(
+                id=new_id,
                 user_id=user.id,
                 family_id=family_id or uuid.uuid4(),
                 token_hash=hash_refresh_token(plain),
                 expires_at=expires_at,
             )
         )
+        if replaces is not None:
+            await self.session.flush()  # the replacement row must exist before it is referenced
+            replaces.revoked_at = utcnow()
+            replaces.replaced_by_id = new_id
         await self.session.commit()
         return IssuedTokens(access, expires_in, plain, expires_at)
 
@@ -156,12 +175,7 @@ class AuthService:
         if user is None or not user.is_active:
             raise AuthenticationError("Your session has ended. Please sign in again.", code="invalid_session")
 
-        record.revoked_at = utcnow()
-        issued = await self.issue_tokens(user, family_id=record.family_id)
-        replacement = await self.tokens.get_by_hash(hash_refresh_token(issued.refresh_token))
-        record.replaced_by_id = replacement.id if replacement else None
-        await self.session.commit()
-        return user, issued
+        return user, await self.issue_tokens(user, family_id=record.family_id, replaces=record)
 
     async def revoke(self, plain: str | None) -> None:
         if not plain:

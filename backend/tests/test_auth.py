@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -194,6 +195,27 @@ class TestRefreshRotation:
         client.cookies.clear()
         client.cookies.set(cookie_name, latest, path="/api/auth")
         assert (await client.post("/api/auth/refresh")).status_code == 200
+
+    async def test_parallel_refreshes_never_end_the_session(
+        self, client: httpx.AsyncClient, harness: AppHarness
+    ) -> None:
+        """A page load can fire several refreshes at once (tabs, retries). Rotation must be atomic:
+        a request that lands between "old token revoked" and "replacement recorded" used to look
+        like token theft and revoked the whole session."""
+        await _register(client, _email())
+        name = harness.app.state.settings.refresh_cookie_name
+        cookie = client.cookies.get(name)
+        client.cookies.clear()
+
+        async def refresh() -> httpx.Response:
+            return await client.post("/api/auth/refresh", headers={"Cookie": f"{name}={cookie}"})
+
+        results = await asyncio.gather(*(refresh() for _ in range(8)))
+        assert [r.status_code for r in results] == [200] * 8
+        # the session survived: the newest cookie still refreshes
+        newest = results[-1].headers["set-cookie"].split(";", 1)[0].split("=", 1)[1]
+        again = await client.post("/api/auth/refresh", headers={"Cookie": f"{name}={newest}"})
+        assert again.status_code == 200
 
     async def test_reuse_after_logout_is_rejected_even_within_grace(
         self, client: httpx.AsyncClient, harness: AppHarness
