@@ -36,6 +36,16 @@ const only = process.env.SHOTS ? new Set(process.env.SHOTS.split(",").map((s) =>
 
 async function shot(page, name) {
   if (only && !only.has(name)) return;
+  // Never photograph a loading state: wait until every skeleton / busy placeholder is gone.
+  await page
+    .waitForFunction(
+      () => !document.querySelector(".animate-pulse, [aria-busy='true'], [role='status'][aria-label^='Loading']"),
+      undefined,
+      { timeout: 45000 },
+    )
+    .catch(() => {
+      throw new Error(`${name}: still showing a loading placeholder after 45 s; refusing to capture it`);
+    });
   await page.waitForTimeout(700); // let charts/animations settle
   for (let attempt = 1; ; attempt++) {
     try {
