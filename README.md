@@ -113,9 +113,9 @@ light; the theme is chosen in Settings (Dark / Light / System).
 |---|---|
 | ![Overview](docs/screenshots/desktop-home-dark.png) | ![History](docs/screenshots/desktop-history-dark.png) |
 
-| Model card and evaluation | Settings: Dark / Light / System |
-|---|---|
-| ![Model page](docs/screenshots/desktop-model-dark.png) | ![Settings](docs/screenshots/desktop-settings-light.png) |
+| Model card and evaluation |
+|---|
+| ![Model page](docs/screenshots/desktop-model-dark.png) | 
 
 | New analysis | Reports |
 |---|---|
