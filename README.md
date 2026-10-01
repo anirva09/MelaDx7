@@ -1,8 +1,10 @@
+<p align="center"><img src="docs/media/banner.png" alt="MelaDx7: interpretable AI for dermoscopic skin lesion analysis" /></p>
+
 # MelaDx7
 
 **Interpretable Deep Learning for Skin Cancer Detection and Subtype Classification**
 
-MelaDx7 analyses dermoscopic skin-lesion images with a convolutional neural network,
+MelaDx7 analyses dermoscopic skin-lesion images with a Vision Transformer (ViT-Base/16),
 reports a calibrated probability for every lesion class, and explains each prediction
 with a Grad-CAM heatmap of the image regions that drove it. It is a complete system:
 training pipeline, versioned model artifacts, a FastAPI inference service with
@@ -14,6 +16,15 @@ PostgreSQL, and a React web application.
 > not a medical device. It gives no treatment recommendations.
 
 ---
+
+## Watch (48 s)
+
+[![MelaDx7 in 48 seconds: result, Grad-CAM, phone and desktop, themes, real evaluation numbers](docs/media/meladx7-promo.gif)](docs/media/meladx7-promo.mp4)
+
+*Silent, with captions. The preview above is a short excerpt; click it for the full 1080p MP4
+(`docs/media/meladx7-promo.mp4`). Everything on screen is the real application with the trained
+model, and the numbers are read from its `metrics.json`. How the media was made:
+[tools/promo](tools/promo/README.md).*
 
 ## Contents
 
@@ -33,7 +44,7 @@ Deep learning can classify dermoscopic images, but a label on its own is hard to
 a reviewer cannot tell whether the model looked at the lesion or at a ruler, hair or an
 ink marking.
 
-This project pairs a CNN classifier with explainable AI. For every image it returns the
+This project pairs a deep-learning classifier with explainable AI. For every image it returns the
 predicted class, a calibrated probability for each class, an uncertainty assessment, and
 a Grad-CAM map for any class, and it records exactly which model produced the result, so
 a clinician or researcher can inspect, question and reproduce it.

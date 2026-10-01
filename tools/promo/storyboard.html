@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>MelaDx7 promo storyboard</title>
+<style>
+  @font-face { font-family: "DM Sans"; font-weight: 400; src: url("fonts/dm-sans-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "DM Sans"; font-weight: 500; src: url("fonts/dm-sans-latin-500-normal.woff2") format("woff2"); }
+  @font-face { font-family: "DM Sans"; font-weight: 600; src: url("fonts/dm-sans-latin-600-normal.woff2") format("woff2"); }
+  @font-face { font-family: "DM Sans"; font-weight: 700; src: url("fonts/dm-sans-latin-700-normal.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 400; src: url("fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 500; src: url("fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2"); }
+
+  :root { --accent: #2995ff; --ink: #fff; --ink2: #b4b4b4; --muted: #808080; --line: #383838; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0b0b0c; }
+  body { font-family: "DM Sans", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    background: radial-gradient(1300px 800px at 72% 28%, #12202e 0%, #0b0b0c 62%); }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .abs { position: absolute; }
+
+  h1 { font-size: 132px; font-weight: 700; letter-spacing: -0.035em; line-height: 1; }
+  h2 { font-size: 76px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.04; }
+  .sub { font-size: 32px; color: var(--ink2); line-height: 1.35; font-weight: 400; }
+  .tag { font-family: "IBM Plex Mono", monospace; font-size: 22px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+  .pill { display: inline-flex; align-items: center; gap: 12px; border: 1.5px solid var(--line); border-radius: 999px;
+    padding: 14px 26px; font-size: 26px; color: var(--ink2); background: rgba(255,255,255,.04); }
+  .win { position: absolute; border-radius: 18px; overflow: hidden; background: #000;
+    box-shadow: 0 40px 120px rgba(0,0,0,.65), 0 0 0 1.5px #2a2a2a; }
+  .win .bar { height: 34px; background: #1b1b1b; display: flex; align-items: center; gap: 9px; padding-left: 16px; }
+  .win .bar i { width: 12px; height: 12px; border-radius: 50%; background: #3a3a3a; display: block; }
+  .win img { display: block; width: 100%; }
+  .phone { position: absolute; width: 400px; border-radius: 52px; border: 11px solid #202020; overflow: hidden; background: #000;
+    box-shadow: 0 40px 100px rgba(0,0,0,.7), 0 0 0 1.5px #343434; }
+  .phone img { display: block; width: 100%; }
+  .foot { position: absolute; left: 70px; bottom: 38px; font-family: "IBM Plex Mono", monospace; font-size: 19px; color: #6c6c6c; letter-spacing: .04em; opacity: 0; }
+  .rect { position: absolute; border: 4px solid var(--accent); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0), 0 0 40px rgba(41,149,255,.55); opacity: 0; }
+  .bullet { position: absolute; left: 1475px; width: 400px; padding-left: 26px; border-left: 5px solid var(--accent); opacity: 0; }
+  .bullet b { display: block; font-size: 38px; font-weight: 700; letter-spacing: -.02em; line-height: 1.12; }
+  .bullet span { display: block; margin-top: 8px; font-size: 24px; color: var(--ink2); line-height: 1.3; }
+  .big { font-size: 160px; font-weight: 700; letter-spacing: -0.05em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .lab { font-size: 30px; color: var(--ink2); margin-top: 14px; line-height: 1.3; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1 · Title -->
+  <section class="scene" id="s1">
+    <svg class="abs" id="rings" viewBox="0 0 1000 1000" style="left:760px; top:-60px; width:1100px; height:1100px; opacity:.5">
+      <circle cx="500" cy="500" r="470" fill="none" stroke="#1d2a38" stroke-width="2"/>
+      <circle cx="500" cy="500" r="350" fill="none" stroke="#1d2a38" stroke-width="2"/>
+      <circle cx="500" cy="500" r="230" fill="none" stroke="#243546" stroke-width="2"/>
+    </svg>
+    <svg class="abs" viewBox="0 0 32 32" style="left:150px; top:300px; width:150px; height:150px">
+      <rect width="32" height="32" rx="8" fill="#262626"/>
+      <circle id="s1ring" cx="16" cy="16" r="9.5" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="60" stroke-dashoffset="60" transform="rotate(-90 16 16)"/>
+      <circle id="s1dot" cx="16" cy="16" r="4.2" fill="#2995ff" style="transform-origin:16px 16px; transform:scale(0)"/>
+    </svg>
+    <h1 class="abs" id="s1title" style="left:150px; top:480px">MelaDx7</h1>
+    <p class="sub abs" id="s1sub" style="left:154px; top:640px; width:1000px; font-size:44px; color:#cfd6de">Interpretable AI for dermoscopic<br/>skin lesion analysis</p>
+    <div class="abs tag" id="s1tag" style="left:154px; top:250px">Research &amp; education prototype</div>
+  </section>
+
+  <!-- 2 · The problem -->
+  <section class="scene" id="s2">
+    <div class="abs tag" id="s2tag" style="left:130px; top:250px">The problem</div>
+    <h2 class="abs" id="s2a" style="left:130px; top:310px; width:900px">A label alone is hard to trust.</h2>
+    <p class="sub abs" id="s2b" style="left:134px; top:540px; width:820px; font-size:40px; color:#cfd6de">Is the model looking at the lesion &mdash; or at a ruler, a hair, an ink mark?</p>
+    <div class="abs" id="s2img" style="left:1090px; top:190px; width:700px; height:700px; border-radius:50%; overflow:hidden; border:6px solid #2a2a2a; box-shadow:0 0 0 18px rgba(255,255,255,.04), 0 40px 100px rgba(0,0,0,.6)">
+      <img src="assets/original.jpg" style="width:933px; height:700px; margin-left:-116px; display:block"/>
+    </div>
+    <div class="abs" id="s2scan" style="left:1090px; top:190px; width:700px; height:700px; border-radius:50%; overflow:hidden; opacity:0">
+      <div style="position:absolute; left:0; right:0; height:6px; background:linear-gradient(90deg,transparent,#2995ff,transparent); box-shadow:0 0 30px #2995ff" id="s2line"></div>
+    </div>
+  </section>
+
+  <!-- 3 · Results -->
+  <section class="scene" id="s3">
+    <div class="abs tag" id="s3tag" style="left:70px; top:42px">The result</div>
+    <div class="win" id="s3win" style="left:60px; top:96px; width:1380px">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <img src="../../docs/screenshots/desktop-result-dark.png"/>
+    </div>
+    <div class="rect" id="s3r1" style="left:958px; top:300px; width:432px; height:256px"></div>
+    <div class="rect" id="s3r2" style="left:962px; top:403px; width:424px; height:74px"></div>
+    <div class="rect" id="s3r3" style="left:955px; top:562px; width:436px; height:350px"></div>
+    <div class="bullet" id="s3b0" style="top:200px"><b>Every result explains itself</b><span>Prediction, probabilities and a Grad-CAM map, all from one analysis.</span></div>
+    <div class="bullet" id="s3b1" style="top:420px"><b>Calibrated confidence</b><span>Temperature-scaled, so a probability means more than a raw score.</span></div>
+    <div class="bullet" id="s3b2" style="top:640px"><b>Uncertainty flags</b><span>Low top probability or a small margin is called out, not hidden.</span></div>
+    <div class="bullet" id="s3b3" style="top:860px"><b>All seven classes</b><span>Never a single verdict. Never a risk score.</span></div>
+  </section>
+
+  <!-- 4 · Grad-CAM -->
+  <section class="scene" id="s4">
+    <div class="abs tag" id="s4tag" style="left:1010px; top:250px">Explainable by design</div>
+    <h2 class="abs" id="s4h" style="left:1010px; top:310px; width:820px">See where the model looked.</h2>
+    <p class="sub abs" id="s4p" style="left:1014px; top:520px; width:760px">Grad-CAM for the predicted class, or any class you choose. Attribution of the model &mdash; not clinical evidence.</p>
+    <div class="abs" id="s4legend" style="left:1014px; top:760px; width:640px">
+      <div style="height:16px; border-radius:8px; background:linear-gradient(90deg,#30123b,#4662d7,#36aaf9,#1ae4b6,#72fe5e,#c7ef34,#faba39,#f66b19,#cb2a04,#7a0403)"></div>
+      <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:22px; color:var(--muted)"><span>Lower</span><span>Higher relative attribution</span></div>
+    </div>
+    <div class="abs" id="s4frame" style="left:110px; top:180px; width:840px; height:630px; border-radius:26px; overflow:hidden; box-shadow:0 40px 110px rgba(0,0,0,.7), 0 0 0 1.5px #2a2a2a">
+      <img src="assets/original.jpg" style="position:absolute; inset:0; width:100%; height:100%"/>
+      <div id="s4over" style="position:absolute; inset:0; clip-path:inset(0 100% 0 0)"><img src="assets/overlay.jpg" style="width:100%; height:100%; display:block"/></div>
+      <div id="s4div" style="position:absolute; top:0; bottom:0; width:4px; background:#fff; box-shadow:0 0 24px rgba(255,255,255,.8); left:0"></div>
+    </div>
+    <div class="abs pill" id="s4chip" style="left:110px; top:840px; font-size:24px">Original &nbsp;&rarr;&nbsp; <span style="color:#fff">Grad-CAM overlay</span></div>
+  </section>
+
+  <!-- 5 · Phones -->
+  <section class="scene" id="s5">
+    <div class="abs tag" id="s5tag" style="left:130px; top:360px">Phone &amp; desktop</div>
+    <h2 class="abs" id="s5h" style="left:130px; top:420px; width:700px">Made for the clinic desk and the pocket.</h2>
+    <p class="sub abs" id="s5p" style="left:134px; top:700px; width:620px">Swipe to compare, long-press for actions, history one thumb away.</p>
+    <div class="phone" id="s5p1" style="left:900px; top:120px"><img src="../../docs/screenshots/phone-result-dark.png"/></div>
+    <div class="phone" id="s5p2" style="left:1370px; top:200px"><img src="../../docs/screenshots/phone-history-dark.png"/></div>
+  </section>
+
+  <!-- 6 · Themes -->
+  <section class="scene" id="s6">
+    <div class="abs tag" id="s6tag" style="left:340px; top:46px">Display preferences</div>
+    <h2 class="abs" id="s6h" style="left:340px; top:84px; font-size:64px">Light &middot; Dark &middot; System</h2>
+    <div class="win" id="s6win" style="left:340px; top:196px; width:1240px">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <img src="../../docs/screenshots/desktop-settings-light.png"/>
+      <div id="s6dark" style="position:absolute; left:0; right:0; top:34px; bottom:0; clip-path:inset(0 0 0 0)"><img src="../../docs/screenshots/desktop-settings-dark.png"/></div>
+      <div id="s6div" style="position:absolute; top:34px; bottom:0; width:4px; background:#2995ff; box-shadow:0 0 24px #2995ff; left:0"></div>
+    </div>
+    <p class="sub abs" id="s6p" style="left:1100px; top:104px; width:480px; text-align:right; font-size:28px">Applied at once. Remembered across sessions.</p>
+  </section>
+
+  <!-- 7 · Honest numbers -->
+  <section class="scene" id="s7">
+    <div class="abs tag" id="s7tag" style="left:130px; top:150px">Evaluated, not promised</div>
+    <h2 class="abs" id="s7h" style="left:130px; top:205px; width:1500px; font-size:68px">Real results on images the model never saw.</h2>
+    <div class="abs" id="s7c1" style="left:130px; top:430px"><div class="big" id="n1">0</div><div class="lab">held-out test images<br/>(grouped by lesion)</div></div>
+    <div class="abs" id="s7c2" style="left:650px; top:430px"><div class="big" id="n2">0</div><div class="lab">accuracy</div></div>
+    <div class="abs" id="s7c3" style="left:1280px; top:430px"><div class="big" id="n3">0</div><div class="lab">macro-F1</div></div>
+    <p class="sub abs" id="s7n" style="left:134px; top:790px; width:1500px; font-size:34px; color:#cfd6de">Melanoma: recall 0.71, precision 0.53. Every figure is read from the model&rsquo;s own <span style="font-family:'IBM Plex Mono',monospace; color:#fff">metrics.json</span>.</p>
+    <div class="abs pill" id="s7p" style="left:134px; top:900px">Evaluation results on one public dataset &mdash; not guarantees for any individual</div>
+  </section>
+
+  <!-- 8 · End card -->
+  <section class="scene" id="s8">
+    <svg class="abs" viewBox="0 0 32 32" style="left:810px; top:190px; width:300px; height:300px">
+      <rect width="32" height="32" rx="8" fill="#262626"/>
+      <circle cx="16" cy="16" r="9.5" fill="none" stroke="#fff" stroke-width="2"/>
+      <circle cx="16" cy="16" r="4.2" fill="#2995ff"/>
+    </svg>
+    <h1 class="abs" id="s8t" style="left:0; width:1920px; text-align:center; top:540px">MelaDx7</h1>
+    <p class="sub abs" id="s8s" style="left:0; width:1920px; text-align:center; top:690px; font-size:40px; color:#cfd6de">Interpretable AI for dermoscopic image analysis</p>
+    <div class="abs" id="s8d" style="left:0; width:1920px; text-align:center; top:775px"><span class="pill" style="border-color:#6b4d00; color:#ffd27a; background:rgba(255,200,80,.07)">Research &amp; education prototype &nbsp;&middot;&nbsp; Not a medical device &nbsp;&middot;&nbsp; Not a diagnosis</span></div>
+    <div class="abs" id="s8g" style="left:0; width:1920px; text-align:center; top:870px"><span class="pill" style="font-family:'IBM Plex Mono',monospace; font-size:28px; color:#fff; border-color:#2995ff">github.com/anirva09/MelaDx7</span></div>
+    <p class="abs" id="s8c" style="left:0; width:1920px; text-align:center; top:975px; font-size:19px; color:#6c6c6c; line-height:1.5; font-family:'IBM Plex Mono',monospace">Model: ViT-Base/16 fine-tuned from google/vit-base-patch16-224-in21k (Apache-2.0) &nbsp;&middot;&nbsp; Data: HAM10000, Tschandl et al. 2018 (CC BY-NC, non-commercial)<br/>Weights for non-commercial use only. Images shown are from the HAM10000 test split.</p>
+  </section>
+
+  <div class="foot" id="foot">Research prototype &middot; not a diagnosis &middot; not a medical device</div>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const anims = [];
+  const hooks = [];
+  const EASE = "cubic-bezier(.2,.7,.2,1)";
+  function A(el, keyframes, at, dur, easing = EASE) {
+    const a = el.animate(keyframes, { delay: at * 1000, duration: dur * 1000, easing, fill: "both" });
+    a.pause();
+    anims.push(a);
+    return a;
+  }
+  const fadeUp = (el, at, dur = 0.8, dy = 40) =>
+    A(el, [{ opacity: 0, transform: `translateY(${dy}px)` }, { opacity: 1, transform: "translateY(0)" }], at, dur);
+  const fadeIn = (el, at, dur = 0.6) => A(el, [{ opacity: 0 }, { opacity: 1 }], at, dur, "linear");
+  function scene(el, start, end, fade = 0.5) {
+    const total = end - start;
+    A(el, [{ opacity: 0 }, { opacity: 1, offset: fade / total }, { opacity: 1, offset: 1 - fade / total }, { opacity: 0 }], start, total, "linear");
+  }
+
+  // Timeline (seconds)
+  const T = { s1: [0, 4.6], s2: [4.6, 10.2], s3: [10.2, 19.4], s4: [19.4, 26.4], s5: [26.4, 32.4], s6: [32.4, 37.6], s7: [37.6, 42.8], s8: [42.8, 48] };
+  window.DURATION = 48;
+  for (const k of Object.keys(T)) scene($(k), T[k][0], T[k][1], k === "s1" ? 0.01 : 0.5);
+  // The first scene must be visible from frame 0; keep its fade-in instant.
+
+  // S1
+  A($("s1ring"), [{ strokeDashoffset: 60 }, { strokeDashoffset: 0 }], 0.2, 1.3);
+  A($("s1dot"), [{ transform: "scale(0)" }, { transform: "scale(1.25)", offset: .7 }, { transform: "scale(1)" }], 1.0, 0.9);
+  fadeUp($("s1tag"), 0.4); fadeUp($("s1title"), 1.0, 0.9, 50); fadeUp($("s1sub"), 1.6, 0.9);
+  A($("rings"), [{ transform: "scale(.92) rotate(0deg)" }, { transform: "scale(1.04) rotate(8deg)" }], 0, 4.6, "linear");
+
+  // S2
+  fadeIn($("s2tag"), 4.9); fadeUp($("s2a"), 5.1, 0.9); fadeUp($("s2b"), 6.4, 0.9);
+  A($("s2img"), [{ opacity: 0, transform: "scale(.9)" }, { opacity: 1, transform: "scale(1)" }], 5.0, 1.1);
+  A($("s2scan"), [{ opacity: 0 }, { opacity: 1, offset: .1 }, { opacity: 1, offset: .9 }, { opacity: 0 }], 7.0, 2.4, "linear");
+  A($("s2line"), [{ top: "0px" }, { top: "694px" }, { top: "0px" }], 7.0, 2.4, "ease-in-out");
+
+  // S3
+  fadeIn($("s3tag"), 10.5);
+  A($("s3win"), [{ opacity: 0, transform: "translateY(60px) scale(.97)" }, { opacity: 1, transform: "none" }], 10.4, 1.0);
+  const bl = (id, at) => fadeUp($(id), at, 0.6, 24);
+  bl("s3b0", 11.4); bl("s3b1", 13.0); bl("s3b2", 15.0); bl("s3b3", 16.9);
+  const box = (id, at, dur) => A($(id), [{ opacity: 0 }, { opacity: 1, offset: .12 }, { opacity: 1, offset: .88 }, { opacity: 0 }], at, dur, "linear");
+  box("s3r1", 12.8, 2.0); box("s3r2", 14.8, 2.0); box("s3r3", 16.7, 2.4);
+
+  // S4
+  fadeIn($("s4tag"), 19.8); fadeUp($("s4h"), 20.0, 0.9); fadeUp($("s4p"), 21.0, 0.9); fadeIn($("s4legend"), 22.8, 0.8);
+  A($("s4frame"), [{ opacity: 0, transform: "scale(.94)" }, { opacity: 1, transform: "scale(1)" }], 19.7, 1.0);
+  A($("s4over"), [{ clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)" }], 21.4, 2.6, "ease-in-out");
+  A($("s4div"), [{ left: "0px", opacity: 1 }, { left: "836px", opacity: 1, offset: .99 }, { left: "836px", opacity: 0 }], 21.4, 2.6, "ease-in-out");
+  fadeIn($("s4chip"), 24.2);
+
+  // S5
+  fadeIn($("s5tag"), 26.7); fadeUp($("s5h"), 26.9, 0.9); fadeUp($("s5p"), 28.0, 0.9);
+  A($("s5p1"), [{ opacity: 0, transform: "translateY(120px)" }, { opacity: 1, transform: "none" }], 27.0, 1.1);
+  A($("s5p2"), [{ opacity: 0, transform: "translateY(140px)" }, { opacity: 1, transform: "none" }], 27.5, 1.1);
+  A($("s5p1"), [{ transform: "translateY(0)" }, { transform: "translateY(-14px)" }], 29.0, 3.2, "ease-in-out");
+
+  // S6
+  fadeIn($("s6tag"), 32.7); fadeUp($("s6h"), 32.9, 0.8, 30); fadeIn($("s6p"), 33.6);
+  A($("s6win"), [{ opacity: 0, transform: "translateY(60px)" }, { opacity: 1, transform: "none" }], 32.7, 0.9);
+  // dark layer reveals from the left, then retreats: dark -> light -> dark
+  A($("s6dark"), [{ clipPath: "inset(0 0 0 0)" }, { clipPath: "inset(0 100% 0 0)", offset: .5 }, { clipPath: "inset(0 0 0 0)" }], 33.6, 3.4, "ease-in-out");
+  A($("s6div"), [{ left: "1236px", opacity: 1 }, { left: "0px", opacity: 1, offset: .5 }, { left: "1236px", opacity: 1, offset: 1 }], 33.6, 3.4, "ease-in-out");
+
+  // S7
+  fadeIn($("s7tag"), 37.9); fadeUp($("s7h"), 38.1, 0.8);
+  fadeUp($("s7c1"), 39.0, 0.7); fadeUp($("s7c2"), 39.4, 0.7); fadeUp($("s7c3"), 39.8, 0.7);
+  fadeUp($("s7n"), 40.9, 0.7, 20); fadeIn($("s7p"), 41.5, 0.7);
+  const ease = (x) => 1 - Math.pow(1 - x, 3);
+  hooks.push((t) => {
+    const p = (a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+    $("n1").textContent = Math.round(1675 * ease(p(39.1, 40.5))).toLocaleString("en-US");
+    $("n2").textContent = (82.45 * ease(p(39.5, 40.9))).toFixed(2) + "%";
+    $("n3").textContent = (0.7352 * ease(p(39.9, 41.3))).toFixed(3);
+  });
+
+  // S8
+  fadeUp($("s8t"), 43.2, 0.8, 30); fadeIn($("s8s"), 43.7); fadeIn($("s8d"), 44.4); fadeIn($("s8g"), 45.0); fadeIn($("s8c"), 45.5);
+
+  // Footer disclaimer while the product is on screen
+  A($("foot"), [{ opacity: 0 }, { opacity: 1, offset: .06 }, { opacity: 1, offset: .94 }, { opacity: 0 }], 4.9, 37.9, "linear");
+
+  window.render = (t) => {
+    anims.forEach((a) => (a.currentTime = t * 1000));
+    hooks.forEach((h) => h(t));
+  };
+  window.render(0);
+  window.READY = document.fonts.ready.then(() =>
+    Promise.all([...document.images].map((i) => (i.complete ? 1 : new Promise((r) => (i.onload = i.onerror = r))))),
+  );
+</script>
+</body>
+</html>

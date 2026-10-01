@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>MelaDx7 banner</title>
+<style>
+  @font-face { font-family: "DM Sans"; font-weight: 400; src: url("fonts/dm-sans-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "DM Sans"; font-weight: 700; src: url("fonts/dm-sans-latin-700-normal.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 500; src: url("fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2"); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: #0b0b0c; }
+  body { font-family: "DM Sans", system-ui, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+  .wrap { position: relative; width: 100vw; height: 100vh; overflow: hidden;
+    background: radial-gradient(90vh 90vh at 78% 40%, #14263a 0%, #0b0b0c 70%);
+    display: flex; align-items: center; padding: 0 7vh; gap: 4vh; }
+  .rings { position: absolute; right: -14vh; top: 50%; transform: translateY(-50%); width: 120vh; height: 120vh; opacity: .55; }
+  .left { position: relative; flex: 1; min-width: 0; }
+  .logo { width: 17vh; height: 17vh; margin-bottom: 4.2vh; }
+  h1 { font-size: 22vh; font-weight: 700; letter-spacing: -0.035em; line-height: .95; }
+  .tag { margin-top: 3.6vh; font-size: 6.4vh; line-height: 1.22; color: #cfd6de; max-width: 74vh; }
+  .chip { display: inline-block; margin-top: 4.6vh; border: 1.5px solid #6b4d00; color: #ffd27a; background: rgba(255,200,80,.07);
+    border-radius: 999px; padding: 1.5vh 3vh; font-family: "IBM Plex Mono", monospace; font-size: 2.9vh; letter-spacing: .03em; }
+  .lens { position: relative; flex: none; width: 74vh; height: 74vh; border-radius: 50%; overflow: hidden;
+    border: .8vh solid #2a2a2a; box-shadow: 0 0 0 2.2vh rgba(255,255,255,.04), 0 5vh 12vh rgba(0,0,0,.6); margin-right: 3vh; }
+  .lens img { position: absolute; height: 100%; left: 50%; top: 0; transform: translateX(-50%); }
+  @media (min-aspect-ratio: 5/2) {
+    .left { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "logo title" "logo tag" "logo chip"; column-gap: 7vh; align-items: center; }
+    .logo { grid-area: logo; width: 40vh; height: 40vh; margin: 0; }
+    h1 { grid-area: title; font-size: 27vh; align-self: end; }
+    .tag { grid-area: tag; font-size: 5.8vh; margin-top: 1.6vh; max-width: none; }
+    .chip { grid-area: chip; margin-top: 3vh; justify-self: start; font-size: 3.2vh; }
+    .lens { width: 84vh; height: 84vh; margin-right: 1vh; }
+    .badge { bottom: 2vh; }
+  }
+  .badge { position: absolute; right: 7vh; bottom: 4vh; font-family: "IBM Plex Mono", monospace; font-size: 2.2vh; color: #6c6c6c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <svg class="rings" viewBox="0 0 1000 1000">
+    <circle cx="500" cy="500" r="470" fill="none" stroke="#1d2a38" stroke-width="2"/>
+    <circle cx="500" cy="500" r="350" fill="none" stroke="#1d2a38" stroke-width="2"/>
+  </svg>
+  <div class="left">
+    <svg class="logo" viewBox="0 0 32 32">
+      <rect width="32" height="32" rx="8" fill="#262626"/>
+      <circle cx="16" cy="16" r="9.5" fill="none" stroke="#fff" stroke-width="2"/>
+      <circle cx="16" cy="16" r="4.2" fill="#2995ff"/>
+    </svg>
+    <h1>MelaDx7</h1>
+    <p class="tag">Interpretable AI for dermoscopic skin lesion analysis, with Grad-CAM explanations.</p>
+    <span class="chip">Research &amp; education prototype &middot; not a diagnosis</span>
+  </div>
+  <div class="lens"><img src="assets/overlay.jpg" /></div>
+  <div class="badge">Image: HAM10000 test split (CC BY-NC)</div>
+</div>
+<script>window.READY = document.fonts.ready.then(() => Promise.all([...document.images].map((i) => (i.complete ? 1 : new Promise((r) => (i.onload = i.onerror = r))))));</script>
+</body>
+</html>
