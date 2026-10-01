@@ -42,5 +42,8 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     css: false,
     restoreMocks: true,
+    // jsdom page renders are CPU-bound; the 5 s default fails on loaded or slow CI runners.
+    testTimeout: 20_000,
+    hookTimeout: 20_000,
   },
 });
