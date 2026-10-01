@@ -343,7 +343,7 @@ function DesktopHome() {
                 recent={recent.data?.items}
                 flagged={flagged.data?.items}
                 tab={tab}
-                className="px-5 pb-0 pt-6 [&_a]:h-[204px]"
+                className="px-5 pb-5 pt-6 [&_a]:h-[216px]"
               />
             )}
           </section>

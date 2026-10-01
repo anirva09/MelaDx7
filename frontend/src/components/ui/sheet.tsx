@@ -172,7 +172,7 @@ export function BottomSheet({
               onPointerUp={onPointerUp}
               onPointerCancel={onPointerUp}
             >
-              <span className="mx-auto mb-2 block h-1 w-9 rounded-full bg-white/20" aria-hidden />
+              <span className="mx-auto mb-2 block h-1 w-9 rounded-full bg-[var(--grabber)]" aria-hidden />
               {size === "auto" ? (
                 <div className="flex items-center justify-between gap-3">
                   <Dialog.Title className="text-lg font-medium tracking-ref text-subtle">

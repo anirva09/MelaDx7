@@ -180,7 +180,7 @@ export function LongPressMenu({ actions, label, children, className }: LongPress
                         "flex h-11 w-full items-center justify-between gap-3 px-4 text-left text-lg tracking-ref outline-none",
                         "focus-visible:bg-active hover:bg-active active:bg-active disabled:opacity-40",
                         "[&_svg]:size-6 [&_svg]:shrink-0 [&_svg]:stroke-[1.5]",
-                        index > 0 && "border-t border-white/[0.07]",
+                        index > 0 && "border-t border-[var(--menu-line)]",
                         action.destructive ? "text-danger" : "text-ink",
                       )}
                     >

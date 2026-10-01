@@ -43,7 +43,7 @@ export function DropdownMenuLabel({ className, ...props }: ComponentProps<typeof
 }
 
 export function DropdownMenuSeparator({ className, ...props }: ComponentProps<typeof Menu.Separator>) {
-  return <Menu.Separator className={cn("mx-2.5 my-1 h-px bg-white/10", className)} {...props} />;
+  return <Menu.Separator className={cn("mx-2.5 my-1 h-px bg-[var(--menu-line)]", className)} {...props} />;
 }
 
 export const DropdownMenuRadioGroup = Menu.RadioGroup;

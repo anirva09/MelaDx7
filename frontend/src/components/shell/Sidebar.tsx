@@ -137,12 +137,12 @@ export function Sidebar() {
       <button
         type="button"
         onClick={() => setSearchOpen(true)}
-        className="press-soft mt-[25px] flex h-[31px] w-full items-center gap-2 rounded-[9px] border border-sidebar-line bg-[var(--surface)] pl-1.5 pr-1.5 text-left text-sm text-subtle hover:text-ink dark:bg-[#1f1f1f]"
+        className="press-soft mt-[25px] flex min-h-[31px] w-full items-center gap-2 rounded-[9px] border border-sidebar-line bg-[var(--surface)] pl-1.5 pr-1.5 text-left text-sm text-subtle hover:text-ink dark:bg-[#1f1f1f]"
         aria-keyshortcuts={isMac ? "Meta+K" : "Control+K"}
       >
         <Search className="size-[17px]" strokeWidth={1.5} aria-hidden />
-        <span className="flex-1">Quick Search</span>
-        <kbd className="rounded-[7px] border border-[#444] px-1.5 py-0.5 font-sans text-2xs leading-none text-subtle">
+        <span className="min-w-0 flex-1 truncate whitespace-nowrap">Quick Search</span>
+        <kbd className="shrink-0 whitespace-nowrap rounded-[7px] border border-[#444] px-1.5 py-0.5 font-sans text-2xs leading-none text-subtle">
           {isMac ? "⌘K" : "Ctrl K"}
         </kbd>
       </button>
