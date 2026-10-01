@@ -105,9 +105,9 @@ Taken from the running application with the trained ViT-Base/16 model, on real i
 from the held-out test split (HAM10000, CC BY-NC). Every screen exists in dark (default) and
 light; the theme is chosen in Settings (Dark / Light / System).
 
-| Result with Grad-CAM (dark) | Result with Grad-CAM (light) |
-|---|---|
-| ![Result, dark](docs/screenshots/desktop-result-dark.png) | ![Result, light](docs/screenshots/desktop-result-light.png) |
+| Result with Grad-CAM (dark) | 
+|---|
+| ![Result, dark](docs/screenshots/desktop-result-dark.png) | 
 
 | Overview | History |
 |---|---|
