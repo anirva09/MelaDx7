@@ -52,6 +52,12 @@ test("pages have no horizontal overflow or console errors on phone, tablet and d
         await page.goto(path);
         await page.waitForLoadState("load");
         await page.waitForTimeout(1200); // pace like a person: session refresh is limited to 60 per minute per IP
+        // A login page has no overflow and no errors either, so a lost session would pass silently.
+        const landed = new URL(page.url()).pathname;
+        if (landed !== path) {
+          problems.push(`session lost: ${path} ${viewport.name} ${theme} landed on ${landed}`);
+          continue;
+        }
         const { scrollWidth, innerWidth } = await page.evaluate(() => ({
           scrollWidth: document.documentElement.scrollWidth,
           innerWidth: window.innerWidth,

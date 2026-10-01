@@ -93,7 +93,7 @@ function UserSwitcher() {
           <ChevronsUpDown className="size-5 shrink-0 text-subtle" strokeWidth={1.5} aria-hidden />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-[240px]">
+      <DropdownMenuContent align="start" className="w-[240px] lg:w-[216px]">
         <DropdownMenuLabel>
           <span className="block truncate text-md font-medium text-ink">{user.full_name}</span>
           <span className="block truncate">{user.email}</span>
@@ -137,12 +137,13 @@ export function Sidebar() {
       <button
         type="button"
         onClick={() => setSearchOpen(true)}
-        className="press-soft mt-[25px] flex min-h-[31px] w-full items-center gap-2 rounded-[9px] border border-sidebar-line bg-[var(--surface)] pl-1.5 pr-1.5 text-left text-sm text-subtle hover:text-ink dark:bg-[#1f1f1f]"
+        className="press-soft @container mt-[22px] flex h-11 w-full items-center gap-2 rounded-[14px] border border-sidebar-line bg-[var(--surface)] px-2.5 text-left text-sm text-subtle hover:text-ink dark:border-transparent dark:bg-[#1f1f1f]"
         aria-keyshortcuts={isMac ? "Meta+K" : "Control+K"}
       >
-        <Search className="size-[17px]" strokeWidth={1.5} aria-hidden />
+        <Search className="size-[18px] shrink-0" strokeWidth={1.5} aria-hidden />
         <span className="min-w-0 flex-1 truncate whitespace-nowrap">Quick Search</span>
-        <kbd className="shrink-0 whitespace-nowrap rounded-[7px] border border-[#444] px-1.5 py-0.5 font-sans text-2xs leading-none text-subtle">
+        {/* The chip steps aside (rem-based, so it follows text size) when it would squeeze the label. */}
+        <kbd className="hidden shrink-0 items-center rounded-[9px] bg-black/[0.07] px-1.5 py-1 font-sans text-[11px] font-medium leading-none text-subtle @[10rem]:inline-flex dark:bg-white/[0.12]">
           {isMac ? "⌘K" : "Ctrl K"}
         </kbd>
       </button>

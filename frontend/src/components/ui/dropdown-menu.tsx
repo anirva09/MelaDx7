@@ -16,7 +16,7 @@ export function DropdownMenuContent({ className, ...props }: ComponentProps<type
         collisionPadding={12}
         className={cn(
           // Reference "Note - Keyboard Menu": translucent, blurred, radius 19, 12px padding.
-          "glass-menu data-open-pop z-50 min-w-[215px] origin-[var(--radix-dropdown-menu-content-transform-origin)] rounded-[19px] p-1.5",
+          "glass-menu data-open-pop z-50 min-w-[215px] origin-[var(--radix-dropdown-menu-content-transform-origin)] rounded-[19px] p-1.5 lg:min-w-[200px] lg:rounded-[14px] lg:p-1",
           className,
         )}
         {...props}
@@ -29,8 +29,8 @@ export function DropdownMenuItem({ className, ...props }: ComponentProps<typeof 
   return (
     <Menu.Item
       className={cn(
-        "flex min-h-11 cursor-default select-none items-center gap-2 rounded-[13px] px-2.5 text-base font-medium tracking-ref text-ink outline-none",
-        "data-[highlighted]:bg-active data-[disabled]:opacity-40 [&_svg]:size-6 [&_svg]:stroke-[1.5] [&_svg]:text-ink",
+        "flex min-h-11 cursor-default select-none items-center gap-2.5 rounded-[13px] px-2.5 text-base font-medium tracking-ref text-ink outline-none lg:min-h-9 lg:rounded-[9px] lg:text-sm",
+        "data-[highlighted]:bg-active data-[disabled]:opacity-40 [&_svg]:size-5 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] [&_svg]:text-ink lg:[&_svg]:size-4",
         className,
       )}
       {...props}
@@ -39,11 +39,11 @@ export function DropdownMenuItem({ className, ...props }: ComponentProps<typeof 
 }
 
 export function DropdownMenuLabel({ className, ...props }: ComponentProps<typeof Menu.Label>) {
-  return <Menu.Label className={cn("px-2.5 py-2 text-xs text-muted", className)} {...props} />;
+  return <Menu.Label className={cn("px-2.5 py-2 text-xs text-muted lg:py-1.5", className)} {...props} />;
 }
 
 export function DropdownMenuSeparator({ className, ...props }: ComponentProps<typeof Menu.Separator>) {
-  return <Menu.Separator className={cn("mx-2.5 my-1 h-px bg-[var(--menu-line)]", className)} {...props} />;
+  return <Menu.Separator className={cn("mx-2.5 my-1 h-px bg-[var(--menu-line)] lg:my-0.5", className)} {...props} />;
 }
 
 export const DropdownMenuRadioGroup = Menu.RadioGroup;
@@ -56,8 +56,8 @@ export function DropdownMenuRadioItem({
   return (
     <Menu.RadioItem
       className={cn(
-        "flex min-h-11 cursor-default select-none items-center gap-2 rounded-[13px] px-2.5 text-base font-medium tracking-ref text-ink outline-none",
-        "data-[highlighted]:bg-active data-[state=checked]:bg-active [&_svg]:size-6 [&_svg]:stroke-[1.5]",
+        "flex min-h-11 cursor-default select-none items-center gap-2.5 rounded-[13px] px-2.5 text-base font-medium tracking-ref text-ink outline-none lg:min-h-9 lg:rounded-[9px] lg:text-sm",
+        "data-[highlighted]:bg-active data-[state=checked]:bg-active [&_svg]:size-5 [&_svg]:shrink-0 [&_svg]:stroke-[1.5] lg:[&_svg]:size-4",
         className,
       )}
       {...props}

@@ -1,7 +1,11 @@
 import "@testing-library/jest-dom/vitest";
 
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
+
+// findBy*/waitFor wait 1 s by default, which is too tight when the machine is busy (CI, or a dev
+// server running alongside); a passing test still returns as soon as the element appears.
+configure({ asyncUtilTimeout: 5000 });
 
 afterEach(() => {
   cleanup();

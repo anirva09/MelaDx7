@@ -16,18 +16,41 @@ test("landing header: the brand sits on the same line as the section links", asy
   expect(Math.abs((await centre(brand)) - (await centre(link)))).toBeLessThanOrEqual(2);
 });
 
-test("sidebar: Quick Search stays on one line even with enlarged text", async ({ page }) => {
+test("sidebar: Quick Search is never clipped, at normal and enlarged text", async ({ page }) => {
   await register(page);
   await page.goto("/app");
-  await page.addStyleTag({ content: "html { font-size: 20px !important; }" }); // 125% text size
   const search = page.getByRole("button", { name: /Quick Search/ });
-  await expect(search).toBeVisible();
   const label = search.getByText("Quick Search");
-  const lineHeight = await label.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight) || 24);
-  const labelBox = (await label.boundingBox())!;
-  expect(labelBox.height).toBeLessThanOrEqual(lineHeight + 2); // one line, not two
+  const shortcut = search.locator("kbd");
+  await expect(search).toBeVisible();
+
+  const clipped = () => label.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
+  const lines = async () => {
+    const lineHeight = await label.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight) || 20);
+    return Math.round(((await label.boundingBox())!.height) / lineHeight);
+  };
+
+  // Normal size: the label is complete and the shortcut chip is shown.
+  expect(await clipped()).toBe(false);
+  expect(await lines()).toBe(1);
+  await expect(shortcut).toBeVisible();
+
+  // 125% text: the label must still be complete (the chip steps aside rather than squeezing it).
+  await page.addStyleTag({ content: "html { font-size: 20px !important; }" });
+  expect(await clipped()).toBe(false);
+  expect(await lines()).toBe(1);
   const overflow = await search.evaluate((el) => el.scrollWidth - el.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
+});
+
+test("account menu: compact rows with small icons", async ({ page }) => {
+  await register(page);
+  await page.goto("/app");
+  await page.getByRole("button", { name: /^Account:/ }).click();
+  const item = page.getByRole("menuitem", { name: "Profile" });
+  await expect(item).toBeVisible();
+  expect(((await item.boundingBox())!).height).toBeLessThanOrEqual(38);
+  expect(((await item.locator("svg").boundingBox())!).width).toBeLessThanOrEqual(18);
 });
 
 test("overview: result cards do not touch the bottom edge of their panel", async ({ page }) => {
