@@ -2,7 +2,7 @@
 //
 //   E2E_BASE_URL=http://localhost:5173 \
 //   PLAYWRIGHT_CHROMIUM_EXECUTABLE="C:/Program Files/Google/Chrome/Application/chrome.exe" \
-//   TEST_IMAGES=data/processed/test node capture-screenshots.mjs ../../docs/screenshots
+//   TEST_IMAGES=data/processed/test [SHOTS=desktop-home-dark,phone-result-dark] node capture-screenshots.mjs ../../docs/screenshots
 //
 // Uses real held-out test-split images (never committed). Creates a throw-away account and
 // deletes it again at the end.
@@ -31,9 +31,21 @@ function pick(cls, n) {
 fs.mkdirSync(out, { recursive: true });
 const browser = await chromium.launch({ executablePath: exe, args: ["--no-sandbox"] });
 
+// Optional filter: SHOTS=name1,name2 writes only those files (the others are skipped untouched).
+const only = process.env.SHOTS ? new Set(process.env.SHOTS.split(",").map((s) => s.trim())) : null;
+
 async function shot(page, name) {
+  if (only && !only.has(name)) return;
   await page.waitForTimeout(700); // let charts/animations settle
-  await page.screenshot({ path: path.join(out, `${name}.png`) });
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await page.screenshot({ path: path.join(out, `${name}.png`), timeout: 45000 });
+      break;
+    } catch (error) {
+      if (attempt >= 3) throw error; // font loading can stall once on a busy machine
+      await page.waitForTimeout(1500);
+    }
+  }
   console.log("saved", name);
 }
 
