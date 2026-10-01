@@ -23,6 +23,7 @@
   --surface: #ffffff;
   --surface-2: #ececec;
   --field: #e4e4e4;
+  --sidebar-w: 13.75rem; /* 220px at the default text size; grows with the user's text size */
   --sidebar: #f7f7f7;
   --sidebar-line: #e2e2e2;
   --ink: #141414;

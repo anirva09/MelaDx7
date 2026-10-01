@@ -35,10 +35,14 @@ test("sidebar: Quick Search is never clipped, at normal and enlarged text", asyn
   expect(await lines()).toBe(1);
   await expect(shortcut).toBeVisible();
 
-  // 125% text: the label must still be complete (the chip steps aside rather than squeezing it).
+  // 125% text: the sidebar grows with the text (its width is in rem), so the label stays complete
+  // and the shortcut chip stays visible.
   await page.addStyleTag({ content: "html { font-size: 20px !important; }" });
   expect(await clipped()).toBe(false);
   expect(await lines()).toBe(1);
+  await expect(shortcut).toBeVisible();
+  const sidebarWidth = await page.locator("aside[aria-label='Sidebar']").evaluate((el) => el.getBoundingClientRect().width);
+  expect(sidebarWidth).toBeGreaterThan(260); // 13.75rem at 20px
   const overflow = await search.evaluate((el) => el.scrollWidth - el.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
 });

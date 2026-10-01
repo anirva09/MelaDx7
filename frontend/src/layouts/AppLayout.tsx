@@ -31,7 +31,7 @@ export function AppLayout() {
         <main
           id="main"
           tabIndex={-1}
-          className="min-h-dvh bg-paper focus:outline-none lg:ml-[220px] lg:mt-[7px] lg:min-h-[calc(100dvh-7px)] lg:rounded-tl-[10px] lg:border-l lg:border-t lg:border-sidebar-line"
+          className="min-h-dvh bg-paper focus:outline-none lg:ml-[var(--sidebar-w)] lg:mt-[7px] lg:min-h-[calc(100dvh-7px)] lg:rounded-tl-[10px] lg:border-l lg:border-t lg:border-sidebar-line"
         >
           <Outlet />
         </main>

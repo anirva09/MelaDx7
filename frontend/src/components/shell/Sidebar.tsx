@@ -58,9 +58,9 @@ const MODEL: Item[] = [
 
 function itemClass(active: boolean, small = false) {
   return cn(
-    "press-soft flex h-[30px] items-center gap-2 rounded-[10px] px-1.5 transition-colors",
-    "[&_svg]:size-[18px] [&_svg]:shrink-0",
-    small ? "text-xs" : "text-sm",
+    "press-soft flex h-[1.75rem] items-center gap-2.5 rounded-lg px-2 transition-colors",
+    "[&_svg]:shrink-0",
+    small ? "text-xs [&_svg]:size-[0.9375rem]" : "text-[0.8125rem] [&_svg]:size-4",
     active ? "bg-[var(--surface)] text-ink dark:bg-[#1f1f1f]" : "text-subtle hover:bg-active hover:text-ink",
   );
 }
@@ -82,15 +82,15 @@ function UserSwitcher() {
           className="press-soft flex w-full items-center gap-2.5 rounded-[10px] p-1 text-left hover:bg-active"
           aria-label={`Account: ${user.full_name}`}
         >
-          <span className="relative flex size-[30px] shrink-0 items-center justify-center rounded-[8px] bg-[#262626] text-base font-bold text-white">
+          <span className="relative flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#262626] text-sm font-bold text-white">
             {initial(user.full_name)}
             <span
               className="absolute -bottom-[3px] -right-[3px] size-1.5 rounded-full bg-good ring-2 ring-sidebar"
               aria-hidden
             />
           </span>
-          <span className="min-w-0 flex-1 truncate text-base font-bold text-ink">{user.full_name}</span>
-          <ChevronsUpDown className="size-5 shrink-0 text-subtle" strokeWidth={1.5} aria-hidden />
+          <span className="min-w-0 flex-1 truncate text-[0.9375rem] font-bold text-ink">{user.full_name}</span>
+          <ChevronsUpDown className="size-[1.125rem] shrink-0 text-subtle" strokeWidth={1.5} aria-hidden />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-[240px] lg:w-[216px]">
@@ -130,20 +130,19 @@ export function Sidebar() {
   return (
     <aside
       aria-label="Sidebar"
-      className="fixed inset-y-0 left-0 z-30 hidden w-[220px] flex-col bg-sidebar px-4 pb-6 pt-[21px] lg:flex"
+      className="fixed inset-y-0 left-0 z-30 hidden w-[var(--sidebar-w)] flex-col bg-sidebar px-4 pb-6 pt-[1.3rem] lg:flex"
     >
       <UserSwitcher />
 
       <button
         type="button"
         onClick={() => setSearchOpen(true)}
-        className="press-soft @container mt-[22px] flex h-11 w-full items-center gap-2 rounded-[14px] border border-sidebar-line bg-[var(--surface)] px-2.5 text-left text-sm text-subtle hover:text-ink dark:border-transparent dark:bg-[#1f1f1f]"
+        className="press-soft mt-[1.35rem] flex h-[1.875rem] w-full items-center gap-2 rounded-[0.5625rem] border border-sidebar-line bg-[var(--surface)] px-2 text-left text-[0.8125rem] text-subtle hover:text-ink dark:border-transparent dark:bg-[#1f1f1f]"
         aria-keyshortcuts={isMac ? "Meta+K" : "Control+K"}
       >
-        <Search className="size-[18px] shrink-0" strokeWidth={1.5} aria-hidden />
+        <Search className="size-4 shrink-0" strokeWidth={1.5} aria-hidden />
         <span className="min-w-0 flex-1 truncate whitespace-nowrap">Quick Search</span>
-        {/* The chip steps aside (rem-based, so it follows text size) when it would squeeze the label. */}
-        <kbd className="hidden shrink-0 items-center rounded-[9px] bg-black/[0.07] px-1.5 py-1 font-sans text-[11px] font-medium leading-none text-subtle @[10rem]:inline-flex dark:bg-white/[0.12]">
+        <kbd className="inline-flex shrink-0 items-center rounded-[0.4375rem] bg-black/[0.07] px-1.5 py-[0.1875rem] font-sans text-[0.6875rem] font-medium leading-none text-subtle dark:bg-white/[0.12]">
           {isMac ? "⌘K" : "Ctrl K"}
         </kbd>
       </button>
