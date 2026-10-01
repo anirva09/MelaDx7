@@ -7,7 +7,7 @@
  * The reference is a dark interface; dark is the default theme and the light theme mirrors
  * the same structure with inverted neutrals.
  *
- *   paper       page background (mobile #141414; desktop main panel #090909)
+ *   paper       page background (mobile #141414; desktop main panel #161616, a step above the #101011 nav)
  *   surface     section cards (mobile #1f1f1f; desktop #171717)
  *   surface-2   cards nested in a section (#242424)
  *   field       inputs and search fields (#333333)
@@ -139,9 +139,9 @@
     --surface-2: #eaeaea;
   }
   .dark {
-    --paper: #090909;
-    --surface: #171717;
-    --surface-2: #242424;
+    --paper: #161616;
+    --surface: #1e1e1e;
+    --surface-2: #272727;
   }
 }
 

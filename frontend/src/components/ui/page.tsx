@@ -48,7 +48,7 @@ export function DesktopHeader({ title, subtitle, actions }: DesktopHeaderProps) 
     <header className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
       <div className="min-w-0">
         <h1 className="text-3xl font-semibold tracking-display text-ink">{title}</h1>
-        {subtitle && <p className="mt-2 text-[15px] text-subtle">{subtitle}</p>}
+        {subtitle && <p className="mt-2 text-[1.0625rem] text-subtle">{subtitle}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-3 pt-4">{actions}</div>}
     </header>
