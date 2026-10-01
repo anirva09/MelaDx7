@@ -17,7 +17,6 @@ PostgreSQL, and a React web application.
 
 ---
 
-## Watch (50 s)
 
 [![MelaDx7 in 50 seconds: result, Grad-CAM, phone and desktop, reproducibility, real evaluation numbers](docs/media/meladx7-promo.gif)](docs/media/meladx7-promo.mp4)
 
