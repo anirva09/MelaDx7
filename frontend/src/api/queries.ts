@@ -1,6 +1,7 @@
 /** TanStack Query hooks and cache keys. */
 
 import {
+  type QueryClient,
   keepPreviousData,
   useInfiniteQuery,
   useMutation,
@@ -84,8 +85,12 @@ export function useClassExplanation(id: string, code: string | null) {
 
 function useInvalidateAnalysisData() {
   const client = useQueryClient();
-  return () => {
-    void client.invalidateQueries({ queryKey: queryKeys.analyses });
+  /** `except`: an analysis that no longer exists, whose detail queries must not be refetched. */
+  return (except?: string) => {
+    void client.invalidateQueries({
+      queryKey: queryKeys.analyses,
+      predicate: (query) => !(except && query.queryKey[1] === "detail" && query.queryKey[2] === except),
+    });
     void client.invalidateQueries({ queryKey: queryKeys.overview });
     void client.invalidateQueries({ queryKey: ["model", "inference-stats"] });
   };
@@ -111,14 +116,34 @@ export function useCreateAnalysis() {
   });
 }
 
+/**
+ * Drop a cached query once nothing is showing it. Removing it while its page is still mounted makes
+ * that page re-request the (deleted) resource and log a 404; waiting for the last observer to leave
+ * removes it at the moment the page unmounts.
+ */
+function removeWhenUnobserved(client: QueryClient, key: readonly unknown[]): void {
+  const cache = client.getQueryCache();
+  const query = cache.find({ queryKey: key });
+  if (!query || query.getObserversCount() === 0) {
+    client.removeQueries({ queryKey: key });
+    return;
+  }
+  const unsubscribe = cache.subscribe((event) => {
+    if (event.type === "observerRemoved" && event.query === query && query.getObserversCount() === 0) {
+      unsubscribe();
+      client.removeQueries({ queryKey: key });
+    }
+  });
+}
+
 export function useDeleteAnalysis() {
   const client = useQueryClient();
   const invalidate = useInvalidateAnalysisData();
   return useMutation({
     mutationFn: (id: string) => analysisApi.remove(id),
     onSuccess: (_data, id) => {
-      client.removeQueries({ queryKey: queryKeys.analysis(id) });
-      invalidate();
+      removeWhenUnobserved(client, queryKeys.analysis(id));
+      invalidate(id);
     },
   });
 }

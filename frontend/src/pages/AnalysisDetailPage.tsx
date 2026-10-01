@@ -293,7 +293,12 @@ export function AnalysisDetailPage() {
   const classExplanation = useClassExplanation(id, detail?.produced_by_current_model ? explainCode : null);
 
   const refetch = analysis.refetch;
-  const onImageError = useCallback(() => void refetch(), [refetch]);
+  // An image failing to load usually means its signed URL expired, so ask for fresh ones. Not while
+  // the analysis is being deleted: its files are gone and the refetch would only return a 404.
+  const deleting = remove.isPending || remove.isSuccess;
+  const onImageError = useCallback(() => {
+    if (!deleting) void refetch();
+  }, [refetch, deleting]);
 
   // Deep link from a card's "Prediction history" action.
   useEffect(() => {
