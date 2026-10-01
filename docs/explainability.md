@@ -2,8 +2,9 @@
 
 ## Method: Grad-CAM
 
-Gradient-weighted Class Activation Mapping (Selvaraju et al., ICCV 2017) explains a CNN
-prediction for class `c` using the feature maps `A^k` of a convolutional layer:
+Gradient-weighted Class Activation Mapping (Selvaraju et al., ICCV 2017) explains a network
+prediction for class `c` using the feature maps `A^k` of a chosen layer (a convolutional layer for
+the CNNs; the patch tokens reshaped to a grid for the ViT):
 
 ```
 alpha_k^c = (1 / Z) * sum_ij  d y^c / d A^k_ij        channel importance (global-average gradient)

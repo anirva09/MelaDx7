@@ -25,7 +25,7 @@ export function AuthLayout({
             See the prediction, and where the model looked.
           </p>
           <p className="mt-4 text-white/65">
-            A convolutional network classifies dermoscopic images and pairs every result with a Grad-CAM
+            A Vision Transformer classifies dermoscopic images and pairs every result with a Grad-CAM
             attribution map, calibrated class probabilities and a full reproducibility record.
           </p>
         </div>

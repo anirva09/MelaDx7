@@ -266,7 +266,7 @@ export function LandingPage() {
               Interpretable AI for dermoscopic skin lesion analysis
             </h1>
             <p className="mt-6 max-w-xl text-lg text-ink-2">
-              A convolutional neural network classifies a dermoscopic image, reports a calibrated probability
+              A deep neural network (a Vision Transformer) classifies a dermoscopic image, reports a calibrated probability
               for every lesion class, and shows which regions of the image drove its prediction.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -332,7 +332,7 @@ export function LandingPage() {
         <Section
           id="explainability"
           title="Grad-CAM, briefly"
-          lead="Gradient-weighted Class Activation Mapping asks which feature maps in the last convolutional layer increase the score of a class, and where in the image those features respond."
+          lead="Gradient-weighted Class Activation Mapping asks which internal feature maps (for the Vision Transformer, the patch tokens entering its last block) increase the score of a class, and where in the image those features respond."
         >
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <div className="rounded-xl bg-stage p-6 text-white ring-1 ring-stage-line">

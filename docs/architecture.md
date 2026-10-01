@@ -31,7 +31,7 @@ flowchart LR
     S --> Store[StorageBackend]
   end
   subgraph ML["ml package (in-process)"]
-    Eng[InferenceEngine] --> Net[CNN from model card]
+    Eng[InferenceEngine] --> Net[Network from model card]
     Eng --> GC[Grad-CAM]
   end
   DB[(PostgreSQL)]
